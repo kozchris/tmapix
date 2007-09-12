@@ -39,10 +39,10 @@ import com.semagia.tmapix.utils.TMAPIFeatures;
 import junit.framework.TestCase;
 
 /**
- * 
+ * Tests against the TMAPIInputHandler.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestTMAPIInputHandler extends TestCase {
 
@@ -64,7 +64,7 @@ public class TestTMAPIInputHandler extends TestCase {
             System.out.println("XTM 1.1 is not supported, some tests may fail");
         }
         if (!TMAPIFeatures.setTNC(factory, false)) {
-            System.out.println("Disabling the Topic Name Constraint is not supported, some tests may fail");            
+            System.out.println("Disabling the Topic Name Constraint is not supported, some tests may fail");
         }
         _sys = factory.newTopicMapSystem();
         _tm = _sys.createTopicMap(_BASE_URI);
@@ -416,5 +416,6 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(1, parent.getTopicNames().size());
         TopicName name = (TopicName) parent.getTopicNames().iterator().next();
         assertEquals(3, name.getVariants().size());
+        //TODO: Test reification, locator etc.
     }
 }

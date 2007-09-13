@@ -22,6 +22,7 @@ package com.semagia.tmapix.io.internal;
 import java.util.Iterator;
 
 import org.python.util.PythonInterpreter;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
@@ -31,6 +32,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapi.core.TopicName;
+import org.tmapi.core.Variant;
 
 import com.semagia.tmapix.index.IIdentityIndex;
 import com.semagia.tmapix.index.IndexManager;
@@ -60,6 +62,9 @@ public class TestTMAPIInputHandler extends TestCase {
     public void setUp() throws Exception {
         TopicMapSystemFactory factory = null;
         factory = TopicMapSystemFactory.newInstance();
+        TMAPIFeatures.setXTM10(factory, false);
+        TMAPIFeatures.setAutomerge(factory, false);
+        TMAPIFeatures.setReadOnly(factory, false);
         if (!TMAPIFeatures.setXTM11(factory, true)) {
             System.out.println("XTM 1.1 is not supported, some tests may fail");
         }
@@ -103,10 +108,6 @@ public class TestTMAPIInputHandler extends TestCase {
         _updateIndex();
         return _identityIndex.getTopicByItemIdentifier(iid);
     }
-
-    private Topic topicByIdent(String ident) {
-        return topicByItemIdentifier(_BASE_URI + "#" + ident);
-    }
     
     public void testTopicBySubjectIdentifier() {
         String sid = "http://psi.semagia.com/semagia";
@@ -120,7 +121,7 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(sid, ((Locator) topic.getSubjectIdentifiers().iterator().next()).getReference());
     }
     
-    public void testTopicBySubjectIdentifier2() {
+    public void testTopicBySubjectIdentifierExisting() {
         String sid = "http://psi.semagia.com/semagia";
         String py = "handler.create_topic_by_sid('" + sid + "')";
         Topic topic = topicBySubjectIdentifier(sid);
@@ -148,7 +149,7 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(iid, ((Locator) topic.getSourceLocators().iterator().next()).getReference());
     }
 
-    public void testTopicByItemIdentifier2() {
+    public void testTopicByItemIdentifierExistingSID() {
         String iid = "http://psi.semagia.com/semagia";
         String py = "handler.create_topic_by_iid('" + iid + "')";
         Topic topic = topicByItemIdentifier(iid);
@@ -190,23 +191,21 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(sid, ((Locator) topic.getSubjectIdentifiers().iterator().next()).getReference());
     }
     
-    public void testTopicAddSubjectIdentifier2() {
+    public void testTopicAddSubjectIdentifierExisting() {
         String sid = "http://psi.semagia.com/semagia";
         String py = "handler.add_sid(topic, '" + sid + "')";
         Topic existing = _tm.createTopic();
         existing.addSubjectIdentifier(_tm.createLocator(sid));
         assertEquals(existing, topicBySubjectIdentifier(sid));
         Topic topic = _tm.createTopic();
-        String iid = "http://www.semagia.com/tmapix.map#test";
-        topic.addSourceLocator(_tm.createLocator(iid));
-        assertEquals(1, topic.getSourceLocators().size());
         assertEquals(0, topic.getSubjectIdentifiers().size());
+        assertEquals(2, _tm.getTopics().size());
         _py.set("topic", topic);
         _py.exec(py);
+        assertEquals(1, _tm.getTopics().size());
         Topic topic2 = topicBySubjectIdentifier(sid);
         assertNotNull(topic2);
         assertEquals(topic, topic2);
-        assertEquals(existing, topic2);
         assertEquals(1, topic.getSubjectIdentifiers().size());
         assertEquals(sid, ((Locator) topic.getSubjectIdentifiers().iterator().next()).getReference());
     }
@@ -225,7 +224,7 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(iid, ((Locator) topic.getSourceLocators().iterator().next()).getReference());
     }
     
-    public void testTopicAddItemIdentifier2() {
+    public void testTopicAddItemIdentifierExisting() {
         String iid = "http://www.semagia.com/tmapix.map#test";
         String py = "handler.add_iid(topic, '" + iid + "')";
         Topic existing = _tm.createTopic();
@@ -235,9 +234,9 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(2, _tm.getTopics().size());
         _py.set("topic", topic);
         _py.exec(py);
+        assertEquals(1, _tm.getTopics().size());
         Topic topic2 = topicByItemIdentifier(iid);
         assertNotNull(topic2);
-        assertEquals(1, _tm.getTopics().size());
         assertEquals(topic, topic2);
         assertEquals(1, topic.getSourceLocators().size());
         assertEquals(iid, ((Locator) topic.getSourceLocators().iterator().next()).getReference());
@@ -257,25 +256,35 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(slo, ((Locator) topic.getSubjectLocators().iterator().next()).getReference());
     }
     
-    public void testTopicAddSubjectLocator2() {
+    public void testTopicAddSubjectLocatorExisting() {
         String slo = "http://www.semagia.com/";
         String py = "handler.add_slo(topic, '" + slo + "')";
         Topic existing = _tm.createTopic();
         existing.addSubjectLocator(_tm.createLocator(slo));
         assertEquals(existing, topicBySubjectLocator(slo));
         Topic topic = _tm.createTopic();
-        String iid = "http://www.semagia.com/tmapix.map#test";
-        topic.addSourceLocator(_tm.createLocator(iid));
-        assertEquals(1, topic.getSourceLocators().size());
         assertEquals(0, topic.getSubjectLocators().size());
+        assertEquals(2, _tm.getTopics().size());
         _py.set("topic", topic);
         _py.exec(py);
+        assertEquals(1, _tm.getTopics().size());
         Topic topic2 = topicBySubjectLocator(slo);
         assertNotNull(topic2);
         assertEquals(topic, topic2);
-        assertEquals(existing, topic2);
         assertEquals(1, topic.getSubjectLocators().size());
         assertEquals(slo, ((Locator) topic.getSubjectLocators().iterator().next()).getReference());
+    }
+    
+    public void testTopicAddType() {
+        String py = "handler.add_type(topic, type)";
+        Topic topic = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        assertEquals(0, topic.getTypes().size());
+        _py.set("topic", topic);
+        _py.set("type", type);
+        _py.exec(py);
+        assertEquals(1, topic.getTypes().size());
+        assertTrue(topic.getTypes().contains(type));
     }
     
     public void testReifyTopicMap() {
@@ -286,6 +295,14 @@ public class TestTMAPIInputHandler extends TestCase {
         _py.exec(py);
         assertNotNull(_tm.getReifier());
         assertEquals(topic, _tm.getReifier());
+    }
+
+    public void testTopicMapAddItemIdentifier() {
+        String py = "handler.add_tm_iid('http://www.semagia.com/map1#tm')";
+        assertEquals(0, _tm.getSourceLocators().size());
+        _py.exec(py);
+        assertEquals(1, _tm.getSourceLocators().size());
+        assertEquals("http://www.semagia.com/map1#tm", ((Locator)_tm.getSourceLocators().iterator().next()).getReference());
     }
     
     public void testReifyTopicMapExistingReifier() {
@@ -298,18 +315,207 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(topic, _tm.getReifier());
         Topic topic2 = _tm.createTopic();
         assertFalse(topic.equals(topic2));
+        assertEquals(2, _tm.getTopics().size());
         _py.set("topic", topic2);
-        assertNotNull(_tm.getReifier());
+        _py.exec(py);
         assertEquals(1, _tm.getTopics().size());
-        assertEquals(topic, topic2);
+        assertNotNull(_tm.getReifier());
     }
     
     public void testCreateAssociation() {
-        // TODO
+        // type, scope, reifier, iids, roles
+        String py = "roles = [(role_type1, player1, None, ()), (role_type2, player2, None, ())]\n" +
+                "handler.create_association(type, (), None, (), roles)";
+        Topic type = _tm.createTopic();
+        Topic role_type1 = _tm.createTopic();
+        Topic player1 = _tm.createTopic();
+        Topic role_type2 = _tm.createTopic();
+        Topic player2 = _tm.createTopic();
+        assertEquals(0, _tm.getAssociations().size());
+        _py.set("type", type);
+        _py.set("role_type1", role_type1);
+        _py.set("player1", player1);
+        _py.set("role_type2", role_type2);
+        _py.set("player2", player2);
+        _py.exec(py);
+        assertEquals(1, _tm.getAssociations().size());
+        Association assoc = (Association) _tm.getAssociations().iterator().next();
+        assertEquals(2, assoc.getAssociationRoles().size());
+        assertEquals(1, player1.getRolesPlayed().size());
+        assertEquals(1, player2.getRolesPlayed().size());
+        AssociationRole role1 = (AssociationRole) player1.getRolesPlayed().iterator().next();
+        assertEquals(role_type1, role1.getType());
+        AssociationRole role2 = (AssociationRole) player2.getRolesPlayed().iterator().next();
+        assertEquals(role_type2, role2.getType());
     }
     
-    public void testCreateOccurrence() {
-        // TODO
+    public void testCreateAssociationWithScope() {
+        // type, scope, reifier, iids, roles
+        String py = "roles = [(role_type1, player1, None, ()), (role_type2, player2, None, ())]\n" +
+                "handler.create_association(type, [theme1, theme2], None, (), roles)";
+        Topic type = _tm.createTopic();
+        Topic role_type1 = _tm.createTopic();
+        Topic player1 = _tm.createTopic();
+        Topic role_type2 = _tm.createTopic();
+        Topic player2 = _tm.createTopic();
+        Topic theme1 = _tm.createTopic();
+        Topic theme2 = _tm.createTopic();  
+        assertEquals(0, _tm.getAssociations().size());
+        _py.set("type", type);
+        _py.set("role_type1", role_type1);
+        _py.set("player1", player1);
+        _py.set("role_type2", role_type2);
+        _py.set("player2", player2);
+        _py.set("theme1", theme1);
+        _py.set("theme2", theme2);
+        _py.exec(py);
+        assertEquals(1, _tm.getAssociations().size());
+        Association assoc = (Association) _tm.getAssociations().iterator().next();
+        assertEquals(2, assoc.getAssociationRoles().size());
+        assertEquals(2, assoc.getScope().size());
+        assertTrue(assoc.getScope().contains(theme1));
+        assertTrue(assoc.getScope().contains(theme2));
+    }
+    
+    public void testCreateAssociationWithReifier() {
+        // type, scope, reifier, iids, roles
+        String py = "roles = [(role_type1, player1, None, ()), (role_type2, player2, None, ())]\n" +
+                "handler.create_association(type, (), reifier, (), roles)";
+        Topic type = _tm.createTopic();
+        Topic role_type1 = _tm.createTopic();
+        Topic player1 = _tm.createTopic();
+        Topic role_type2 = _tm.createTopic();
+        Topic player2 = _tm.createTopic();
+        Topic reifier = _tm.createTopic();
+        assertEquals(0, _tm.getAssociations().size());
+        _py.set("type", type);
+        _py.set("role_type1", role_type1);
+        _py.set("player1", player1);
+        _py.set("role_type2", role_type2);
+        _py.set("player2", player2);
+        _py.set("reifier", reifier);
+        _py.exec(py);
+        assertEquals(1, _tm.getAssociations().size());
+        Association assoc = (Association) _tm.getAssociations().iterator().next();
+        assertEquals(2, assoc.getAssociationRoles().size());
+        assertEquals(reifier, assoc.getReifier());
+    }
+    
+    public void testCreateAssociationWithRoleReified() {
+        // type, scope, reifier, iids, roles
+        String py = "roles = [(role_type, player, reifier, ())]\n" +
+                "handler.create_association(type, (), None, (), roles)";
+        Topic type = _tm.createTopic();
+        Topic role_type = _tm.createTopic();
+        Topic player = _tm.createTopic();
+        Topic reifier = _tm.createTopic();
+        assertEquals(0, _tm.getAssociations().size());
+        _py.set("type", type);
+        _py.set("role_type", role_type);
+        _py.set("player", player);
+        _py.set("reifier", reifier);
+        _py.exec(py);
+        assertEquals(1, _tm.getAssociations().size());
+        Association assoc = (Association) _tm.getAssociations().iterator().next();
+        assertEquals(1, assoc.getAssociationRoles().size());
+        AssociationRole role  = (AssociationRole) assoc.getAssociationRoles().iterator().next(); 
+        assertEquals(reifier, role.getReifier());
+    }
+    
+    public void testCreateOccurrenceString() {
+        // parent, type, value, scope, reifier, iids
+        String py = "handler.create_occurrence(parent, type, ('Semagia', '" + _XS_STRING + "'), (), None, ())";
+        Topic parent = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        assertEquals(0, parent.getOccurrences().size());
+        _py.set("parent", parent);
+        _py.set("type", type);
+        _py.exec(py);
+        assertEquals(1, parent.getOccurrences().size());
+        Occurrence occ = (Occurrence) parent.getOccurrences().iterator().next();
+        assertNull(occ.getResource());
+        assertEquals("Semagia", occ.getValue());
+        assertEquals(type, occ.getType());
+        assertNull(occ.getReifier());
+        assertTrue(occ.getSourceLocators().isEmpty());
+    }
+    
+    public void testCreateOccurrenceInteger() {
+        // parent, type, value, scope, reifier, iids
+        String py = "handler.create_occurrence(parent, type, ('1', '" + _XS_INTEGER + "'), (), None, ())";
+        Topic parent = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        assertEquals(0, parent.getOccurrences().size());
+        _py.set("parent", parent);
+        _py.set("type", type);
+        _py.exec(py);
+        assertEquals(1, parent.getOccurrences().size());
+        Occurrence occ = (Occurrence) parent.getOccurrences().iterator().next();
+        assertNull(occ.getResource());
+        assertEquals("1", occ.getValue());
+        assertEquals(type, occ.getType());
+        assertNull(occ.getReifier());
+        assertTrue(occ.getSourceLocators().isEmpty());
+    }
+    
+    public void testCreateOccurrenceAnyURI() {
+        // parent, type, value, scope, reifier, iids
+        String py = "handler.create_occurrence(parent, type, ('http://www.semagia.com/', '" + _XS_ANY_URI + "'), (), None, ())";
+        Topic parent = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        assertEquals(0, parent.getOccurrences().size());
+        _py.set("parent", parent);
+        _py.set("type", type);
+        _py.exec(py);
+        assertEquals(1, parent.getOccurrences().size());
+        Occurrence occ = (Occurrence) parent.getOccurrences().iterator().next();
+        assertNull(occ.getValue());
+        assertEquals("http://www.semagia.com/", occ.getResource().getReference());
+        assertEquals(type, occ.getType());
+        assertNull(occ.getReifier());
+        assertTrue(occ.getSourceLocators().isEmpty());
+    }
+    
+    public void testCreateOccurrenceWithReifier() {
+        // parent, type, value, scope, reifier, iids
+        String py = "handler.create_occurrence(parent, type, ('Semagia', '" + _XS_STRING + "'), (), reifier, ())";
+        Topic parent = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        Topic reifier = _tm.createTopic();
+        assertEquals(0, parent.getOccurrences().size());
+        _py.set("parent", parent);
+        _py.set("type", type);
+        _py.set("reifier", reifier);
+        _py.exec(py);
+        assertEquals(1, parent.getOccurrences().size());
+        Occurrence occ = (Occurrence) parent.getOccurrences().iterator().next();
+        assertNull(occ.getResource());
+        assertEquals("Semagia", occ.getValue());
+        assertEquals(type, occ.getType());
+        assertEquals(reifier, occ.getReifier());
+    }
+    
+    public void testCreateOccurrenceWithScope() {
+        // parent, type, value, scope, reifier, iids
+        String py = "handler.create_occurrence(parent, type, ('Semagia', '" + _XS_STRING + "'), [theme1, theme2], None, ())";
+        Topic parent = _tm.createTopic();
+        Topic type = _tm.createTopic();
+        Topic theme1 = _tm.createTopic();
+        Topic theme2 = _tm.createTopic();
+        assertEquals(0, parent.getOccurrences().size());
+        _py.set("parent", parent);
+        _py.set("type", type);
+        _py.set("theme1", theme1);
+        _py.set("theme2", theme2);
+        _py.exec(py);
+        assertEquals(1, parent.getOccurrences().size());
+        Occurrence occ = (Occurrence) parent.getOccurrences().iterator().next();
+        assertNull(occ.getResource());
+        assertEquals("Semagia", occ.getValue());
+        assertEquals(type, occ.getType());
+        assertEquals(2, occ.getScope().size());
+        assertTrue(occ.getScope().contains(theme1));
+        assertTrue(occ.getScope().contains(theme2));
     }
     
     public void testCreateName() {
@@ -416,6 +622,25 @@ public class TestTMAPIInputHandler extends TestCase {
         assertEquals(1, parent.getTopicNames().size());
         TopicName name = (TopicName) parent.getTopicNames().iterator().next();
         assertEquals(3, name.getVariants().size());
-        //TODO: Test reification, locator etc.
+        assertEquals(1, reifier.getReified().size());
+        Variant var1 = (Variant) reifier.getReified().iterator().next();
+        assertNull(var1.getResource());
+        assertEquals("semagia", var1.getValue());
+        for (Iterator iter = name.getVariants().iterator(); iter.hasNext();) {
+            Variant var = (Variant) iter.next();
+            assertTrue(var.getScope().contains(theme1));
+            assertTrue(var.getScope().contains(theme2));
+            if (var.equals(var1)) {
+                continue;
+            }
+            assertEquals(0, var.getSourceLocators().size());
+            assertNull(var.getReifier());
+            if (var.getResource() == null) {
+                assertEquals("1", var.getValue());
+            }
+            else {
+                assertEquals("http://www.semagia.com/", var.getResource().getReference());
+            }
+        }
     }
 }

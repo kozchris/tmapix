@@ -8,12 +8,12 @@
  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
- * 
+ *
  * The Original Code is Semagia TMAPIX.
- * 
- * The Initial Developer of the Original Code is Semagia http://www.semagia.com/. 
+ *
+ * The Initial Developer of the Original Code is Semagia http://www.semagia.com/.
  * All Rights Reserved.
- * 
+ *
  * Contributer(s): Lars Heuer <heuer[at]semagia.com>
  *
  */
@@ -21,7 +21,6 @@ package com.semagia.tmapix.io.internal;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.python.core.ArgParser;
 import org.python.core.PyObject;
@@ -48,23 +47,23 @@ import com.semagia.tmapix.utils.ReificationUtils;
 
 /**
  * Implementation of the <code>mappa.io.ITMInputHandler</code> for TMAPI.
- * 
+ *
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public final class TMAPIInputHandler extends PyObject {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
-    
+
     private static final String _XS_STRING = "http://www.w3.org/2001/XMLSchema#string";
-    private static final String _XS_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI"; 
-    
+    private static final String _XS_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
+
     private IIdentityIndex _identityIndex;
     private TopicMap _topicmap;
-    
+
     /**
      * Logger.
      */
@@ -75,7 +74,7 @@ public final class TMAPIInputHandler extends PyObject {
         _topicmap = topicmap;
         _identityIndex = IndexManager.getIdentityIndex(topicmap);
     }
-    
+
     /**
      * Updates the identity index if necessary.
      */
@@ -86,7 +85,7 @@ public final class TMAPIInputHandler extends PyObject {
     }
 
     /**
-     * Creates a Locator from the provided <code>reference</code>. 
+     * Creates a Locator from the provided <code>reference</code>.
      *
      * @param reference An IRI.
      * @return A Locator.
@@ -104,7 +103,7 @@ public final class TMAPIInputHandler extends PyObject {
     private static Topic _to_topic(PyObject pyObj) {
         return (Topic) pyObj.__tojava__(Topic.class);
     }
-    
+
     /**
      * Converts a PyObject into a collection of topics.
      * If the length of the object is 0, <code>null</code> is returned.
@@ -112,7 +111,7 @@ public final class TMAPIInputHandler extends PyObject {
      * @param pyObj
      * @return
      */
-    private static Collection _to_topics(PyObject pyObj) {
+    private static Collection<Topic> _to_topics(PyObject pyObj) {
         int length = pyObj.__len__();
         if (length == 0) {
             return null;
@@ -123,15 +122,15 @@ public final class TMAPIInputHandler extends PyObject {
         }
         return Arrays.asList(topics);
     }
-    
+
     public Topic create_topic(String base) {
         //TODO: Do not ignore base
         return _topicmap.createTopic();
     }
-    
+
     /**
      * This method returns an existing topic that has a subject identifier
-     * equals to ``iid`` or an item identifier equals to `iid`. If no such 
+     * equals to ``iid`` or an item identifier equals to `iid`. If no such
      * topic exists, a topic is created and the locator `iid` is added
      * to its item identifiers property. This newly created topic is returned.
      *
@@ -154,10 +153,10 @@ public final class TMAPIInputHandler extends PyObject {
         }
         return topic;
     }
-    
+
     /**
      * This method returns an existing topic that has a subject identifier
-     * equals to `sid` or an item identifier equals to `sid`. If no such 
+     * equals to `sid` or an item identifier equals to `sid`. If no such
      * topic exists, a topic is created and the locator `sid` is added
      * to its subject identifiers property. This newly created topic is returned.
      *
@@ -180,11 +179,11 @@ public final class TMAPIInputHandler extends PyObject {
         }
         return topic;
     }
-    
+
     /**
      * This method returns an existing topic that has a subject locator
-     * equals to `slo`. If no such topic exists, a topic is created and 
-     * the locator `slo` is added to its subject locators property. 
+     * equals to `slo`. If no such topic exists, a topic is created and
+     * the locator `slo` is added to its subject locators property.
      * This newly created topic is returned.
      *
      * @param slo An IRI.
@@ -200,7 +199,7 @@ public final class TMAPIInputHandler extends PyObject {
         }
         return topic;
     }
-    
+
     /**
      * Adds the item identifier `iid` to the `topic`.
      *
@@ -218,10 +217,10 @@ public final class TMAPIInputHandler extends PyObject {
             topic.mergeIn(ex.getUnmodifiedTopic());
         }
     }
-    
+
     /**
      * Adds the subject identifier `sid` to the `topic`.
-     * 
+     *
      * If another topic has an equal item identifier or subject identifier,
      * the other topic must be merged with `topic`
      *
@@ -236,11 +235,11 @@ public final class TMAPIInputHandler extends PyObject {
             topic.mergeIn(ex.getUnmodifiedTopic());
         }
     }
-    
+
     /**
      * Adds the subject locator `slo` to the `topic`.
-     * 
-     * If another topic has an equal subject locator, the other topic must be 
+     *
+     * If another topic has an equal subject locator, the other topic must be
      * merged with `topic`.
      *
      * @param topic A topic.
@@ -254,7 +253,7 @@ public final class TMAPIInputHandler extends PyObject {
             topic.mergeIn(ex.getUnmodifiedTopic());
         }
     }
-    
+
     /**
      * Creates a type-instance relationship in the unconstrained scope between
      * the `topic` (which plays the role ``instance``) and the topic ``type``
@@ -266,16 +265,16 @@ public final class TMAPIInputHandler extends PyObject {
     public void add_type(Topic topic, Topic type) {
         topic.addType(type);
     }
-    
+
     /**
-     * Reifies the topic map instance. 
+     * Reifies the topic map instance.
      *
      * @param reifier A topic which should reify the topic map.
      */
     public void reify_tm(Topic reifier) {
         _set_reifier(_topicmap, reifier);
     }
-    
+
     /**
      * Adds an item identifier to the topic map.
      *
@@ -284,10 +283,10 @@ public final class TMAPIInputHandler extends PyObject {
     public void add_tm_iid(String iid) {
         _topicmap.addSourceLocator(_create_locator(iid));
     }
-    
+
     /**
-     * Creates an association with the specified `type`, `scope`, 
-     * `reifier` and item identifiers `iids`. 
+     * Creates an association with the specified `type`, `scope`,
+     * `reifier` and item identifiers `iids`.
      *
      * @param args
      * @param kw
@@ -295,10 +294,10 @@ public final class TMAPIInputHandler extends PyObject {
     public void create_association(PyObject[] args, String[] kw) {
         ArgParser ap = new ArgParser("create_association", args, kw,
                                      new String[] {
-                                                "type", "scope", "reifier", 
+                                                "type", "scope", "reifier",
                                                 "iids", "roles"});
         Topic type = _to_topic(ap.getPyObject(0));
-        Collection scope = _to_topics(ap.getPyObject(1));
+        Collection<Topic> scope = _to_topics(ap.getPyObject(1));
         Topic reifier = _to_topic(ap.getPyObject(2));
         PySequence iids = (PySequence) ap.getPyObject(3);
         PySequence roles = (PySequence) ap.getPyObject(4);
@@ -307,13 +306,13 @@ public final class TMAPIInputHandler extends PyObject {
         _set_reifier(assoc, reifier);
         _set_iids(assoc, iids);
         if (scope != null) {
-            for (Iterator iter = scope.iterator(); iter.hasNext();) {
-                assoc.addScopingTopic((Topic) iter.next()); 
+            for (Topic theme : scope) {
+                assoc.addScopingTopic(theme);
             }
         }
         _create_roles(assoc, roles);
     }
-    
+
     /**
      * Creates roles with the specified parent.
      *
@@ -333,10 +332,10 @@ public final class TMAPIInputHandler extends PyObject {
             _set_iids(role, iids);
         }
     }
-    
+
     /**
      * Creates an occurrence with the specified `parent`, `type`, `value`,
-     * `scope`, `reifier` and item identifiers `iids`. 
+     * `scope`, `reifier` and item identifiers `iids`.
      *
      * @param args
      * @param kw
@@ -351,7 +350,7 @@ public final class TMAPIInputHandler extends PyObject {
         PyTuple valueTuple = (PyTuple) ap.getPyObject(2);
         String value = (String) valueTuple.__getitem__(0).__tojava__(String.class);
         String datatype = (String) valueTuple.__getitem__(1).__tojava__(String.class);
-        Collection scope = _to_topics(ap.getPyObject(3));
+        Collection<Topic> scope = _to_topics(ap.getPyObject(3));
         Topic reifier = _to_topic(ap.getPyObject(4));
         PySequence iids = (PySequence) ap.getPyObject(5);
         Occurrence occ = null;
@@ -368,7 +367,7 @@ public final class TMAPIInputHandler extends PyObject {
         _set_reifier(occ, reifier);
         _set_iids(occ, iids);
     }
-    
+
     /**
      * Creates a topic name with the specified `parent`, `type`, `value`,
      * `scope`, `reifier` and item identifiers `iids`.
@@ -380,12 +379,12 @@ public final class TMAPIInputHandler extends PyObject {
         ArgParser ap = new ArgParser("create_name", args, kw,
                                      new String[] {
                                                 "parent", "type", "value",
-                                                "scope", "reifier", "iids", 
+                                                "scope", "reifier", "iids",
                                                 "variants"});
         Topic parent = _to_topic(ap.getPyObject(0));
         Topic type = _to_topic(ap.getPyObject(1));
         String value = ap.getString(2);
-        Collection scope = _to_topics(ap.getPyObject(3));
+        Collection<Topic> scope = _to_topics(ap.getPyObject(3));
         Topic reifier = _to_topic(ap.getPyObject(4));
         PySequence iids = (PySequence) ap.getPyObject(5);
         PySequence variants = (PySequence) ap.getPyObject(6);
@@ -394,7 +393,7 @@ public final class TMAPIInputHandler extends PyObject {
         _set_iids(name, iids);
         _create_variants(name, variants);
     }
-    
+
     /**
      * Creates variants with the specified parent.
      *
@@ -408,7 +407,7 @@ public final class TMAPIInputHandler extends PyObject {
             PyTuple valueTuple = (PyTuple) tuple.__getitem__(0);
             String value = (String) valueTuple.__getitem__(0).__tojava__(String.class);
             String datatype = (String) valueTuple.__getitem__(1).__tojava__(String.class);
-            Collection scope = _to_topics(tuple.__getitem__(1));
+            Collection<Topic> scope = _to_topics(tuple.__getitem__(1));
             Topic reifier = _to_topic(tuple.__getitem__(2));
             PySequence iids = (PySequence) tuple.__getitem__(3);
             Variant var = null;
@@ -424,12 +423,12 @@ public final class TMAPIInputHandler extends PyObject {
             }
             _set_reifier(var, reifier);
             _set_iids(var, iids);
-        }        
+        }
     }
-    
+
     /**
-     * Sets the reifier. 
-     * 
+     * Sets the reifier.
+     *
      * If the <code>reifier</code> is <code>null</code>, this method does
      * nothing. If the Topic Maps construct is already reified, the existing
      * reifier is merged with the provided reifier.
@@ -452,7 +451,7 @@ public final class TMAPIInputHandler extends PyObject {
             ReificationUtils.createReification(reifier, tmo);
         }
     }
-    
+
     /**
      * Sets the item identifiers for the Topic Maps construct.
      *
@@ -462,7 +461,7 @@ public final class TMAPIInputHandler extends PyObject {
     private void _set_iids(TopicMapObject tmo, PySequence iids) {
         PyObject iter = iids.__iter__();
         for (PyObject item; (item = iter.__iternext__()) != null;)  {
-            tmo.addSourceLocator(_create_locator((String) item.__tojava__(String.class))); 
+            tmo.addSourceLocator(_create_locator((String) item.__tojava__(String.class)));
         }
     }
 

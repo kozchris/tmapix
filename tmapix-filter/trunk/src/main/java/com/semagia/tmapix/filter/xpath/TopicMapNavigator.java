@@ -21,6 +21,9 @@ package com.semagia.tmapix.filter.xpath;
 
 import java.util.Iterator;
 
+import static com.semagia.tmapix.filter.xpath.ChildAxis.*;
+import static com.semagia.tmapix.filter.xpath.Utils.*;
+
 import org.jaxen.DefaultNavigator;
 import org.jaxen.JaxenConstants;
 import org.jaxen.NamedAccessNavigator;
@@ -30,15 +33,19 @@ import org.jaxen.saxpath.SAXPathException;
 import org.jaxen.util.SingleObjectIterator;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Name;
+import org.tmapi.core.Reifiable;
+import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
+import org.tmapi.core.Typed;
 
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 @SuppressWarnings("serial")
 final class TopicMapNavigator extends DefaultNavigator 
@@ -58,12 +65,12 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.DefaultNavigator#getParentNode(java.lang.Object)
      */
     @Override
-    public Object getParentNode(Object contextNode)
+    public Object getParentNode(Object ctxNode)
             throws UnsupportedAxisException {
-        if (Utils.isConstruct(contextNode)) {
-            return ((Construct) contextNode).getParent();
+        if (isConstruct(ctxNode)) {
+            return ((Construct) ctxNode).getParent();
         }
-        return super.getParentNode(contextNode);
+        return super.getParentNode(ctxNode);
     }
 
     /* (non-Javadoc)
@@ -180,7 +187,7 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#isDocument(java.lang.Object)
      */
     public boolean isDocument(Object ctxNode) {
-        return Utils.isTopicMap(ctxNode);
+        return isTopicMap(ctxNode);
     }
 
     /* (non-Javadoc)
@@ -195,7 +202,7 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#isElement(java.lang.Object)
      */
     public boolean isElement(Object ctxNode) {
-        return Utils.isConstruct(ctxNode);
+        return isConstruct(ctxNode);
     }
 
     /* (non-Javadoc)
@@ -216,7 +223,6 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#isText(java.lang.Object)
      */
     public boolean isText(Object arg0) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -241,32 +247,57 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.NamedAccessNavigator#getChildAxisIterator(java.lang.Object, java.lang.String, java.lang.String, java.lang.String)
      */
     @SuppressWarnings("unchecked")
-    public Iterator getChildAxisIterator(Object contextNode, String localName, String namespacePrefix,
+    public Iterator getChildAxisIterator(Object ctxNode, String localName, String namespacePrefix,
             String namespaceURI) throws UnsupportedAxisException {
         //System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
-        if (Utils.isTopic(contextNode)) {
-            Topic topic = (Topic) contextNode;
-            if ("roles".equals(localName)) {
+        if (isTopic(ctxNode)) {
+            Topic topic = (Topic) ctxNode;
+            if (isRoleAxis(localName)) {
                 return topic.getRolesPlayed().iterator();
             }
-            else if ("names".equals(localName)) {
+            else if (isNameAxis(localName)) {
                 return topic.getNames().iterator();
             }
-            else if ("occurrences".equals(localName)) {
+            else if (isOccurrenceAxis(localName)) {
                 return topic.getOccurrences().iterator();
             }
         }
-        else if (Utils.isAssociation(contextNode)) {
-            if ("roles".equals(localName)) {
-                return ((Association) contextNode).getRoles().iterator();
+        else if (isAssociation(ctxNode)) {
+            Association assoc = (Association) ctxNode;
+            if (isRoleAxis(localName)) {
+                return assoc.getRoles().iterator();
             }
-            return IteratorUtils.getChildren((Association) contextNode);
         }
-        else if (Utils.isTopicMap(contextNode)) {
-            return IteratorUtils.getChildren((TopicMap) contextNode);
+        else if (isTopicMap(ctxNode)) {
+            TopicMap tm = (TopicMap) ctxNode;
+            if (isTopicAxis(localName)) {
+                return tm.getTopics().iterator();
+            }
+            else if (isAssociationAxis(localName)) {
+                return tm.getAssociations().iterator();
+            }
         }
-        else if (Utils.isName(contextNode)) {
-            return IteratorUtils.getChildren((Name) contextNode);
+        else if (isReifierAxis(localName) && isReifiable(ctxNode)) {
+            return new SingleObjectIterator(((Reifiable) ctxNode).getReifier());
+        }
+        else if (isTypeAxis(localName) && isTyped(ctxNode)) {
+            return new SingleObjectIterator(((Typed) ctxNode).getType());
+        }
+        else if (isScopeAxis(localName) && isScoped(ctxNode)) {
+            return ((Scoped) ctxNode).getScope().iterator();
+        }
+        else if (isValueAxis(localName)) {
+            String value = null;
+            if (isName(ctxNode)) {
+                value= ((Name) ctxNode).getValue();
+            }
+            else if (isDatatypeAware(ctxNode)) {
+                value = ((DatatypeAware) ctxNode).getValue();
+            }
+            else {
+                return JaxenConstants.EMPTY_ITERATOR;
+            }
+            return new SingleObjectIterator(value);
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -278,7 +309,7 @@ final class TopicMapNavigator extends DefaultNavigator
     @Override
     public Iterator getParentAxisIterator(Object contextNode)
             throws UnsupportedAxisException {
-        if (Utils.isConstruct(contextNode)) {
+        if (isConstruct(contextNode)) {
             return new SingleObjectIterator(((Construct) contextNode).getParent());
         }
         return super.getParentAxisIterator(contextNode);

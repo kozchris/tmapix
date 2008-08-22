@@ -32,7 +32,7 @@ import com.semagia.tmapix.filter.IFilter;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 @SuppressWarnings("serial")
 public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {

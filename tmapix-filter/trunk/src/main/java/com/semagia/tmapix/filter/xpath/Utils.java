@@ -21,18 +21,22 @@ package com.semagia.tmapix.filter.xpath;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
+import org.tmapi.core.Reifiable;
 import org.tmapi.core.Role;
+import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
+import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
 /**
- * 
+ * Provides functions to test objects of their type.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class Utils {
 
@@ -69,20 +73,18 @@ final class Utils {
     }
 
     public static boolean isTyped(Object obj) {
-        return isAssociation(obj)
-                    || isRole(obj)
-                    || isOccurrence(obj)
-                    || isName(obj);
+        return obj instanceof Typed;
     }
 
     public static boolean isScoped(Object obj) {
-        return isAssociation(obj)
-                    || isOccurrence(obj)
-                    || isName(obj)
-                    || isVariant(obj);
+        return obj instanceof Scoped;
     }
 
     public static boolean isReifiable(Object obj) {
-        return !isTopic(obj);
+        return obj instanceof Reifiable;
+    }
+
+    public static boolean isDatatypeAware(Object obj) {
+        return obj instanceof DatatypeAware;
     }
 }

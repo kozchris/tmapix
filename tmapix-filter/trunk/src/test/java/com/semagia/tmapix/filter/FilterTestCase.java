@@ -21,8 +21,9 @@ package com.semagia.tmapix.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -33,7 +34,7 @@ import org.tmapi.core.Topic;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public abstract class FilterTestCase extends TMAPITestCase {
 
@@ -43,6 +44,7 @@ public abstract class FilterTestCase extends TMAPITestCase {
 
     protected Object singleResult(Iterable<?> iterable) {
         final Iterator<?> it = iterable.iterator();
+        assertTrue("Expected an element", it.hasNext());
         Object obj = it.next();
         try {
             it.next();
@@ -63,12 +65,12 @@ public abstract class FilterTestCase extends TMAPITestCase {
     }
 
     protected void _testRoles(IFilter<?> filter, Construct obj) throws Exception {
-        Collection<?> coll = asCollection(filter.match(obj));
+        Set<Object> coll = asSet(filter.match(obj));
         if (obj instanceof Topic) {
-            assertEquals(collection(((Topic) obj).getRolesPlayed()), coll);
+            assertEquals(((Topic) obj).getRolesPlayed(), coll);
         }
         else if (obj instanceof Association) {
-            assertEquals(collection(((Association) obj).getRoles()), coll);
+            assertEquals(((Association) obj).getRoles(), coll);
         }
         else {
             assertTrue(coll.isEmpty());
@@ -79,13 +81,13 @@ public abstract class FilterTestCase extends TMAPITestCase {
         return new ArrayList<Object>(coll);
     }
 
-    protected Collection<?> asCollection(Iterable<?> match) {
-        List<Object> l = new ArrayList<Object>();
+    protected Set<Object> asSet(Iterable<?> match) {
+        Set<Object> res = new HashSet<Object>();
         Iterator<?> iter = match.iterator();
         while (iter.hasNext()) {
-            l.add(iter.next());
+            res.add(iter.next());
         }
-        return l;
+        return res;
     }
 
 }

@@ -41,6 +41,8 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 
+import com.semagia.tmapix.filter.utils.ChainIterator;
+
 /**
  * 
  * 
@@ -249,7 +251,7 @@ final class TopicMapNavigator extends DefaultNavigator
     @SuppressWarnings("unchecked")
     public Iterator getChildAxisIterator(Object ctxNode, String localName, String namespacePrefix,
             String namespaceURI) throws UnsupportedAxisException {
-        //System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
+//        System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
         if (isTopic(ctxNode)) {
             Topic topic = (Topic) ctxNode;
             if (isRoleAxis(localName)) {
@@ -300,6 +302,28 @@ final class TopicMapNavigator extends DefaultNavigator
             return new SingleObjectIterator(value);
         }
         return JaxenConstants.EMPTY_ITERATOR;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Iterator getChildAxisIterator(Object ctxNode)
+            throws UnsupportedAxisException {
+//        System.out.println("childAxisIterator");
+        if (isTopic(ctxNode)) {
+            Topic topic = (Topic) ctxNode;
+            return new ChainIterator(topic.getOccurrences(), topic.getNames());
+        }
+        else if (isAssociation(ctxNode)) {
+            return ((Association) ctxNode).getRoles().iterator();
+        }
+        else if (isTopicMap(ctxNode)) {
+            TopicMap tm = (TopicMap) ctxNode;
+            return new ChainIterator(tm.getTopics(), tm.getAssociations());
+        }
+        else if (isName(ctxNode)) {
+            return ((Name) ctxNode).getVariants().iterator();
+        }
+        return super.getChildAxisIterator(ctxNode);
     }
 
     /* (non-Javadoc)

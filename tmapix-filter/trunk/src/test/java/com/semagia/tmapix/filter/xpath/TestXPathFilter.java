@@ -19,8 +19,13 @@
  */
 package com.semagia.tmapix.filter.xpath;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.Name;
+import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
@@ -31,7 +36,7 @@ import com.semagia.tmapix.filter.IFilter;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestXPathFilter extends FilterTestCase {
 
@@ -52,7 +57,7 @@ public class TestXPathFilter extends FilterTestCase {
     }
 
     private void _testRoles(final Construct c) throws Exception {
-        _testRoles(xpath("./roles"), c);
+        _testRoles(xpath("./role"), c);
     }
 
     public void testTopicMap() throws Exception {
@@ -109,7 +114,7 @@ public class TestXPathFilter extends FilterTestCase {
         final Role role = assoc.createRole(createTopic(), createTopic());
         assoc.createRole(createTopic(), createTopic());
         assertEquals(2, assoc.getRoles().size());
-        assertEquals(collection(assoc.getRoles()), asCollection((xpath("../roles").match(role))));
+        assertEquals(assoc.getRoles(), asSet((xpath("../role").match(role))));
     }
 
     public void testRole() throws Exception {
@@ -141,5 +146,34 @@ public class TestXPathFilter extends FilterTestCase {
 
     public void testVariantParent() throws Exception {
         _testParent(createVariant());
+    }
+
+    public void testTopicChildren() throws Exception {
+        final Topic topic = createTopic();
+        final Name name1 = topic.createName("Semagia");
+        final Name name2 = topic.createName("semagia");
+        final Occurrence occ1 = topic.createOccurrence(createTopic(), "semagia");
+        final Occurrence occ2 = topic.createOccurrence(createTopic(), "Semagia");
+        Set<Object> coll = asSet(xpath("./*").match(topic));
+        Set<Object> expected = new HashSet<Object>();
+        expected.add(name1);
+        expected.add(name2);
+        expected.add(occ1);
+        expected.add(occ2);
+        assertEquals(expected, coll);
+    }
+
+    public void testTopicMapChildren() throws Exception {
+        final Topic topic = createTopic();
+        final Topic topic2 = createTopic();
+        final Topic topic3 = createTopic();
+        final Association assoc = _tm.createAssociation(topic3);
+        Set<Object> coll = asSet(xpath("./*").match(_tm));
+        Set<Object> expected = new HashSet<Object>();
+        expected.add(topic);
+        expected.add(topic2);
+        expected.add(topic3);
+        expected.add(assoc);
+        assertEquals(expected, coll);
     }
 }

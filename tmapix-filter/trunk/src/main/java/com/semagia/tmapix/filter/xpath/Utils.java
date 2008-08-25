@@ -38,7 +38,7 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class Utils {
+public final class Utils {
 
     public static boolean isConstruct(Object obj) {
         return obj instanceof Construct;

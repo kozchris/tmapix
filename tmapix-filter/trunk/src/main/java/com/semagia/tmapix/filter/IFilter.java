@@ -26,7 +26,7 @@ import org.tmapi.core.Construct;
  * {@link org.tmapi.core.Construct}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public interface IFilter<T> {
 
@@ -38,5 +38,7 @@ public interface IFilter<T> {
      * @throws FilterMatchException
      */
     public Iterable<T> match(Construct context) throws FilterMatchException;
+
+    public T matchOne(Construct context) throws FilterMatchException;
 
 }

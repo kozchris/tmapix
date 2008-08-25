@@ -36,6 +36,7 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Name;
 import org.tmapi.core.Reifiable;
+import org.tmapi.core.Role;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -79,96 +80,108 @@ final class TopicMapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#getAttributeName(java.lang.Object)
      */
     public String getAttributeName(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getAttributeNamespaceUri(java.lang.Object)
      */
     public String getAttributeNamespaceUri(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getAttributeQName(java.lang.Object)
      */
     public String getAttributeQName(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getAttributeStringValue(java.lang.Object)
      */
     public String getAttributeStringValue(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getCommentStringValue(java.lang.Object)
      */
     public String getCommentStringValue(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getElementName(java.lang.Object)
      */
-    public String getElementName(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getElementName(Object ctxNode) {
+        if (isTopic(ctxNode)) {
+            return "topic";
+        }
+        if (isAssociation(ctxNode)) {
+            return "association";
+        }
+        if (isRole(ctxNode)) {
+            return "role";
+        }
+        if (isOccurrence(ctxNode)) {
+            return "occurrence";
+        }
+        if (isName(ctxNode)) {
+            return "name";
+        }
+        if (isVariant(ctxNode)) {
+            return "variant";
+        }
+        if (isTopicMap(ctxNode)) {
+            return "topic map";
+        }
+        return "<unknown-element>";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getElementNamespaceUri(java.lang.Object)
      */
     public String getElementNamespaceUri(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getElementQName(java.lang.Object)
      */
     public String getElementQName(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getElementStringValue(java.lang.Object)
      */
-    public String getElementStringValue(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getElementStringValue(Object obj) {
+        if (isConstruct(obj)) {
+            return ((Construct) obj).getId();
+        }
+        return obj.toString();
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getNamespacePrefix(java.lang.Object)
      */
     public String getNamespacePrefix(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getNamespaceStringValue(java.lang.Object)
      */
     public String getNamespaceStringValue(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#getTextStringValue(java.lang.Object)
      */
-    public String getTextStringValue(Object arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getTextStringValue(Object obj) {
+        return obj.toString();
     }
 
     /* (non-Javadoc)
@@ -224,8 +237,8 @@ final class TopicMapNavigator extends DefaultNavigator
     /* (non-Javadoc)
      * @see org.jaxen.Navigator#isText(java.lang.Object)
      */
-    public boolean isText(Object arg0) {
-        return false;
+    public boolean isText(Object obj) {
+        return obj instanceof String;
     }
 
     /* (non-Javadoc)
@@ -242,7 +255,7 @@ final class TopicMapNavigator extends DefaultNavigator
     @SuppressWarnings("unchecked")
     public Iterator getAttributeAxisIterator(Object arg0, String arg1,
             String arg2, String arg3) throws UnsupportedAxisException {
-       return null;
+       throw new UnsupportedAxisException("Unsupported attribute axis '" + arg1 + "'");
     }
 
     /* (non-Javadoc)
@@ -251,7 +264,7 @@ final class TopicMapNavigator extends DefaultNavigator
     @SuppressWarnings("unchecked")
     public Iterator getChildAxisIterator(Object ctxNode, String localName, String namespacePrefix,
             String namespaceURI) throws UnsupportedAxisException {
-//        System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
+        // System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
         if (isTopic(ctxNode)) {
             Topic topic = (Topic) ctxNode;
             if (isRoleAxis(localName)) {
@@ -262,6 +275,15 @@ final class TopicMapNavigator extends DefaultNavigator
             }
             else if (isOccurrenceAxis(localName)) {
                 return topic.getOccurrences().iterator();
+            }
+            else if (isSubjectIdentifierAxis(localName)) {
+                return topic.getSubjectIdentifiers().iterator();
+            }
+            else if (isSubjectLocatorAxis(localName)) {
+                return topic.getSubjectLocators().iterator();
+            }
+            else if (isItemIdentifierAxis(localName)) {
+                return topic.getItemIdentifiers().iterator();
             }
         }
         else if (isAssociation(ctxNode)) {
@@ -279,6 +301,12 @@ final class TopicMapNavigator extends DefaultNavigator
                 return tm.getAssociations().iterator();
             }
         }
+        else if (isPlayerAxis(localName) && isRole(ctxNode)) {
+            return new SingleObjectIterator(((Role) ctxNode).getPlayer());
+        }
+        else if (isItemIdentifierAxis(localName) && isConstruct(ctxNode)) {
+            return ((Construct) ctxNode).getItemIdentifiers().iterator();
+        }
         else if (isReifierAxis(localName) && isReifiable(ctxNode)) {
             return new SingleObjectIterator(((Reifiable) ctxNode).getReifier());
         }
@@ -289,17 +317,15 @@ final class TopicMapNavigator extends DefaultNavigator
             return ((Scoped) ctxNode).getScope().iterator();
         }
         else if (isValueAxis(localName)) {
-            String value = null;
             if (isName(ctxNode)) {
-                value= ((Name) ctxNode).getValue();
+                return new SingleObjectIterator(((Name) ctxNode).getValue());
             }
             else if (isDatatypeAware(ctxNode)) {
-                value = ((DatatypeAware) ctxNode).getValue();
+                return new SingleObjectIterator(((DatatypeAware) ctxNode).getValue());
             }
-            else {
-                return JaxenConstants.EMPTY_ITERATOR;
-            }
-            return new SingleObjectIterator(value);
+        }
+        else if (isDatatypeAxis(localName) && isDatatypeAware(ctxNode)) {
+            return new SingleObjectIterator(((DatatypeAware) ctxNode).getDatatype());
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -308,7 +334,7 @@ final class TopicMapNavigator extends DefaultNavigator
     @Override
     public Iterator getChildAxisIterator(Object ctxNode)
             throws UnsupportedAxisException {
-//        System.out.println("childAxisIterator");
+        // System.out.println("childAxisIterator: " +ctxNode);
         if (isTopic(ctxNode)) {
             Topic topic = (Topic) ctxNode;
             return new ChainIterator(topic.getOccurrences(), topic.getNames());
@@ -323,7 +349,7 @@ final class TopicMapNavigator extends DefaultNavigator
         else if (isName(ctxNode)) {
             return ((Name) ctxNode).getVariants().iterator();
         }
-        return super.getChildAxisIterator(ctxNode);
+        return JaxenConstants.EMPTY_ITERATOR;
     }
 
     /* (non-Javadoc)

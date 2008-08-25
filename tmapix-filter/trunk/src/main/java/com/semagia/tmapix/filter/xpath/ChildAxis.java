@@ -55,12 +55,32 @@ final class ChildAxis {
         return "type".equals(name);
     }
 
+    public static boolean isPlayerAxis(String name) {
+        return "player".equals(name);
+    }
+
     public static boolean isScopeAxis(String name) {
         return "scope".equals(name);
     }
 
     public static boolean isValueAxis(String name) {
         return "value".equals(name);
+    }
+
+    public static boolean isDatatypeAxis(String name) {
+        return "datatype".equals(name);
+    }
+
+    public static boolean isItemIdentifierAxis(String name) {
+        return "iid".equals(name);
+    }
+
+    public static boolean isSubjectIdentifierAxis(String name) {
+        return "sid".equals(name);
+    }
+
+    public static boolean isSubjectLocatorAxis(String name) {
+        return "slo".equals(name);
     }
 
 }

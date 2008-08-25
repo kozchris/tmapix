@@ -23,12 +23,25 @@ package com.semagia.tmapix.filter;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public class FilterMatchException extends Exception {
+public class FilterMatchException extends RuntimeException {
 
-    public FilterMatchException(Throwable throwable) {
-        super(throwable);
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6801914927584947555L;
+
+    public FilterMatchException(String msg) {
+        super(msg);
+    }
+
+    public FilterMatchException(Throwable cause) {
+        super(cause);
+    }
+
+    public FilterMatchException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

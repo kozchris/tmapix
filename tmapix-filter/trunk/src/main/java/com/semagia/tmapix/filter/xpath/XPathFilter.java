@@ -60,7 +60,7 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
     }
 
     XPathFilter(final String xpath) throws JaxenException {
-        this(xpath, TopicMapNavigator.getInstance());
+        this(xpath, MapNavigator.getInstance());
     }
 
     /**

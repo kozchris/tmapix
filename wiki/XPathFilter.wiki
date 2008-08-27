@@ -1,4 +1,5 @@
 #summary Explains basic usage of the XPathFilter
+#labels Featured
 
 = XPathFilter =
 

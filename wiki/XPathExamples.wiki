@@ -1,4 +1,5 @@
 #summary XPath examples
+#labels Featured
 
 = XPath Examples =
 

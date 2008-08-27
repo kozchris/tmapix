@@ -15,11 +15,15 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Reifiable =
 
+Provides all `Construct` axes plus the following:
+
 || *Axis*       || *TMAPI equivalent*       ||
 || `reifier`    || getReifier()             ||
 
 
 = Scoped = 
+
+Provides all `Construct` axes plus the following:
 
 || *Axis*     || *TMAPI equivalent*       ||
 || `scope`    || getScope()               ||
@@ -27,11 +31,15 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Typed =
 
+Provides all `Construct` axes plus the following:
+
 || *Axis*     || *TMAPI equivalent*       ||
 || `type`     || getType()                ||
 
 
 = DatatypeAware = 
+
+Provides all `Scoped` and `Reifiable` axes plus the following:
 
 || *Axis*       || *TMAPI equivalent*       ||
 || `value`      || getValue()               ||
@@ -40,12 +48,16 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Topic Map =
 
+Provides all `Reifiable` axes plus the following:
+
 || *Axis*         || *TMAPI equivalent*       ||
 || `topic`        || getTopics()              ||
 || `association`  || getAssociations()        ||
 
 
 = Topic =
+
+Provides all `Construct` axes plus the following:
 
 || *Axis*       || *TMAPI equivalent*       ||
 || `sid`        || getSubjectIdentifiers()  ||
@@ -60,11 +72,15 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Association = 
 
+Provides all `Typed`, `Scoped` and `Reifiable` axes plus the following:
+
 || *Axis*     || *TMAPI equivalent*       ||
 || `role`       || getRoles()         ||
 
 
 = Role = 
+
+Provides all `Typed`, and `Reifiable` axes plus the following:
 
 || *Axis*     || *TMAPI equivalent*       ||
 || `player`     || getPlayer()              ||
@@ -72,10 +88,12 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Occurrence = 
 
-Adds no additional axis, see DatatypeAware, Typed, Reifiable, and Scoped
+Adds no additional axis, see `DatatypeAware` and `Typed`
 
 
 = Name =
+
+Provides all `Typed`, `Scoped`, and `Reifiable` axes plus the following:
 
 || *Axis*       || *TMAPI equivalent*       ||
 || `value`      || getValue()               ||
@@ -84,4 +102,4 @@ Adds no additional axis, see DatatypeAware, Typed, Reifiable, and Scoped
 
 = Variant = 
 
-Adds no additional axis, see DatatypeAware, Reifiable, and Scoped
+Adds no additional axis, see `DatatypeAware`

@@ -1,0 +1,37 @@
+#summary Overview of XPath functions
+#labels Featured
+
+= XPath Functions =
+
+== Retrieving a topic by its subject identifier ==
+
+The function `sid` expects a string and returns a topic with an subject identifier equals to the the specified string.
+
+Example:
+
+{{{
+// Find the topic "John_Lennon" and return all roles it plays
+
+IFilter<Role> filter = XPathFilter.create("sid('http://de.wikipedia.org/wiki/John_Lennon')/role");
+
+for (Role role: filter.match(topicMap)) {
+   // ...
+}
+}}}
+
+
+== Retrieving a topic by its subject locator ==
+
+The function `slo` expects a string and returns a topic with an subject locator equals to the the specified string.
+
+Example:
+
+{{{
+// Find a topic with the subject locator "http://www.semagia.com/" and return all occurrences
+
+IFilter<Occurrence> filter = XPathFilter.create("slo('http://www.semagia.com/')/occurrence");
+
+for (Occurrence occ: filter.match(topicMap)) {
+   // ...
+}
+}}}

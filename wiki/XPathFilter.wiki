@@ -1,3 +1,5 @@
+# Explains basic usage of the XPathFilter
+
 = XPathFilter =
 
 The `com.semagia.tmapix.filter.xpath` package provides a `com.semagia.tmapix.filter.IFilter` implementation that utilizes [http://www.w3.org/TR/xpath XPath 1.0] expressions to navigate through the [http://www.isotopicmaps.org/sam/sam-model/ Topic Maps - Data Model (TMDM)].

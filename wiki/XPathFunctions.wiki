@@ -51,3 +51,31 @@ IFilter<Construct> filter = XPathFilter.create("iid('http://www.semagia.com/map#
 
 Construct parent = filter.matchOne(topicMap);
 }}}
+
+
+== Check if an statement is in the unconstrained scope =
+
+The function `in-ucs` expects a `org.tmapi.core.Scoped` instance and returns `true` if the statement is in the unconstrained scope, otherwise `false`.
+
+Example: 
+{{{
+// Find those names which are in the unconstrained constrained scope
+IFilter<Name> filter = XPathFilter.create("name[in-ucs(.)]"); 
+
+for (Name name: filter.match(topic)) {
+// ...
+}
+}}}
+
+In fact, the `in-ucs` function is equivalent to the following code, but requires less typing and should be more clear:
+{{{
+// Find those names which are in the unconstrained constrained scope
+IFilter<Name> filter = XPathFilter.create("name[count(./scope) = 0]"); 
+
+for (Name name: filter.match(topic)) {
+// ...
+}
+}}}
+
+
+

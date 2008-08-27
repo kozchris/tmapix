@@ -1,0 +1,85 @@
+#summary XPath Axes explanation
+
+= XPath Axes =
+
+Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some axes, these are explained in the following.
+
+
+= Construct =
+
+|| *Axis* || *TMAPI equivalent*   ||
+|| parent || getParent()          ||
+|| iid    || getItemIdentifiers() ||
+
+= Reifiable =
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| reifier    || getReifier()             ||
+
+
+= Scoped = 
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| scope      || getScope()               ||
+
+
+= Typed =
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| type       || getType()                ||
+
+
+= DatatypeAware = 
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| value      || getValue()               ||
+|| datatype   || getDatatype()               ||
+
+
+= Topic Map =
+
+|| *Axis*       || *TMAPI equivalent*       ||
+|| topic        || getTopics()              ||
+|| association  || getAssociations()        ||
+
+
+= Topic =
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| sid        || getSubjectIdentifiers()  ||
+|| slo        || getSubjectLocators()     ||
+|| occurrence || getOccurrences()         ||
+|| name       || getNames()               ||
+|| reified    || getReified()             ||
+|| type       || getTypes()               ||
+|| instance   || TypeInstanceIndex.getTopics(topic)) ||
+|| role       || getRolesPlayed()         ||
+
+
+= Association = 
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| role       || getRolesPlayed()         ||
+
+
+= Role = 
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| player     || getPlayer()              ||
+
+
+= Occurrence = 
+
+Adds no new axis, see DatatypeAware, Typed, Reifiable, and Scoped
+
+
+= Name =
+
+|| *Axis*     || *TMAPI equivalent*       ||
+|| value      || getValue()               ||
+|| variant    || getVariants()            ||
+
+
+= Variant = 
+
+Adds no new axis, see DatatypeAware, Reifiable, and Scoped

@@ -23,5 +23,6 @@ IFilter<Role> filter = XPathFilter.create("role");
 for (Role role: filter.match(topic)) {
    doSomethingWith(role);
 }
-
 }}}
+
+`XPathFilter.create(String)` is a factory method to create new instances of `IFilter`. In case the expression is not a valid (i.e. a syntax error occurs), a RuntimeException is thrown. 

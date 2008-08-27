@@ -67,7 +67,7 @@ for (Name name: filter.match(topic)) {
 }
 }}}
 
-In fact, the `in-ucs` function is equivalent to the following code, but requires less typing and should be more clear:
+In fact, the `in-ucs` function is equivalent to the following code, but requires less typing, is faster, and should be more clear:
 {{{
 // Find those names which are in the unconstrained constrained scope
 IFilter<Name> filter = XPathFilter.create("name[count(./scope) = 0]"); 
@@ -76,6 +76,4 @@ for (Name name: filter.match(topic)) {
 // ...
 }
 }}}
-
-
 

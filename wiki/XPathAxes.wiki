@@ -60,7 +60,7 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 = Association = 
 
 || *Axis*     || *TMAPI equivalent*       ||
-|| role       || getRolesPlayed()         ||
+|| role       || getRoles()         ||
 
 
 = Role = 

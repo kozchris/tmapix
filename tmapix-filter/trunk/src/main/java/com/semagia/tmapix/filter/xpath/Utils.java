@@ -22,6 +22,7 @@ package com.semagia.tmapix.filter.xpath;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.DatatypeAware;
+import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Reifiable;
@@ -86,5 +87,13 @@ public final class Utils {
 
     public static boolean isDatatypeAware(Object obj) {
         return obj instanceof DatatypeAware;
+    }
+
+    public static boolean isLocator(Object obj) {
+        return obj instanceof Locator;
+    }
+
+    public static boolean hasDatatype(Locator datatype, String dt) {
+        return dt.equals(datatype.getReference());
     }
 }

@@ -34,6 +34,7 @@ import org.jaxen.util.SingleObjectIterator;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.DatatypeAware;
+import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Role;
@@ -41,6 +42,7 @@ import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
+import org.tmapi.index.TypeInstanceIndex;
 
 import com.semagia.tmapix.filter.utils.ChainIterator;
 
@@ -181,6 +183,9 @@ final class MapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#getTextStringValue(java.lang.Object)
      */
     public String getTextStringValue(Object obj) {
+        if (isLocator(obj)) {
+            return ((Locator) obj).getReference();
+        }
         return obj.toString();
     }
 
@@ -238,7 +243,7 @@ final class MapNavigator extends DefaultNavigator
      * @see org.jaxen.Navigator#isText(java.lang.Object)
      */
     public boolean isText(Object obj) {
-        return obj instanceof String;
+        return isLocator(obj) || obj instanceof String;
     }
 
     /* (non-Javadoc)
@@ -264,29 +269,42 @@ final class MapNavigator extends DefaultNavigator
     @SuppressWarnings("unchecked")
     public Iterator getChildAxisIterator(Object ctxNode, String localName, String namespacePrefix,
             String namespaceURI) throws UnsupportedAxisException {
-        // System.out.println("localName: " + localName + ", namespacePrefix: " + namespacePrefix + ", namespaceURI: " + namespaceURI);
         if (isTopic(ctxNode)) {
             Topic topic = (Topic) ctxNode;
             if (isRoleAxis(localName)) {
                 return topic.getRolesPlayed().iterator();
             }
-            else if (isNameAxis(localName)) {
+            if (isNameAxis(localName)) {
                 return topic.getNames().iterator();
             }
-            else if (isOccurrenceAxis(localName)) {
+            if (isOccurrenceAxis(localName)) {
                 return topic.getOccurrences().iterator();
             }
-            else if (isSubjectIdentifierAxis(localName)) {
+            if (isSubjectIdentifierAxis(localName)) {
                 return topic.getSubjectIdentifiers().iterator();
             }
-            else if (isSubjectLocatorAxis(localName)) {
+            if (isSubjectLocatorAxis(localName)) {
                 return topic.getSubjectLocators().iterator();
             }
-            else if (isItemIdentifierAxis(localName)) {
+            if (isItemIdentifierAxis(localName)) {
                 return topic.getItemIdentifiers().iterator();
             }
+            if (isReifiedAxis(localName)) {
+                return new SingleObjectIterator(topic.getReified());
+            }
+            if (isTypeAxis(localName)) {
+                return topic.getTypes().iterator();
+            }
+            if (isInstanceAxis(localName)) {
+                TypeInstanceIndex typeInstanceIdx = topic.getTopicMap().getIndex(TypeInstanceIndex.class);
+                typeInstanceIdx.open();
+                if (!typeInstanceIdx.isAutoUpdated()) {
+                    typeInstanceIdx.reindex();
+                }
+                return typeInstanceIdx.getTopics(topic).iterator();
+            }
         }
-        else if (isAssociation(ctxNode)) {
+        if (isAssociation(ctxNode)) {
             Association assoc = (Association) ctxNode;
             if (isRoleAxis(localName)) {
                 return assoc.getRoles().iterator();
@@ -301,31 +319,40 @@ final class MapNavigator extends DefaultNavigator
                 return tm.getAssociations().iterator();
             }
         }
-        else if (isPlayerAxis(localName) && isRole(ctxNode)) {
+        if (isPlayerAxis(localName) && isRole(ctxNode)) {
             return new SingleObjectIterator(((Role) ctxNode).getPlayer());
         }
-        else if (isItemIdentifierAxis(localName) && isConstruct(ctxNode)) {
+        if (isItemIdentifierAxis(localName) && isConstruct(ctxNode)) {
             return ((Construct) ctxNode).getItemIdentifiers().iterator();
         }
-        else if (isReifierAxis(localName) && isReifiable(ctxNode)) {
+        if (isReifierAxis(localName) && isReifiable(ctxNode)) {
             return new SingleObjectIterator(((Reifiable) ctxNode).getReifier());
         }
-        else if (isTypeAxis(localName) && isTyped(ctxNode)) {
+        if (isTypeAxis(localName) && isTyped(ctxNode)) {
             return new SingleObjectIterator(((Typed) ctxNode).getType());
         }
-        else if (isScopeAxis(localName) && isScoped(ctxNode)) {
+        if (isScopeAxis(localName) && isScoped(ctxNode)) {
             return ((Scoped) ctxNode).getScope().iterator();
         }
-        else if (isValueAxis(localName)) {
+        if (isValueAxis(localName)) {
             if (isName(ctxNode)) {
                 return new SingleObjectIterator(((Name) ctxNode).getValue());
             }
-            else if (isDatatypeAware(ctxNode)) {
+            if (isDatatypeAware(ctxNode)) {
                 return new SingleObjectIterator(((DatatypeAware) ctxNode).getValue());
             }
         }
-        else if (isDatatypeAxis(localName) && isDatatypeAware(ctxNode)) {
-            return new SingleObjectIterator(((DatatypeAware) ctxNode).getDatatype());
+        if (isDatatypeAware(ctxNode)) {
+            DatatypeAware dtAware = ((DatatypeAware) ctxNode);
+            if ("http://www.w3.org/2001/XMLSchema#".equals(namespaceURI)) {
+                final Locator datatype = dtAware.getDatatype();
+                if (hasDatatype(datatype, namespaceURI+localName)) {
+                    return new SingleObjectIterator(datatype);
+                }
+            }
+            if (isDatatypeAxis(localName)) {
+                return new SingleObjectIterator(dtAware.getDatatype());
+            }
         }
         return JaxenConstants.EMPTY_ITERATOR;
     }
@@ -334,7 +361,6 @@ final class MapNavigator extends DefaultNavigator
     @Override
     public Iterator getChildAxisIterator(Object ctxNode)
             throws UnsupportedAxisException {
-        // System.out.println("childAxisIterator: " +ctxNode);
         if (isTopic(ctxNode)) {
             Topic topic = (Topic) ctxNode;
             return new ChainIterator(topic.getOccurrences(), topic.getNames());

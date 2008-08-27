@@ -39,6 +39,20 @@ public interface IFilter<T> {
      */
     public Iterable<T> match(Construct context) throws FilterMatchException;
 
+    /**
+     * Applies this filter instance to the specified <tt>context</tt> and
+     * returns one result item.
+     * <p>
+     * If the result contains more than one item, one item from the result is
+     * first item chosen. Note that the returned result item may change
+     * between two invocations of the {@link #matchOne(Construct)} method even
+     * if the underlying dataset has not been modified.
+     * </p>
+     *
+     * @param context The starting point for the filter.
+     * @return The result item or <tt>null</tt> if no result was found.
+     * @throws FilterMatchException
+     */
     public T matchOne(Construct context) throws FilterMatchException;
 
 }

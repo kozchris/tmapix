@@ -17,7 +17,7 @@
  * Contributer(s): Lars Heuer <heuer[at]semagia.com>
  *
  */
-package com.semagia.tmapix.filter.utils;
+package com.semagia.tmapix.filter.voc;
 
 /**
  * 
@@ -25,7 +25,13 @@ package com.semagia.tmapix.filter.utils;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-public final class TMDM {
+public class XSD {
 
-    public static final String TOPIC_NAME = "http://psi.topicmaps.org/iso13250/model/topic-name";
+    private XSD() {
+        // noop.
+    }
+
+    private static final String _BASE = "http://www.w3.org/2001/XMLSchema#";
+
+    public static final String ANY_URI = _BASE + "anyURI";
 }

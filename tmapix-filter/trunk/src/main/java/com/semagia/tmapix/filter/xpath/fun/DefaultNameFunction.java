@@ -28,7 +28,7 @@ import org.jaxen.FunctionCallException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 
-import com.semagia.tmapix.filter.utils.TMDM;
+import com.semagia.tmapix.filter.voc.TMDM;
 import com.semagia.tmapix.filter.xpath.Utils;
 
 /**

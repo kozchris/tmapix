@@ -51,8 +51,24 @@ final class ChildAxis {
         return "reifier".equals(name);
     }
 
+    public static boolean isReifiedAxis(String name) {
+        return "reified".equals(name);
+    }
+
     public static boolean isTypeAxis(String name) {
         return "type".equals(name);
+    }
+
+    public static boolean isInstanceAxis(String name) {
+        return "instance".equals(name);
+    }
+
+    public static boolean isSupertypeAxis(String name) {
+        return "supertype".equals(name);
+    }
+
+    public static boolean isSubtypeAxis(String name) {
+        return "subtype".equals(name);
     }
 
     public static boolean isPlayerAxis(String name) {

@@ -22,6 +22,8 @@ package com.semagia.tmapix.filter.xpath.fun;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.semagia.tmapix.filter.xpath.Utils.*;
+
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
@@ -31,8 +33,7 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import com.semagia.tmapix.filter.utils.TMDM;
-import com.semagia.tmapix.filter.xpath.Utils;
+import com.semagia.tmapix.filter.voc.TMDM;
 
 /**
  * 
@@ -58,13 +59,13 @@ public class AtomifyFunction implements Function {
         String value = null;
         for (Object obj: arg) {
             value = null;
-            if (Utils.isName(obj)) {
+            if (isName(obj)) {
                 value = ((Name) obj).getValue();
             }
-            else if (Utils.isDatatypeAware(obj)) {
+            else if (isDatatypeAware(obj)) {
                 value = ((DatatypeAware) obj).getValue();
             }
-            else if (Utils.isTopic(obj)) {
+            else if (isTopic(obj)) {
                 Topic topic = (Topic) obj;
                 Locator loc = topic.getTopicMap().createLocator(TMDM.TOPIC_NAME);
                 for (Name name: topic.getNames()) {
@@ -73,8 +74,11 @@ public class AtomifyFunction implements Function {
                     }
                 }
             }
+            else if (isLocator(obj)) {
+                value = ((Locator) obj).getReference();
+            }
             if (value == null) {
-                value = Utils.isConstruct(obj) ? ((Construct) obj).getId() : obj.toString();
+                value = isConstruct(obj) ? ((Construct) obj).getId() : obj.toString();
             }
             result.add(value);
         }

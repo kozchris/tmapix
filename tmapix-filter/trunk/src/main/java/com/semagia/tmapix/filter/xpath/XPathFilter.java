@@ -21,7 +21,7 @@ package com.semagia.tmapix.filter.xpath;
 
 import org.jaxen.BaseXPath;
 import org.jaxen.JaxenException;
-import org.jaxen.Navigator;
+import org.jaxen.NamedAccessNavigator;
 import org.jaxen.SimpleFunctionContext;
 import org.jaxen.XPathFunctionContext;
 import org.tmapi.core.Construct;
@@ -42,8 +42,12 @@ import com.semagia.tmapix.filter.xpath.fun.SloFunction;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-@SuppressWarnings("serial")
 public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1631674793728598908L;
 
     static {
         SimpleFunctionContext ctx = (SimpleFunctionContext) XPathFunctionContext.getInstance();
@@ -55,12 +59,9 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
         ctx.registerFunction("", "atomify", new AtomifyFunction());
     }
 
-    XPathFilter(final String xpath, final Navigator navigator) throws JaxenException {
+    XPathFilter(final String xpath, final NamedAccessNavigator navigator) throws JaxenException {
         super(xpath, navigator);
-    }
-
-    XPathFilter(final String xpath) throws JaxenException {
-        this(xpath, MapNavigator.getInstance());
+        super.addNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
     }
 
     /**
@@ -73,9 +74,9 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
      */
     public static <T> IFilter<T> create(final String xpath) throws TMAPIRuntimeException {
         try {
-            return new XPathFilter<T>(xpath);
+            return new XPathFilter<T>(xpath, MapNavigator.getInstance());
         }
-        catch (Exception ex) {
+        catch (JaxenException ex) {
             throw new TMAPIRuntimeException(ex);
         }
     }
@@ -88,7 +89,7 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
         try {
             return (Iterable<T>) super.selectNodes(context);
         }
-        catch (Exception ex) {
+        catch (JaxenException ex) {
             throw new FilterMatchException(ex);
         }
     }
@@ -102,7 +103,7 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
         try {
             return (T) super.selectSingleNode(context);
         }
-        catch (Exception ex) {
+        catch (JaxenException ex) {
             throw new FilterMatchException(ex);
         }
     }

@@ -21,3 +21,22 @@ for (Name name: filter.match(topic)) {
    // ...
 }
 }}}
+
+Find all occurrences with datatype xsd:anyURI:
+{{{
+IFilter<Occurrence> filter = XPathFilter.create("occurrence[datatype=xsd:anyURI]");
+
+for (Occurrence occ: filter.match(topic)) {
+   // ...
+}
+}}}
+
+Find all occurrences with datatype xsd:anyURI and return the string value:
+{{{
+IFilter<String> filter = XPathFilter.create("occurrence[datatype=xsd:anyURI]/value");
+
+for (String val: filter.match(topic)) {
+   // ...
+}
+}}}
+

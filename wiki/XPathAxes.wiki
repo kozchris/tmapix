@@ -8,9 +8,10 @@ Each [http://www.tmapi.org/2.0 Topic Maps API (TMAPI)] construct provides some a
 
 = Construct =
 
-|| *Axis* || *TMAPI equivalent*   ||
-|| parent || getParent()          ||
-|| iid    || getItemIdentifiers() ||
+|| *Axis*        || *TMAPI equivalent*   ||
+|| ..            || getParent()          ||
+|| parent::*     || getParent()          ||
+|| iid           || getItemIdentifiers() ||
 
 = Reifiable =
 

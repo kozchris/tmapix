@@ -53,7 +53,7 @@ Construct parent = filter.matchOne(topicMap);
 }}}
 
 
-== Check if an statement is in the unconstrained scope =
+== Check if a statement is in the unconstrained scope =
 
 The function `in-ucs` expects a `org.tmapi.core.Scoped` instance and returns `true` if the statement is in the unconstrained scope, otherwise `false`.
 
@@ -76,4 +76,3 @@ for (Name name: filter.match(topic)) {
 // ...
 }
 }}}
-

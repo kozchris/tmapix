@@ -5,7 +5,7 @@
 
 == Retrieving a topic by its subject identifier ==
 
-The function `sid` expects a string and returns a topic with an subject identifier equals to the the specified string.
+The function `sid` expects a string and returns a topic with a subject identifier equals to the the specified string.
 
 Example:
 
@@ -22,7 +22,7 @@ for (Role role: filter.match(topicMap)) {
 
 == Retrieving a topic by its subject locator ==
 
-The function `slo` expects a string and returns a topic with an subject locator equals to the the specified string.
+The function `slo` expects a string and returns a topic with a subject locator equals to the the specified string.
 
 Example:
 
@@ -34,4 +34,20 @@ IFilter<Occurrence> filter = XPathFilter.create("slo('http://www.semagia.com/')/
 for (Occurrence occ: filter.match(topicMap)) {
    // ...
 }
+}}}
+
+
+
+== Retrieving a Topic Maps construct by its item identifier ==
+
+The function `iid` expects a string and returns a `org.tmapi.core.Construct` with an item identifier equals to the the specified string.
+
+Example:
+
+{{{
+// Find a construct with the item identifier "http://www.semagia.com/map#id" and return the parent
+
+IFilter<Construct> filter = XPathFilter.create("iid('http://www.semagia.com/map#id')/..");
+
+Construct parent = filter.matchOne(topicMap);
 }}}

@@ -40,3 +40,12 @@ for (String val: filter.match(topic)) {
 }
 }}}
 
+
+Find all instances of "topic":
+{{{
+IFilter<Topic> filter = XPathFilter.create("instance");
+
+for (Topic instance: filter.match(topic)) {
+   // ...
+}
+}}}

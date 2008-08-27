@@ -20,7 +20,8 @@
 package com.semagia.tmapix.filter;
 
 /**
- * 
+ * Exception thrown if a <tt>IFilter</tt> instance cannot be applied to 
+ * a construct.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -32,16 +33,32 @@ public class FilterMatchException extends RuntimeException {
      */
     private static final long serialVersionUID = 6801914927584947555L;
 
+    /**
+     * Initializes the exception with the specified message.
+     *
+     * @param msg The message explaining the error.
+     */
     public FilterMatchException(String msg) {
         super(msg);
     }
 
+    /**
+     * Initializes the exception with the specified cause.
+     *
+     * @param cause The cause.
+     */
     public FilterMatchException(Throwable cause) {
         super(cause);
     }
 
-    public FilterMatchException(String message, Throwable cause) {
-        super(message, cause);
+    /**
+     * Initializes the exception with the specified message and cause.
+     *
+     * @param msg The message explaining the error.
+     * @param cause The cause.
+     */
+    public FilterMatchException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 
 }

@@ -37,7 +37,8 @@ import com.semagia.tmapix.filter.xpath.fun.SidFunction;
 import com.semagia.tmapix.filter.xpath.fun.SloFunction;
 
 /**
- * 
+ * {@link IFilter} implementation that uses <a href="http://www.w3.org/TR/xpath">XPath 1.0</a>
+ * expressions.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -65,12 +66,12 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
     }
 
     /**
-     * 
+     * Creates a new {@link IFilter} instance.
      *
      * @param <T>
-     * @param xpath
-     * @return
-     * @throws TMAPIRuntimeException
+     * @param xpath The XPath which should be evaluated.
+     * @return A {@link IFilter} instance.
+     * @throws TMAPIRuntimeException In case of an error (i.e. syntax error).
      */
     public static <T> IFilter<T> create(final String xpath) throws TMAPIRuntimeException {
         try {

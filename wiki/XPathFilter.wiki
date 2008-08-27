@@ -1,4 +1,4 @@
-# Explains basic usage of the XPathFilter
+#summary Explains basic usage of the XPathFilter
 
 = XPathFilter =
 

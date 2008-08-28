@@ -53,7 +53,7 @@ Construct parent = filter.matchOne(topicMap);
 }}}
 
 
-== Check if a statement is in the unconstrained scope =
+== Check if a statement is in the unconstrained scope ==
 
 The function `in-ucs` expects a `org.tmapi.core.Scoped` instance and returns `true` if the statement is in the unconstrained scope, otherwise `false`.
 
@@ -76,3 +76,17 @@ for (Name name: filter.match(topic)) {
 // ...
 }
 }}}
+
+
+== Check if a name uses the default name type ==
+
+The function `default-name` expects a `org.tmapi.core.Name` instance and returns `true` if the name has the default name type (`http://psi.topicmaps.org/iso13250/model/topic-name`), otherwise `false`.
+
+Example:
+{{{
+// Returns all string values of all names which use the default name type.
+IFilter<String> filter = XPathFilter.create("name[default-name(.)]/value"); 
+
+String defaultName = filter.matchOne(topic);
+}}}
+

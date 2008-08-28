@@ -22,7 +22,7 @@ package com.semagia.tmapix.filter.xpath.fun;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.semagia.tmapix.filter.xpath.Utils.*;
+import static com.semagia.tmapix.filter.utils.TMAPIUtils.*;
 
 import org.jaxen.Context;
 import org.jaxen.Function;

@@ -28,10 +28,11 @@ import org.tmapi.core.Topic;
 import com.semagia.tmapix.filter.IFilter;
 
 /**
- * 
+ * {@link org.tmapi.core.Association} and {@link org.tmapi.core.Role} related 
+ * tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestAssociation extends XPathTestCase {
 
@@ -67,6 +68,27 @@ public class TestAssociation extends XPathTestCase {
         assertEquals(2, rolePlayers.size());
         assertTrue(rolePlayers.contains(player1));
         assertTrue(rolePlayers.contains(player2));
+    }
+
+    public void testChildAxis() {
+        final Association assoc = createAssociation();
+        IFilter<Role> filter = xpath("child::*");
+        List<Role> result = asList(filter, assoc);
+        assertEquals(0, result.size());
+        final Role role1 = assoc.createRole(createTopic(), createTopic());
+        result = asList(filter, assoc);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(role1));
+        final Role role2 = assoc.createRole(createTopic(), createTopic());
+        result = asList(filter, assoc);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(role1));
+        assertTrue(result.contains(role2));
+        filter = xpath("child::role");
+        asList(filter, assoc);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(role1));
+        assertTrue(result.contains(role2));
     }
 
 }

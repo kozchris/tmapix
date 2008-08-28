@@ -28,10 +28,10 @@ import org.tmapi.core.Variant;
 import com.semagia.tmapix.filter.IFilter;
 
 /**
- * 
+ * {@link org.tmapi.core.Scoped} related tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestScoped extends XPathTestCase {
 

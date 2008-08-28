@@ -43,9 +43,9 @@ public interface IFilter<T> {
      * Applies this filter instance to the specified <tt>context</tt> and
      * returns one result item.
      * <p>
-     * If the result contains more than one item, one item from the result is
-     * first item chosen. Note that the returned result item may change
-     * between two invocations of the {@link #matchOne(Construct)} method even
+     * If the result contains more than one item, the first item from the result
+     * is chosen. Note that the returned result item may change between two 
+     * invocations of the {@link #matchOne(Construct)} method even
      * if the underlying dataset has not been modified.
      * </p>
      *

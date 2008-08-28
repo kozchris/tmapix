@@ -27,10 +27,10 @@ import org.tmapi.core.Typed;
 import com.semagia.tmapix.filter.IFilter;
 
 /**
- * 
+ * {@link org.tmapi.core.Typed} related tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestTyped extends XPathTestCase {
 

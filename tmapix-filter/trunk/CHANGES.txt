@@ -2,6 +2,14 @@
 Changes
 =======
 
+0.2 -- 2008-08-28
+-----------------
+* Implemented missing XPath ``variant`` axis
+* More tests
+* Java Doc fixes
+* Internal code refactoring
+
+
 0.1 -- 2008-08-27
 -----------------
 * Initial release with XPath implementation

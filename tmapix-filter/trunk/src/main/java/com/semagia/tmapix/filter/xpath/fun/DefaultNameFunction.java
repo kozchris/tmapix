@@ -28,8 +28,8 @@ import org.jaxen.FunctionCallException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 
+import com.semagia.tmapix.filter.utils.TMAPIUtils;
 import com.semagia.tmapix.filter.voc.TMDM;
-import com.semagia.tmapix.filter.xpath.Utils;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class DefaultNameFunction implements Function {
         List<Boolean> result = new ArrayList<Boolean>();
         Locator loc = null;
         for (Object obj: arg) {
-            if (!Utils.isName(obj)) {
+            if (!TMAPIUtils.isName(obj)) {
                 throw new FunctionCallException("Expected name statements");
             }
             if (loc == null) {

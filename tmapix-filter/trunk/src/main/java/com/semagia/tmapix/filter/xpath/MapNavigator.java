@@ -21,8 +21,8 @@ package com.semagia.tmapix.filter.xpath;
 
 import java.util.Iterator;
 
+import static com.semagia.tmapix.filter.utils.TMAPIUtils.*;
 import static com.semagia.tmapix.filter.xpath.ChildAxis.*;
-import static com.semagia.tmapix.filter.xpath.Utils.*;
 
 import org.jaxen.DefaultNavigator;
 import org.jaxen.JaxenConstants;
@@ -56,7 +56,7 @@ import com.semagia.tmapix.filter.utils.ChainIterator;
 final class MapNavigator extends DefaultNavigator 
                 implements NamedAccessNavigator {
 
-    private static MapNavigator _INSTANCE = new MapNavigator();
+    private static final MapNavigator _INSTANCE = new MapNavigator();
 
     private MapNavigator() {
         // noop.
@@ -251,7 +251,7 @@ final class MapNavigator extends DefaultNavigator
      */
     @SuppressWarnings("unchecked")
     public XPath parseXPath(String xpath) throws SAXPathException {
-        return new XPathFilter(xpath, this);
+        return new MapXPathFilter(xpath, this);
     }
 
     /* (non-Javadoc)
@@ -319,10 +319,10 @@ final class MapNavigator extends DefaultNavigator
                 return tm.getAssociations().iterator();
             }
         }
-        if (isPlayerAxis(localName) && isRole(ctxNode)) {
+        if (isRole(ctxNode) && isPlayerAxis(localName)) {
             return new SingleObjectIterator(((Role) ctxNode).getPlayer());
         }
-        if (isItemIdentifierAxis(localName) && isConstruct(ctxNode)) {
+        if (isConstruct(ctxNode) && isItemIdentifierAxis(localName)) {
             return ((Construct) ctxNode).getItemIdentifiers().iterator();
         }
         if (isReifierAxis(localName) && isReifiable(ctxNode)) {
@@ -334,21 +334,25 @@ final class MapNavigator extends DefaultNavigator
         if (isScopeAxis(localName) && isScoped(ctxNode)) {
             return ((Scoped) ctxNode).getScope().iterator();
         }
-        if (isValueAxis(localName)) {
-            if (isName(ctxNode)) {
-                return new SingleObjectIterator(((Name) ctxNode).getValue());
+        if (isName(ctxNode)) {
+            Name name = (Name) ctxNode;
+            if (isValueAxis(localName)) {
+                return new SingleObjectIterator(name.getValue());
             }
-            if (isDatatypeAware(ctxNode)) {
-                return new SingleObjectIterator(((DatatypeAware) ctxNode).getValue());
+            else if (isVariantAxis(localName)) {
+                return name.getVariants().iterator();
             }
         }
         if (isDatatypeAware(ctxNode)) {
             DatatypeAware dtAware = ((DatatypeAware) ctxNode);
             if ("http://www.w3.org/2001/XMLSchema#".equals(namespaceURI)) {
                 final Locator datatype = dtAware.getDatatype();
-                if (hasDatatype(datatype, namespaceURI+localName)) {
+                if (datatype.getReference().equals(namespaceURI+localName)) {
                     return new SingleObjectIterator(datatype);
                 }
+            }
+            if (isValueAxis(localName)) {
+                return new SingleObjectIterator(dtAware.getValue());
             }
             if (isDatatypeAxis(localName)) {
                 return new SingleObjectIterator(dtAware.getDatatype());

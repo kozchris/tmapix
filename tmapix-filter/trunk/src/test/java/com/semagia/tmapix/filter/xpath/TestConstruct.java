@@ -27,10 +27,10 @@ import org.tmapi.core.Locator;
 import com.semagia.tmapix.filter.IFilter;
 
 /**
- * 
+ * {@link org.tmapi.core.Construct} related tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestConstruct extends XPathTestCase {
 
@@ -53,6 +53,7 @@ public class TestConstruct extends XPathTestCase {
         final Locator iid = createLocator("http://www.semagia.com/xpath#1");
         final Locator iid2 = createLocator("http://www.semagia.com/xpath#2");
         c.addItemIdentifier(iid);
+        assertEquals(c, xpath("iid('" + iid.getReference() + "')").matchOne(_tm));
         result = asList(filter.match(c));
         assertEquals(1, result.size());
         assertTrue(result.contains(iid));

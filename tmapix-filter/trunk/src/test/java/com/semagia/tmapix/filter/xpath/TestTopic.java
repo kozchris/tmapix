@@ -31,7 +31,7 @@ import org.tmapi.core.Topic;
 import com.semagia.tmapix.filter.IFilter;
 
 /**
- * 
+ * {@link org.tmapi.core.Topic} related tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
@@ -193,6 +193,10 @@ public class TestTopic extends XPathTestCase {
         result = asList(filter, topic);
         assertEquals(1, result.size());
         assertTrue(result.contains(occ2));
+        IFilter<String> filterValue = xpath("occurrence[datatype=xsd:anyURI]/value");
+        assertEquals("http://www.semagia.com/3", filterValue.matchOne(topic));
+        filterValue = xpath("occurrence[datatype=xsd:string]/value");
+        assertEquals("Occurrence", filterValue.matchOne(topic));
     }
 
     public void testNameAxis() {
@@ -200,5 +204,47 @@ public class TestTopic extends XPathTestCase {
         IFilter<Name> filter = xpath("name");
         List<Name> result = asList(filter, topic);
         assertEquals(0, result.size());
+        final Name name = topic.createName("Semagia");
+        result = asList(filter, topic);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(name));
+        final Name name2 = topic.createName("Name2");
+        result = asList(filter, topic);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(name));
+        assertTrue(result.contains(name2));
+        filter = xpath("name[value='Semagia']");
+        result = asList(filter, topic);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(name));
+        filter = xpath("name[count(./variant) = 0]");
+        result = asList(filter, topic);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(name));
+        assertTrue(result.contains(name2));
+        name2.createVariant("Variant", createTopic());
+        result = asList(filter, topic);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(name));
+        final Name name3 = topic.createName(createTopic(), "Name3");
+        filter = xpath("name[default-name(.)]");
+        result = asList(filter, topic);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(name));
+        assertTrue(result.contains(name2));
+        filter = xpath("name[not(default-name(.))]");
+        result = asList(filter, topic);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(name3));
+        IFilter<String> valueFilter = xpath("name/value");
+        List<String> valueResult = asList(valueFilter, topic);
+        assertEquals(3, valueResult.size());
+        assertTrue(valueResult.contains("Semagia"));
+        assertTrue(valueResult.contains("Name2"));
+        assertTrue(valueResult.contains("Name3"));
+        valueFilter = xpath("name/value[.='Semagia']");
+        valueResult = asList(valueFilter, topic);
+        assertEquals(1, valueResult.size());
+        assertTrue(valueResult.contains("Semagia"));
     }
 }

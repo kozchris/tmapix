@@ -25,7 +25,7 @@ import org.jaxen.FunctionCallException;
 import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 
-import com.semagia.tmapix.filter.xpath.Utils;
+import com.semagia.tmapix.filter.utils.TMAPIUtils;
 
 /**
  * 
@@ -41,12 +41,6 @@ final class FunctionUtils {
         }
     }
 
-    public static void checkBinaryArgument(List<?> args) throws FunctionCallException {
-        if (args.size() != 2) {
-            throw new FunctionCallException("Expected two arguments, got " + args.size());
-        }
-    }
-
     public static void checkString(Object arg) throws FunctionCallException {
         if (!(arg instanceof String)) {
             throw new FunctionCallException("Expected a string argument");
@@ -55,7 +49,7 @@ final class FunctionUtils {
 
     public static TopicMap getTopicMap(List<?> nodeList) {
         for (Object obj: nodeList) {
-            if (Utils.isConstruct(obj)) {
+            if (TMAPIUtils.isConstruct(obj)) {
                 return ((Construct) obj).getTopicMap();
             }
         }

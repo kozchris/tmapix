@@ -27,6 +27,10 @@ package com.semagia.tmapix.filter.xpath;
  */
 final class ChildAxis {
 
+    private ChildAxis() {
+        // noop.
+    }
+
     public static boolean isTopicAxis(String name) {
         return "topic".equals(name);
     }
@@ -77,6 +81,10 @@ final class ChildAxis {
 
     public static boolean isScopeAxis(String name) {
         return "scope".equals(name);
+    }
+
+    public static boolean isVariantAxis(String name) {
+        return "variant".equals(name);
     }
 
     public static boolean isValueAxis(String name) {

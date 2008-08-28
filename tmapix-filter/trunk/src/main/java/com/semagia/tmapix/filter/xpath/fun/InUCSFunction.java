@@ -27,7 +27,7 @@ import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
 import org.tmapi.core.Scoped;
 
-import com.semagia.tmapix.filter.xpath.Utils;
+import com.semagia.tmapix.filter.utils.TMAPIUtils;
 
 /**
  * 
@@ -51,7 +51,7 @@ public class InUCSFunction implements Function {
             throws FunctionCallException {
         List<Boolean> result = new ArrayList<Boolean>();
         for (Object obj: arg) {
-            if (!Utils.isScoped(obj)) {
+            if (!TMAPIUtils.isScoped(obj)) {
                 throw new FunctionCallException("Expected scoped statements");
             }
             result.add(Boolean.valueOf(((Scoped) obj).getScope().isEmpty()));

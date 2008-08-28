@@ -19,15 +19,11 @@
  */
 package com.semagia.tmapix.filter.xpath;
 
-import org.jaxen.BaseXPath;
 import org.jaxen.JaxenException;
-import org.jaxen.NamedAccessNavigator;
 import org.jaxen.SimpleFunctionContext;
 import org.jaxen.XPathFunctionContext;
-import org.tmapi.core.Construct;
 import org.tmapi.core.TMAPIRuntimeException;
 
-import com.semagia.tmapix.filter.FilterMatchException;
 import com.semagia.tmapix.filter.IFilter;
 import com.semagia.tmapix.filter.xpath.fun.AtomifyFunction;
 import com.semagia.tmapix.filter.xpath.fun.DefaultNameFunction;
@@ -37,18 +33,13 @@ import com.semagia.tmapix.filter.xpath.fun.SidFunction;
 import com.semagia.tmapix.filter.xpath.fun.SloFunction;
 
 /**
- * {@link IFilter} implementation that uses <a href="http://www.w3.org/TR/xpath">XPath 1.0</a>
+ * {@link IFilter} factory that uses <a href="http://www.w3.org/TR/xpath">XPath 1.0</a>
  * expressions.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -1631674793728598908L;
+public final class XPathFilter {
 
     static {
         SimpleFunctionContext ctx = (SimpleFunctionContext) XPathFunctionContext.getInstance();
@@ -60,52 +51,19 @@ public final class XPathFilter<T> extends BaseXPath implements IFilter<T> {
         ctx.registerFunction("", "atomify", new AtomifyFunction());
     }
 
-    XPathFilter(final String xpath, final NamedAccessNavigator navigator) throws JaxenException {
-        super(xpath, navigator);
-        super.addNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
-    }
-
     /**
      * Creates a new {@link IFilter} instance.
      *
-     * @param <T>
      * @param xpath The XPath which should be evaluated.
      * @return A {@link IFilter} instance.
      * @throws TMAPIRuntimeException In case of an error (i.e. syntax error).
      */
     public static <T> IFilter<T> create(final String xpath) throws TMAPIRuntimeException {
         try {
-            return new XPathFilter<T>(xpath, MapNavigator.getInstance());
+            return new MapXPathFilter<T>(xpath, MapNavigator.getInstance());
         }
         catch (JaxenException ex) {
             throw new TMAPIRuntimeException(ex);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see com.semagia.tmapix.filter.IFilter#match(org.tmapi.core.Construct)
-     */
-    @SuppressWarnings("unchecked")
-    public Iterable<T> match(final Construct context) throws FilterMatchException {
-        try {
-            return (Iterable<T>) super.selectNodes(context);
-        }
-        catch (JaxenException ex) {
-            throw new FilterMatchException(ex);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see com.semagia.tmapix.filter.IFilter#firstMatch(org.tmapi.core.Construct)
-     */
-    @SuppressWarnings("unchecked")
-    public T matchOne(Construct context)
-            throws FilterMatchException {
-        try {
-            return (T) super.selectSingleNode(context);
-        }
-        catch (JaxenException ex) {
-            throw new FilterMatchException(ex);
         }
     }
 

@@ -15,8 +15,9 @@ language (DSL) or TMQL path expressions) will follow.
 Installation
 ------------
 First of all, you need the TMAPI 2.0 interfaces and a TMAPI 2.0 compatible Topic 
-Maps processor. Further, you need the ``jaxen-1.1.1.jar`` and 
-``semagia-tmapix-filter-<VERSION>.jar`` in your classpath.
+Maps processor, i.e. `tinyTiM <http://sourceforge.net/projects/tinytim>`_. 
+Further, you need the ``jaxen-1.1.1.jar`` and 
+``semagia-tmapix-filter-<VERSION>.jar`` libs in your classpath.
 
 
 XPath Usage
@@ -38,5 +39,5 @@ Visit the TMAPIX homepage <http://tmapix.semagia.com/> for the latest version.
 
 License
 -------
-TMAPIX is licensed under the Mozilla Public License Version (MPL) Version 1.1,
-see LICENSE.txt for details.
+TMAPIX is licensed under the Mozilla Public License (MPL) Version 1.1, see 
+LICENSE.txt for details.

@@ -17,7 +17,7 @@
  * Contributer(s): Lars Heuer <heuer[at]semagia.com>
  *
  */
-package com.semagia.tmapix.filter.xpath;
+package com.semagia.tmapix.filter.utils;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -39,7 +39,11 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class Utils {
+public final class TMAPIUtils {
+
+    private TMAPIUtils() {
+        // noop.
+    }
 
     public static boolean isConstruct(Object obj) {
         return obj instanceof Construct;
@@ -93,7 +97,4 @@ public final class Utils {
         return obj instanceof Locator;
     }
 
-    public static boolean hasDatatype(Locator datatype, String dt) {
-        return dt.equals(datatype.getReference());
-    }
 }

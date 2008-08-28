@@ -17,7 +17,9 @@
  * Contributer(s): Lars Heuer <heuer[at]semagia.com>
  *
  */
-package com.semagia.tmapix.filter.voc;
+package com.semagia.tmapix.filter.xpath;
+
+import org.jaxen.expr.DefaultXPathFactory;
 
 /**
  * 
@@ -25,13 +27,6 @@ package com.semagia.tmapix.filter.voc;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-public class XSD {
+final class MapPathFactory extends DefaultXPathFactory {
 
-    private XSD() {
-        // noop.
-    }
-
-    private static final String _BASE = "http://www.w3.org/2001/XMLSchema#";
-
-    public static final String ANY_URI = _BASE + "anyURI";
 }

@@ -23,7 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * 
+ * Provides and runs all XPath tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
@@ -38,10 +38,12 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(TestConstruct.class);
         suite.addTestSuite(TestReifiable.class);
+        suite.addTestSuite(TestTopicMap.class);
         suite.addTestSuite(TestTopic.class);
         suite.addTestSuite(TestAssociation.class);
         suite.addTestSuite(TestTyped.class);
         suite.addTestSuite(TestScoped.class);
+        suite.addTestSuite(TestName.class);
         return suite;
     }
 }

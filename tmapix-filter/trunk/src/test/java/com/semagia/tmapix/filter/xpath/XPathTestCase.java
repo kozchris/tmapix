@@ -62,6 +62,9 @@ public class XPathTestCase extends TMAPITestCase {
     }
 
     protected static <T> List<T> asList(Iterable<T> iterable) {
+        if (iterable instanceof List) {
+            return (List<T>) iterable;
+        }
         List<T> list = new ArrayList<T>();
         for (T obj: iterable) {
             list.add(obj);

@@ -20,17 +20,14 @@
 package com.semagia.tmapix.filter;
 
 /**
- * Exception thrown if a <tt>IFilter</tt> instance cannot be applied to 
- * a construct.
+ * Exception thrown if a {@link IFilter} instance cannot be applied to a 
+ * construct.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public class FilterMatchException extends RuntimeException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6801914927584947555L;
 
     /**

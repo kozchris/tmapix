@@ -53,6 +53,7 @@ Provides all `Reifiable` axes plus the following:
 || *Axis*         || *TMAPI equivalent*       ||
 || `topic`        || getTopics()              ||
 || `association`  || getAssociations()        ||
+|| `child::*`     || all Topics and Associations ||
 
 
 = Topic =
@@ -68,14 +69,16 @@ Provides all `Construct` axes plus the following:
 || `type`       || getTypes()               ||
 || `instance`   || TypeInstanceIndex.getTopics(topic)) ||
 || `role`       || getRolesPlayed()         ||
+|| `child::*`   || all Names and Occurrences ||
 
 
 = Association = 
 
 Provides all `Typed`, `Scoped` and `Reifiable` axes plus the following:
 
-|| *Axis*     || *TMAPI equivalent*       ||
+|| *Axis*       || *TMAPI equivalent*       ||
 || `role`       || getRoles()         ||
+|| `child::*`   || same as getRoles() ||
 
 
 = Role = 
@@ -98,6 +101,7 @@ Provides all `Typed`, `Scoped`, and `Reifiable` axes plus the following:
 || *Axis*       || *TMAPI equivalent*       ||
 || `value`      || getValue()               ||
 || `variant`    || getVariants()            ||
+|| `child::*`   || same as getVariants()    ||
 
 
 = Variant = 

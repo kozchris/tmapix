@@ -1,4 +1,4 @@
-#summary Overview of XPath functions
+#summary Overview on XPath functions
 #labels Featured
 
 = XPath Functions =
@@ -89,4 +89,3 @@ IFilter<String> filter = XPathFilter.create("name[default-name(.)]/value");
 
 String defaultName = filter.matchOne(topic);
 }}}
-

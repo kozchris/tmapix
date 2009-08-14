@@ -15,7 +15,6 @@
  */
 package com.semagia.tmapix.io;
 
-import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 
 import com.semagia.mio.IMapHandler;
@@ -39,7 +38,7 @@ final class MapHandlerFactory {
         else if (className.startsWith(_TM_ONTOPIA)) {
             return makeOntopiaMapInputHandler(topicMap);
         }
-        throw new TMAPIRuntimeException("Unsupported TMAPI implementation: " + className);
+        return new GenericTMAPIMapInputHandler(topicMap);
     }
 
     private static IMapHandler makeOntopiaMapInputHandler(final TopicMap topicMap) {

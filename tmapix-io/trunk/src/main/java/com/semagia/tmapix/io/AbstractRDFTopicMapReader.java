@@ -23,7 +23,6 @@ import java.net.URL;
 
 import org.tmapi.core.TopicMap;
 
-import com.semagia.mio.IMapHandler;
 import com.semagia.mio.Property;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
@@ -36,11 +35,6 @@ import com.semagia.mio.Syntax;
  */
 abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
         implements RDFTopicMapReader {
-
-    protected AbstractRDFTopicMapReader(IMapHandler handler, Syntax syntax,
-            Source source) {
-        super(handler, syntax, source);
-    }
 
     protected AbstractRDFTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source, String docIRI) throws IOException {

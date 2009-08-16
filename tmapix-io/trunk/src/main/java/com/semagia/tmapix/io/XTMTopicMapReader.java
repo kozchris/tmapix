@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import org.tmapi.core.TopicMap;
 
+import com.semagia.mio.IVersionAwareDeserializer;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
@@ -93,11 +94,11 @@ public final class XTMTopicMapReader extends AbstractXTMTopicMapReader {
     @Override
     protected void postProcess() {
         //TODO
-//        if (super._deserializer instanceof IVersionAwareDeserializer 
-//                && ((IVersionAwareDeserializer) super._deserializer).getVersion().equals("1.0") 
-//                && super._tm != null) {
-//            XTM10Utils.convertToTMDM(super._tm);
-//        }
+        if (super._deserializer instanceof IVersionAwareDeserializer 
+                && ((IVersionAwareDeserializer) super._deserializer).getVersion().equals("1.0") 
+                && super._tm != null) {
+            XTM10Utils.convertToTMDM(super._tm);
+        }
     }
 
 }

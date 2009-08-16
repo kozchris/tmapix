@@ -106,12 +106,12 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      * @param syntax
      * @param source
      */
-    protected AbstractTopicMapReader(final IMapHandler handler,
+    private AbstractTopicMapReader(final IMapHandler handler,
             final Syntax syntax, final Source source) {
         this(handler, DeserializerRegistry.createDeserializer(syntax), source, syntax);
     }
 
-    protected AbstractTopicMapReader(final IMapHandler handler,
+    private AbstractTopicMapReader(final IMapHandler handler,
             final IDeserializer deserializer, final Source source, final Syntax syntax) {
         if (deserializer == null) {
             throw new IllegalArgumentException("Deserializer for " + syntax.getName() + " not found");

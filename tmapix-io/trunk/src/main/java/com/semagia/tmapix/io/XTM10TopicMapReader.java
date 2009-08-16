@@ -94,10 +94,9 @@ public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
      */
     @Override
     protected void postProcess() {
-        //TODO
-//        if (super._tm != null) {
-//            XTM10Utils.convertToTMDM(super._tm);
-//        }
+        if (super._tm != null) {
+            XTM10Utils.convertToTMDM(super._tm);
+        }
     }
 
 }

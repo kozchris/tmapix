@@ -69,15 +69,6 @@ abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
         _tm = topicMap;
     }
 
-    protected AbstractXTMTopicMapReader(IMapHandler handler, Syntax syntax,
-            Source source) {
-        super(handler, syntax, source);
-        //TODO
-//        if (handler instanceof TinyTimMapInputHandler) {
-//            _tm = ((TinyTimMapInputHandler) handler).getTopicMap();
-//        }
-    }
-
     /**
      * Enables / disables processing of the "mergeMap" element.
      * <p>

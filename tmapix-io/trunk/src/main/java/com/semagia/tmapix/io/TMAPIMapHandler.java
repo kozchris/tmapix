@@ -34,11 +34,13 @@ import com.semagia.tmapix.voc.TMDM;
 import com.semagia.tmapix.voc.XSD;
 
 /**
- * 
+ * {@link com.semagia.mio.IMapHandler} implementation that works upon any
+ * TMAPI 2.0 compatible Topic Maps engine.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
+//TODO: Make this public?
 final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
 
     private final static Collection<Topic> _EMPTY_SCOPE = Collections.emptyList();
@@ -46,49 +48,78 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     private TopicMap _tm;
     private final Locator _defaultNameType;
 
+    /**
+     * 
+     *
+     * @param topicMap
+     */
     public TMAPIMapHandler(TopicMap topicMap) {
         _tm = topicMap;
         _defaultNameType = _tm.createLocator(TMDM.TOPIC_NAME);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createTopicByItemIdentifier(java.lang.String)
+     */
     @Override
     protected Topic createTopicByItemIdentifier(String iri) {
         return _tm.createTopicByItemIdentifier(_createLocator(iri));
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createTopicBySubjectIdentifier(java.lang.String)
+     */
     @Override
     protected Topic createTopicBySubjectIdentifier(String iri) {
         return _tm.createTopicBySubjectIdentifier(_createLocator(iri));
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createTopicBySubjectLocator(java.lang.String)
+     */
     @Override
     protected Topic createTopicBySubjectLocator(String iri) {
         return _tm.createTopicBySubjectLocator(_createLocator(iri));
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleTypeInstance(java.lang.Object, java.lang.Object)
+     */
     @Override
     protected void handleTypeInstance(Topic instance, Topic type) {
         instance.addType(type);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleItemIdentifier(java.lang.Object, java.lang.String)
+     */
     @Override
-    protected void handleItemIdentifier(Topic topic, String iri) {
+    protected void handleItemIdentifier(Topic topic, String iri) throws MIOException {
         final Locator iid = _createLocator(iri);
         final Construct existing = _tm.getConstructByItemIdentifier(iid); 
-        if (existing != null && existing instanceof Topic && !existing.equals(topic)) {
-            _merge(topic, (Topic) existing);
-            topic = (Topic) existing;
-        }
-        else {
-            final Topic existingTopic = _tm.getTopicBySubjectIdentifier(iid);
-            if (existingTopic != null && !existingTopic.equals(topic)) {
-                _merge(topic, existingTopic);
-                topic = existingTopic;
+        if (existing != null) {
+            if (existing instanceof Topic) {
+                if (!existing.equals(topic)) {
+                    _merge(topic, (Topic) existing);
+                    topic = (Topic) existing;
+                }
+                return;
             }
+            else {
+                throw new MIOException("The item identifier '" + iri + "' is already assigned to another construct");
+            }
+        }
+        final Topic existingTopic = _tm.getTopicBySubjectIdentifier(iid);
+        if (existingTopic != null && !existingTopic.equals(topic)) {
+            _merge(topic, existingTopic);
+            topic = existingTopic;
         }
         topic.addItemIdentifier(iid);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleSubjectIdentifier(java.lang.Object, java.lang.String)
+     */
     @Override
     protected void handleSubjectIdentifier(Topic topic, String iri)
             throws MIOException {
@@ -109,6 +140,9 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         topic.addSubjectIdentifier(sid);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleSubjectLocator(java.lang.Object, java.lang.String)
+     */
     @Override
     protected void handleSubjectLocator(Topic topic, String iri)
             throws MIOException {
@@ -116,21 +150,30 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         final Topic existingTopic = _tm.getTopicBySubjectLocator(slo);
         if (existingTopic != null && !existingTopic.equals(topic)) {
             _merge(topic, existingTopic);
-            topic = existingTopic;
+            return;
         }
         topic.addSubjectLocator(slo);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleTopicMapItemIdentifier(java.lang.String)
+     */
     @Override
     protected void handleTopicMapItemIdentifier(String iri) throws MIOException {
         _tm.addItemIdentifier(_createLocator(iri));
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#handleTopicMapReifier(java.lang.Object)
+     */
     @Override
     protected void handleTopicMapReifier(Topic reifier) throws MIOException {
         _tm.setReifier(reifier);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createAssociation(java.lang.Object, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
+     */
     @Override
     protected void createAssociation(Topic type, Collection<Topic> scope, Topic reifier,
             Collection<String> iids, Collection<IRole<Topic>> roles)
@@ -145,6 +188,9 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         _applyReifier(assoc, reifier);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createName(java.lang.Object, java.lang.Object, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
+     */
     @Override
     protected void createName(Topic parent, Topic type, String value,
             Collection<Topic> scope, Topic reifier, Collection<String> iids,
@@ -169,10 +215,18 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         _applyReifier(name, reifier);
     }
 
+    /**
+     * 
+     *
+     * @return
+     */
     private Topic _defaultNameType() {
         return _tm.createTopicBySubjectIdentifier(_defaultNameType);
     }
 
+    /* (non-Javadoc)
+     * @see com.semagia.tmapix.io.HamsterHandler#createOccurrence(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection)
+     */
     @Override
     protected void createOccurrence(Topic parent, Topic type, String value,
             String datatype, Collection<Topic> scope, Topic reifier,
@@ -191,28 +245,59 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         _applyReifier(occ, reifier);
     }
 
+    /**
+     * 
+     *
+     * @param scope
+     * @return
+     */
     private Collection<Topic> _scope(Collection<Topic> scope) {
         return scope != null ? scope : _EMPTY_SCOPE;
     }
 
+    /**
+     * 
+     *
+     * @param iri
+     * @return
+     */
     private Locator _createLocator(String iri) {
         return _tm.createLocator(iri);
     }
 
+    /**
+     * 
+     *
+     * @param reifiable
+     * @param iids
+     */
     private void _applyItemIdentifiers(Reifiable reifiable, Iterable<String> iids) {
         for (String iid: iids) {
             reifiable.addItemIdentifier(_createLocator(iid));
         }
     }
 
+    /**
+     * 
+     *
+     * @param reifiable
+     * @param reifier
+     */
     private void _applyReifier(Reifiable reifiable, Topic reifier) {
         if (reifier != null) {
             reifiable.setReifier(reifier);
         }
     }
 
+    /**
+     * 
+     *
+     * @param source
+     * @param target
+     */
     private void _merge(Topic source, Topic target) {
         target.mergeIn(source);
         super.notifyMerge(source, target);
     }
+
 }

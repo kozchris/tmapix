@@ -27,49 +27,173 @@ import com.semagia.mio.MIOException;
  */
 abstract class HamsterHandler<T> {
 
-    protected abstract T createTopicByItemIdentifier(String iri) throws MIOException;
+    /**
+     * Returns either an existing topic with the specified item identifier
+     * or creates a topic with the specified item identifier.
+     * 
+     * @param iri An absolute IRI representing an item identifier.
+     * @return A topic with the item identifier <tt>iri</tt>.
+     * @throws MIOException In case of an error.
+     */
+    protected abstract T createTopicByItemIdentifier(String iri)
+            throws MIOException;
 
-    protected abstract T createTopicBySubjectIdentifier(String iri) throws MIOException;
+    /**
+     * Returns either an existing topic with the specified subject identifier
+     * or creates a topic with the specified subject identifier.
+     * 
+     * @param iri An absolute IRI representing a subject identifier.
+     * @return A topic with the subject identifier <tt>iri</tt>.
+     * @throws MIOException In case of an error.
+     */
+    protected abstract T createTopicBySubjectIdentifier(String iri)
+            throws MIOException;
 
-    protected abstract T createTopicBySubjectLocator(String iri) throws MIOException;
+    /**
+     * Returns either an existing topic with the specified subject locator
+     * or creates a topic with the specified subject locator.
+     * 
+     * @param iri An absolute IRI representing a subject locator.
+     * @return A topic with the subject identifier <tt>iri</tt>.
+     * @throws MIOException In case of an error.
+     */
+    protected abstract T createTopicBySubjectLocator(String iri)
+            throws MIOException;
 
-    protected abstract void handleTypeInstance(T instance, T type) throws MIOException;
+    /**
+     * Creates a tmdm:type-instance relationship between <tt>instance</tt> and
+     * <tt>type</tt>.
+     * 
+     * @param instance The topic that should play the tmdm:instance role.
+     * @param type The topic that should play the tmdm:type role.
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleTypeInstance(T instance, T type)
+            throws MIOException;
 
-    protected abstract void handleItemIdentifier(T topic, String iri) throws MIOException;
+    /**
+     * 
+     * 
+     * @param topic
+     * @param iri
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleItemIdentifier(T topic, String iri)
+            throws MIOException;
 
-    protected abstract void handleSubjectIdentifier(T topic, String iri) throws MIOException;
+    /**
+     * 
+     * 
+     * @param topic
+     * @param iri
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleSubjectIdentifier(T topic, String iri)
+            throws MIOException;
 
-    protected abstract void handleSubjectLocator(T topic, String iri) throws MIOException;
+    /**
+     * 
+     * 
+     * @param topic
+     * @param iri
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleSubjectLocator(T topic, String iri)
+            throws MIOException;
 
-    protected abstract void handleTopicMapItemIdentifier(String iri) throws MIOException;
+    /**
+     * 
+     * 
+     * @param iri
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleTopicMapItemIdentifier(String iri)
+            throws MIOException;
 
-    protected abstract void handleTopicMapReifier(T reifier) throws MIOException;
+    /**
+     * 
+     * 
+     * @param reifier
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void handleTopicMapReifier(T reifier)
+            throws MIOException;
 
-    protected abstract void createOccurrence(T parent, 
-            T type, String value, String datatype, 
-            Collection<T> scope, T reifier, Collection<String> iids) throws MIOException;
+    /**
+     * 
+     * 
+     * @param parent
+     * @param type
+     * @param value
+     * @param datatype
+     * @param scope
+     * @param reifier
+     * @param iids
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void createOccurrence(T parent, T type, String value,
+            String datatype, Collection<T> scope, T reifier,
+            Collection<String> iids) throws MIOException;
 
-    protected abstract void createName(T parent, 
-            T type, String value, 
-            Collection<T> scope, T reifier, Collection<String> iids, 
+    /**
+     * 
+     * 
+     * @param parent
+     * @param type
+     * @param value
+     * @param scope
+     * @param reifier
+     * @param iids
+     * @param variants
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void createName(T parent, T type, String value,
+            Collection<T> scope, T reifier, Collection<String> iids,
             Collection<IVariant<T>> variants) throws MIOException;
 
-    protected abstract void createAssociation(T type, Collection<T> scope, T reifier, 
-            Collection<String> iids, Collection<IRole<T>> roles)  throws MIOException;
+    /**
+     * 
+     * 
+     * @param type
+     * @param scope
+     * @param reifier
+     * @param iids
+     * @param roles
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void createAssociation(T type, Collection<T> scope,
+            T reifier, Collection<String> iids, Collection<IRole<T>> roles)
+            throws MIOException;
 
-
+    /**
+     * 
+     * 
+     */
     public interface IVariant<T> {
+
         public Iterable<String> getItemIdentifiers();
+
         public String getValue();
+
         public String getDatatype();
+
         public Collection<T> getScope();
+
         public T getReifier();
     }
 
+    /**
+     * 
+     * 
+     */
     public interface IRole<T> {
+
         public Iterable<String> getItemIdentifiers();
+
         public T getType();
+
         public T getPlayer();
+
         public T getReifier();
     }
 

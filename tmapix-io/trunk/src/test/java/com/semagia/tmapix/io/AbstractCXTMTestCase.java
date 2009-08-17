@@ -21,9 +21,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 
-import org.tinytim.core.TinyTimTestCase;
-import org.tinytim.mio.CXTMTopicMapWriter;
+import junit.framework.TestCase;
+
 import org.tmapi.core.TopicMap;
+import org.tmapi.core.TopicMapSystem;
+import org.tmapi.core.TopicMapSystemFactory;
 
 /**
  * 
@@ -31,15 +33,23 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-public abstract class AbstractCXTMTestCase extends TinyTimTestCase {
+public abstract class AbstractCXTMTestCase extends TestCase {
 
+    private TopicMap _tm;
     protected URL _url;
     private String _subdir;
+    private TopicMapSystem _tmSys;
 
     protected AbstractCXTMTestCase(URL url, String subdir) {
         super(url.getFile().substring(url.getFile().lastIndexOf('/')+1));
         _url = url;
         _subdir = subdir;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        _tmSys = TopicMapSystemFactory.newInstance().newTopicMapSystem();
     }
 
     protected abstract TopicMapReader makeReader(TopicMap tm, URL url) throws Exception;
@@ -49,6 +59,7 @@ public abstract class AbstractCXTMTestCase extends TinyTimTestCase {
      */
     @Override
     protected void runTest() throws Throwable {
+        _tm = _tmSys.createTopicMap(_url.toExternalForm());
         TopicMapReader reader;
         try {
             reader = makeReader(_tm, _url);
@@ -59,7 +70,7 @@ public abstract class AbstractCXTMTestCase extends TinyTimTestCase {
         }
         reader.read();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        CXTMTopicMapWriter writer = new CXTMTopicMapWriter(result, _url.toExternalForm());
+        TopicMapWriter writer = TMAPIChooser.createCXTMTopicMapWriter(_tm, result, _url.toExternalForm());
         writer.write(_tm);
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
         InputStream tmp = new FileInputStream(CXTMTestUtils.getCXTMFile(_url, _subdir));

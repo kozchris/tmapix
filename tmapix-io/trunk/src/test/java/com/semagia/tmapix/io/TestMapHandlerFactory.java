@@ -59,10 +59,9 @@ public class TestMapHandlerFactory extends TestCase {
         assertTrue(makeMapHandler("org.tinytim.core.TopicMapSystemFactoryImpl") instanceof TinyTimMapInputHandler);
     }
 
-//TODO
-//    public void testDetectOntopia() throws Exception {
-//        assertTrue(makeMapHandler("net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory") instanceof OntopiaMapHandler);
-//    }
+    public void testDetectOntopia() throws Exception {
+        assertTrue(makeMapHandler("net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory") instanceof OntopiaMapHandler);
+    }
 
     public void testUnknownTMAPIImplementation() {
         assertTrue(makeMapHandler(new FakeTopicMap()) instanceof TMAPIMapHandler);

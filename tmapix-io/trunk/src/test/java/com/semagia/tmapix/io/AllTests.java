@@ -31,6 +31,7 @@ public class AllTests extends TestSuite {
 
     public static TestSuite suite() {
         TestSuite suite = new TestSuite();
+        suite.addTestSuite(TestMapHandlerFactory.class);
         //suite.addTest(TestCTMTopicMapReader.suite());
         suite.addTest(TestJTMTopicMapReader.suite());
         suite.addTest(TestN3TopicMapReader.suite());
@@ -39,7 +40,7 @@ public class AllTests extends TestSuite {
         suite.addTest(TestLTMTopicMapReader.suite());
         suite.addTest(TestTMXMLTopicMapReader.suite());
         //suite.addTest(TestTMXMLValidatingTopicMapReader.suite());
-        suite.addTest(TestSnelloTopicMapReader.suite());
+        //suite.addTest(TestSnelloTopicMapReader.suite());
         suite.addTest(TestXTM10TopicMapReader.suite());
         //suite.addTest(TestXTM10ValidatingTopicMapReader.suite());
         suite.addTest(TestXTM20TopicMapReader.suite());

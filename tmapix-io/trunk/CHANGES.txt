@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+0.2.0 -- 2009-08-17
+-------------------
+- Internal code changes
+- Added OntopiaMapHandler which uses Ontopia's native API
+
+
 0.1.0 -- 2009-08-16
 -------------------
 - Initial release

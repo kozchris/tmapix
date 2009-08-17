@@ -10,6 +10,7 @@
     <!-- Directories -->
     <property name="dir.src" value="${basedir}/src/main/java"/>
     <property name="dir.test" value="${basedir}/src/test/java"/>
+    <property name="dir.cxtm" value="${basedir}/src/test/cxtm/"/>
     <property name="dir.lib" value="${basedir}/lib"/>
     <property name="dir.build" value="${basedir}/build"/>
     <property name="dir.dist.root" value="${dir.build}/dist"/>
@@ -152,7 +153,6 @@
     <!-- Tests                                                               -->
     <!-- =================================================================== -->
     <target name="test" depends="compile">
-    <!--
         <mkdir dir="${dir.build.tests}"/>
         <javac destdir="${dir.build.tests}" 
             debug="${debug}"
@@ -162,15 +162,32 @@
             <classpath refid="path.test"/>
             <src path="${dir.test}"/>
         </javac>
+        <antcall target="test-tinytim"></antcall>
+        <antcall target="test-ontopia"></antcall>
+    </target>
+    
+    <target name="test-tinytim">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tinytim.core.TopicMapSystemFactoryImpl"/>
             <classpath refid="path.test"/>
             <formatter type="brief" usefile="false"/>
-            <test name="org.tinytim.mio.AllTests"/>
+            <test name="com.semagia.tmapix.io.AllTests"/>
         </junit>
         <fail message="Tests failed. Check test output." if="test.failed"/>
-     -->
+    </target>
+
+    <target name="test-ontopia">
+        <junit printsummary="true" showoutput="false"
+            errorProperty="test.failed" failureProperty="test.failed">
+            <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory"/>
+            <classpath refid="path.test"/>
+            <formatter type="brief" usefile="false"/>
+            <test name="com.semagia.tmapix.io.AllTests"/>
+        </junit>
+        <fail message="Tests failed. Check test output." if="test.failed"/>
     </target>
 
     <!-- =================================================================== -->
@@ -237,10 +254,8 @@
 
     <!-- =================================================================== -->
     <!-- Creates the distribution files (.zip and .tar.gz)                   -->
-    <!--                                                                     -->
-    <!-- Won't create the distribution files if a test fails                 -->
     <!-- =================================================================== -->
-    <target name="release" depends="jar, test, doc, dist">
+    <target name="release" depends="jar, doc, dist">
         <tar destfile="${dir.dist.root}/${project.tar}"
             basedir="${dir.dist.root}"/>
         <gzip src="${dir.dist.root}/${project.tar}"

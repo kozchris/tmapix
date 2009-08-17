@@ -18,8 +18,6 @@ package com.semagia.tmapix.io;
 import java.net.MalformedURLException;
 import java.util.Collection;
 
-import org.tmapi.core.Topic;
-
 import com.semagia.mio.MIOException;
 import com.semagia.tmapix.voc.XSD;
 
@@ -43,7 +41,7 @@ import net.ontopia.topicmaps.utils.MergeUtils;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
 
@@ -247,7 +245,7 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
             return;
         }
         final TMObjectIF existing = _tm.getObjectByItemIdentifier(sid);
-        if (existing != null && existing instanceof Topic) {
+        if (existing != null && existing instanceof TopicIF) {
             existingTopic = (TopicIF) existing;
             _merge(topic, existingTopic);
             topic = existingTopic;

@@ -20,14 +20,20 @@ import org.tmapi.core.TopicMap;
 import com.semagia.mio.IMapHandler;
 
 /**
- * 
+ * Factory for {@link IMapHandler}s.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public class MapHandlerFactory {
 
-    public static IMapHandler createMapInputHandler(final TopicMap topicMap) {
+    /**
+     * Creates a {@link IMapHandler} for the specified topic map.
+     *
+     * @param topicMap A topic map.
+     * @return A {@link IMapHandler} instance that acts upon the specified topic map.
+     */
+    public static IMapHandler createMapHandler(final TopicMap topicMap) {
         return TMAPIChooser.createMapHandler(topicMap);
     }
 

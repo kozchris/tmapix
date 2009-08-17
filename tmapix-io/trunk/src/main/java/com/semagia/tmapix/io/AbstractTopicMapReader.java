@@ -96,7 +96,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      */
     protected AbstractTopicMapReader(final TopicMap topicMap,
             final Syntax syntax, final Source source) {
-        this(MapHandlerFactory.createMapInputHandler(topicMap), syntax, source);
+        this(MapHandlerFactory.createMapHandler(topicMap), syntax, source);
     }
 
     /**

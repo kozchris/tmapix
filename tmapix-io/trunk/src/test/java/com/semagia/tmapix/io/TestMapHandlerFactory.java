@@ -36,20 +36,47 @@ import junit.framework.TestCase;
  * Tests against the {@link MapHandlerFactory}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestMapHandlerFactory extends TestCase {
+    
+    private static final String _TMAPI_SYSTEM_FACTORY = "org.tmapi.core.TopicMapSystemFactory";
+
+    private String _tmSysFactoryValue;
+
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#setUp()
+     */
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        _tmSysFactoryValue = System.getProperty(_TMAPI_SYSTEM_FACTORY);
+    }
+
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#tearDown()
+     */
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (_tmSysFactoryValue != null) {
+            System.setProperty(_TMAPI_SYSTEM_FACTORY, _tmSysFactoryValue);
+        }
+        else {
+            System.clearProperty(_TMAPI_SYSTEM_FACTORY);
+        }
+    }
 
     private IMapHandler makeMapHandler(String systemFactoryImpl) throws Exception {
         return makeMapHandler(makeTopicMap(systemFactoryImpl));
     }
 
     private IMapHandler makeMapHandler(TopicMap topicMap) {
-        return MapHandlerFactory.createMapInputHandler(topicMap);
+        return MapHandlerFactory.createMapHandler(topicMap);
     }
 
     private TopicMap makeTopicMap(String systemFactoryImpl) throws Exception {
-        System.setProperty("org.tmapi.core.TopicMapSystemFactory", systemFactoryImpl);
+        System.setProperty(_TMAPI_SYSTEM_FACTORY, systemFactoryImpl);
         return TopicMapSystemFactory.newInstance()
                 .newTopicMapSystem()
                 .createTopicMap("http://tmapix.semagia.com/test-map");

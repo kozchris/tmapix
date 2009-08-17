@@ -226,6 +226,7 @@
                 <exclude name="**/LICENSE.ontopia*"/>
                 <exclude name="**/LICENSE.tinytim*"/>
                 <exclude name="**/LICENSE.tmapi*"/>
+                <exclude name="**/LICENSE.backport*"/>
             </fileset>
         </copy>
        

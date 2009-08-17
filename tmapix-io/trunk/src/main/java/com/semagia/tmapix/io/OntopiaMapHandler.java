@@ -245,7 +245,7 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
             return;
         }
         final TMObjectIF existing = _tm.getObjectByItemIdentifier(sid);
-        if (existing != null && existing instanceof TopicIF) {
+        if (existing != null && existing instanceof TopicIF && !existing.equals(topic)) {
             existingTopic = (TopicIF) existing;
             _merge(topic, existingTopic);
             topic = existingTopic;

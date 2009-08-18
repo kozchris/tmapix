@@ -30,6 +30,13 @@
     <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
     <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.5.jar"/>
 
+    <path id="libs.tmapi-1">
+        <fileset dir="${dir.lib}">
+            <include name="tmapi-1*.jar"/>
+            <include name="tmapix-core-*.jar"/>
+        </fileset>
+    </path>
+
     <path id="libs.tmapi">
         <fileset dir="${dir.lib}">
             <include name="tmapi-2.*.jar"/>
@@ -38,12 +45,21 @@
     </path>
 
     <!-- tinyTiM -->
+    <path id="libs.tinytim-1">
+        <fileset dir="${dir.lib}">
+            <include name="tinytim-1*.jar"/>
+            <include name="tinytim-mio-1*.jar"/>
+        </fileset>
+    </path>    
+    
     <path id="libs.tinytim">
         <fileset dir="${dir.lib}">
-            <include name="tinytim-*.jar"/>
+            <include name="tinytim-2*.jar"/>
+            <include name="tinytim-mio-2*.jar"/>
         </fileset>
     </path>
     
+   
     <!-- Ontopia incl. dependencies -->
     <path id="libs.ontopia">
         <fileset dir="${dir.lib}">
@@ -80,6 +96,15 @@
     
     <path id="path.test">
         <path refid="path.compile"/>
+        <pathelement location="${lib.junit}"/>
+        <pathelement location="${dir.build.classes}"/>
+        <pathelement location="${dir.build.tests}"/>
+    </path>
+
+    <path id="path.test-tmapi-1">
+        <path refid="libs.tmapi-1"/>
+        <path refid="libs.tinytim-1"/>
+        <path refid="libs.mio"/>
         <pathelement location="${lib.junit}"/>
         <pathelement location="${dir.build.classes}"/>
         <pathelement location="${dir.build.tests}"/>
@@ -154,7 +179,7 @@
     <!-- =================================================================== -->
     <!-- Tests                                                               -->
     <!-- =================================================================== -->
-    <target name="test" depends="compile">
+    <target name="compile.tests" depends="compile">
         <mkdir dir="${dir.build.tests}"/>
         <javac destdir="${dir.build.tests}" 
             debug="${debug}"
@@ -164,6 +189,9 @@
             <classpath refid="path.test"/>
             <src path="${dir.test}"/>
         </javac>
+    </target>
+    
+    <target name="test" depends="compile.tests">
         <antcall target="test-ontopia"></antcall>
         <antcall target="test-generic"></antcall>
         <antcall target="test-tinytim"></antcall>
@@ -178,6 +206,18 @@
             <formatter type="plain"/>
             <test name="com.semagia.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="tinytim-results"/>
+        </junit>
+    </target>
+
+    <target name="test-tinytim-1" depends="compile.tests">
+        <junit printsummary="true" showoutput="false"
+            errorProperty="test.failed" failureProperty="test.failed">
+            <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tinytim.TopicMapSystemFactoryImpl"/>
+            <classpath refid="path.test-tmapi-1"/>
+            <formatter type="plain"/>
+            <test name="com.semagia.tmapix.io.AllTests" 
+                todir="${dir.build}" outfile="tinytim-1-results"/>
         </junit>
     </target>
 

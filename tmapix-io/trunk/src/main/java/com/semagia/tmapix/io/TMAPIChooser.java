@@ -27,7 +27,7 @@ import com.semagia.mio.IMapHandler;
  */
 final class TMAPIChooser {
 
-    private static final String _TINYTIM = "org.tinytim.core.";
+    private static final String _TINYTIM = "org.tinytim";
     private static final String _ONTOPIA = "net.ontopia.topicmaps.impl.tmapi2.";
     private static final String _GENERIC = "com.semagia.tmapix.io.";
 

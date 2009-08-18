@@ -15,9 +15,6 @@
  */
 package com.semagia.tmapix.io;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.tmapi.core.TopicMap;
 
 import com.semagia.mio.IMapHandler;
@@ -26,12 +23,18 @@ import com.semagia.mio.IMapHandler;
  * Internal helper class that detects different TMAPI 2.0 implementations.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class TMAPIChooser {
 
     private static final String _TINYTIM = "org.tinytim.core.";
     private static final String _ONTOPIA = "net.ontopia.topicmaps.impl.tmapi2.";
+    private static final String _GENERIC = "com.semagia.tmapix.io.";
+
+    static final String TMAPI_SYSTEM_FACTORY = "org.tmapi.core.TopicMapSystemFactory";
+    static final String TINYTIM_SYSTEM_FACTORY = "org.tinytim.core.TopicMapSystemFactoryImpl";
+    static final String ONTOPIA_SYSTEM_FACTORY = "net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory";
+    static final String GENERIC_SYSTEM_FACTORY = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactory";
 
     static IMapHandler createMapHandler(TopicMap topicMap) {
         if (topicMap == null) {
@@ -47,7 +50,7 @@ final class TMAPIChooser {
         return new TMAPIMapHandler(topicMap);
     }
 
-    private static boolean isTinyTim(TopicMap topicMap) {
+    static boolean isTinyTim(TopicMap topicMap) {
         return isTinyTim(topicMap.getClass().getName());
     }
 
@@ -55,12 +58,20 @@ final class TMAPIChooser {
         return className.startsWith(_TINYTIM);
     }
 
-    private static boolean isOntopia(TopicMap topicMap) {
+    static boolean isOntopia(TopicMap topicMap) {
         return isOntopia(topicMap.getClass().getName());
     }
 
     private static boolean isOntopia(String className) {
         return className.startsWith(_ONTOPIA);
+    }
+
+    static boolean isGenericTMAPI(TopicMap topicMap) {
+        return isGenericTMAPI(topicMap.getClass().getName());
+    }
+
+    private static boolean isGenericTMAPI(String className) {
+        return className.startsWith(_GENERIC);
     }
 
     private static IMapHandler makeTinyTimMapInputHandler(final TopicMap topicMap) {
@@ -71,50 +82,8 @@ final class TMAPIChooser {
         return new OntopiaMapHandler(unwrapOntopia(topicMap));
     }
 
-    private static net.ontopia.topicmaps.core.TopicMapIF unwrapOntopia(TopicMap topicMap) {
+    static net.ontopia.topicmaps.core.TopicMapIF unwrapOntopia(TopicMap topicMap) {
         return ((net.ontopia.topicmaps.impl.tmapi2.TopicMapImpl) topicMap).getWrapped();
-    }
-
-    static TopicMapWriter createCXTMTopicMapWriter(TopicMap topicMap, OutputStream out, String base) throws IOException {
-        if (isTinyTim(topicMap)) {
-            return new TinyTimCXTMWriter(out, base);
-        }
-        else if (isOntopia(topicMap)) {
-            return new OntopiaCXTMWriter(out);
-        }
-        throw new IOException("No CXTM serializer found");
-    }
-
-    private static class TinyTimCXTMWriter implements TopicMapWriter {
-
-        private final org.tinytim.mio.CXTMTopicMapWriter _writer;
-
-        public TinyTimCXTMWriter(OutputStream out, String base) throws IOException {
-            _writer = new org.tinytim.mio.CXTMTopicMapWriter(out, base);
-        }
-
-        /* (non-Javadoc)
-         * @see com.semagia.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
-         */
-        @Override
-        public void write(TopicMap topicMap) throws IOException {
-            _writer.write(topicMap); }
-        
-    }
-
-    private static class OntopiaCXTMWriter implements TopicMapWriter {
-        
-        private final net.ontopia.topicmaps.xml.CanonicalXTMWriter _writer;
-
-        public OntopiaCXTMWriter(OutputStream out) throws IOException {
-            _writer = new net.ontopia.topicmaps.xml.CanonicalXTMWriter(out);
-        }
-
-        @Override
-        public void write(TopicMap topicMap) throws IOException {
-            _writer.write(unwrapOntopia(topicMap));
-        }
-
     }
 
 }

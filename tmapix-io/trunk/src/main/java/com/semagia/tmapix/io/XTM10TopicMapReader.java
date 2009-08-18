@@ -90,7 +90,7 @@ public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.AbstractTopicMapReader#postProcess()
+     * @see com.semagia.tmapix.io.AbstractTopicMapReader#postProcess()
      */
     @Override
     protected void postProcess() {

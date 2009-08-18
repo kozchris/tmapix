@@ -38,7 +38,7 @@ import com.semagia.tmapix.voc.XSD;
  * TMAPI 2.0 compatible Topic Maps engine.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 //TODO: Make this public?
 final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {

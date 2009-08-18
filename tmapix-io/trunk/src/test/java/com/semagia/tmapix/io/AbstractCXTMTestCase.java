@@ -31,7 +31,7 @@ import org.tmapi.core.TopicMapSystemFactory;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public abstract class AbstractCXTMTestCase extends TestCase {
 
@@ -70,7 +70,7 @@ public abstract class AbstractCXTMTestCase extends TestCase {
         }
         reader.read();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        TopicMapWriter writer = TMAPIChooser.createCXTMTopicMapWriter(_tm, result, _url.toExternalForm());
+        TopicMapWriter writer = CXTMWriterFactory.createCXTMTopicMapWriter(_tm, result, _url.toExternalForm());
         writer.write(_tm);
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
         InputStream tmp = new FileInputStream(CXTMTestUtils.getCXTMFile(_url, _subdir));

@@ -28,7 +28,6 @@ import com.semagia.mio.MIOException;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-//TODO: Move this to semagia.mio?
 abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> implements IMapHandler {
 
     protected static final byte 

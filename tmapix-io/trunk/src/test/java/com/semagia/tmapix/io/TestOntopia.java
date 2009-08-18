@@ -23,31 +23,18 @@ import junit.framework.TestSuite;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class AllTests extends TestSuite {
+public class TestOntopia extends AllTests {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
 
-    public AllTests() {
+    public TestOntopia() {
         super();
-        addTestSuite(TestMapHandlerFactory.class);
-        addTest(TestCTMTopicMapReader.suite());
-        addTest(TestJTMTopicMapReader.suite());
-        addTest(TestN3TopicMapReader.suite());
-        addTest(TestNTriplesTopicMapReader.suite());
-        addTest(TestRDFXMLTopicMapReader.suite());
-        addTest(TestLTMTopicMapReader.suite());
-        addTest(TestTMXMLTopicMapReader.suite());
-        addTest(TestTMXMLValidatingTopicMapReader.suite());
-        addTest(TestSnelloTopicMapReader.suite());
-        addTest(TestXTM10TopicMapReader.suite());
-        //addTest(TestXTM10ValidatingTopicMapReader.suite());
-        addTest(TestXTM20TopicMapReader.suite());
-        addTest(TestXTM20ValidatingTopicMapReader.suite());
+        System.setProperty(TMAPIChooser.TMAPI_SYSTEM_FACTORY, TMAPIChooser.ONTOPIA_SYSTEM_FACTORY);
     }
 
     public static TestSuite suite() {
-        return new AllTests();
+        return new TestOntopia();
     }
 }

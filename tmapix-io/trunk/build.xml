@@ -22,6 +22,7 @@
     
     <property name="lib.jing" value="${dir.lib}/jing.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
+    <property name="lib.ctm" value="${dir.lib}/semagia-mio-ctm-0.9.3-working-draft-2009-02-18.jar"/>
     <property name="lib.jtm" value="${dir.lib}/semagia-mio-jtm-0.9.3.jar"/>
     <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.5.jar"/>
     <property name="lib.rdf" value="${dir.lib}/semagia-mio-rdf-0.9.3.jar"/>
@@ -61,6 +62,7 @@
         <pathelement location="${lib.jing}"/>
         <!-- The mio libs -->
         <pathelement location="${lib.mio}"/>
+        <pathelement location="${lib.ctm}"/>
         <pathelement location="${lib.jtm}"/>
         <pathelement location="${lib.ltm}"/>
         <pathelement location="${lib.rdf}"/>
@@ -162,8 +164,9 @@
             <classpath refid="path.test"/>
             <src path="${dir.test}"/>
         </javac>
-        <antcall target="test-tinytim"></antcall>
         <antcall target="test-ontopia"></antcall>
+        <antcall target="test-generic"></antcall>
+        <antcall target="test-tinytim"></antcall>
     </target>
     
     <target name="test-tinytim">
@@ -172,10 +175,10 @@
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
             <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tinytim.core.TopicMapSystemFactoryImpl"/>
             <classpath refid="path.test"/>
-            <formatter type="brief" usefile="false"/>
-            <test name="com.semagia.tmapix.io.AllTests"/>
+            <formatter type="plain"/>
+            <test name="com.semagia.tmapix.io.AllTests" 
+                todir="${dir.build}" outfile="tinytim-results"/>
         </junit>
-        <fail message="Tests failed. Check test output." if="test.failed"/>
     </target>
 
     <target name="test-ontopia">
@@ -184,10 +187,22 @@
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
             <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory"/>
             <classpath refid="path.test"/>
-            <formatter type="brief" usefile="false"/>
-            <test name="com.semagia.tmapix.io.AllTests"/>
+            <formatter type="plain"/>
+            <test name="com.semagia.tmapix.io.AllTests" 
+                todir="${dir.build}" outfile="ontopia-results"/>
         </junit>
-        <fail message="Tests failed. Check test output." if="test.failed"/>
+    </target>
+
+    <target name="test-generic">
+        <junit printsummary="true" showoutput="false"
+            errorProperty="test.failed" failureProperty="test.failed">
+            <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactory"/>
+            <classpath refid="path.test"/>
+            <formatter type="plain"/>
+            <test name="com.semagia.tmapix.io.AllTests" 
+                todir="${dir.build}" outfile="generic-results"/>
+        </junit>
     </target>
 
     <!-- =================================================================== -->

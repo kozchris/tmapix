@@ -23,7 +23,7 @@ import com.semagia.mio.MIOException;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class HamsterHandler<T> {
 
@@ -72,63 +72,90 @@ abstract class HamsterHandler<T> {
             throws MIOException;
 
     /**
+     * Adds the item identifier <tt>iri</tt> to the topic.
+     * <p>
+     * Adding the item identifier to the topic may cause a merge operation 
+     * that must be handled transparently..
+     * </p>
      * 
-     * 
-     * @param topic
-     * @param iri
+     * @param topic The topic to add the item identifier to.
+     * @param iri An absolute IRI.
      * @throws MIOException In case of an error.
      */
     protected abstract void handleItemIdentifier(T topic, String iri)
             throws MIOException;
 
     /**
+     * Adds the subject identifier <tt>iri</tt> to the topic.
+     * <p>
+     * Adding the subject identifier to the topic may cause a merge operation 
+     * that must be handled transparently..
+     * </p>
      * 
-     * 
-     * @param topic
-     * @param iri
+     * @param topic The topic to add the subject identifier to.
+     * @param iri An absolute IRI.
      * @throws MIOException In case of an error.
      */
     protected abstract void handleSubjectIdentifier(T topic, String iri)
             throws MIOException;
 
     /**
+     * Adds the subject locator <tt>iri</tt> to the topic.
+     * <p>
+     * Adding the subject locator to the topic may cause a merge operation 
+     * that must be handled transparently..
+     * </p>
      * 
-     * 
-     * @param topic
-     * @param iri
+     * @param topic The topic to add the subject locator to.
+     * @param iri An absolute IRI.
      * @throws MIOException In case of an error.
      */
     protected abstract void handleSubjectLocator(T topic, String iri)
             throws MIOException;
 
     /**
+     * Adds the specified item identifier <tt>iri</tt> to the topic map.
      * 
-     * 
-     * @param iri
+     * @param iri An absolute IRI.
      * @throws MIOException In case of an error.
      */
     protected abstract void handleTopicMapItemIdentifier(String iri)
             throws MIOException;
 
     /**
+     * Sets the [reifier] property of the topic map.
      * 
-     * 
-     * @param reifier
+     * @param reifier The reifier.
      * @throws MIOException In case of an error.
      */
     protected abstract void handleTopicMapReifier(T reifier)
             throws MIOException;
 
     /**
+     * Creates an association.
      * 
+     * @param type The type of the association.
+     * @param scope The scope of the association or <tt>null</tt> to indicate the unconstrained scope.
+     * @param reifier The reifier of the association or <tt>null</tt>.
+     * @param iids The item identifiers of the association. This collection is never <tt>null</tt> but may be empty.
+     * @param roles The roles of the association.
+     * @throws MIOException In case of an error.
+     */
+    protected abstract void createAssociation(T type, Collection<T> scope,
+            T reifier, Collection<String> iids, Collection<IRole<T>> roles)
+            throws MIOException;
+    
+
+    /**
+     * Creates an occurrence.
      * 
-     * @param parent
-     * @param type
-     * @param value
-     * @param datatype
-     * @param scope
-     * @param reifier
-     * @param iids
+     * @param parent The parent topic.
+     * @param type The occurrence type.
+     * @param value The value of the occurrence.
+     * @param datatype The datatype IRI.
+     * @param scope The scope of the occurrence or <tt>null</tt> to indicate the unconstrained scope.
+     * @param reifier The reifier of the occurrence or <tt>null</tt>.
+     * @param iids The item identifiers of the occurrence. This collection is never <tt>null</tt> but may be empty.
      * @throws MIOException In case of an error.
      */
     protected abstract void createOccurrence(T parent, T type, String value,
@@ -136,15 +163,15 @@ abstract class HamsterHandler<T> {
             Collection<String> iids) throws MIOException;
 
     /**
+     * Creates a name.
      * 
-     * 
-     * @param parent
-     * @param type
-     * @param value
-     * @param scope
-     * @param reifier
-     * @param iids
-     * @param variants
+     * @param parent The parent topic.
+     * @param type The name type or <tt>null</tt> to indicate the default name type.
+     * @param value The value of the name.
+     * @param scope The scope of the name or <tt>null</tt> to indicate the unconstrained scope.
+     * @param reifier The reifier of the name or <tt>null</tt>.
+     * @param iids The item identifiers of the name. This collection is never <tt>null</tt> but may be empty.
+     * @param variants The variants of the name. This collection is never <tt>null</tt> but may be emtpy.
      * @throws MIOException In case of an error.
      */
     protected abstract void createName(T parent, T type, String value,
@@ -152,48 +179,83 @@ abstract class HamsterHandler<T> {
             Collection<IVariant<T>> variants) throws MIOException;
 
     /**
-     * 
-     * 
-     * @param type
-     * @param scope
-     * @param reifier
-     * @param iids
-     * @param roles
-     * @throws MIOException In case of an error.
+     * Represents an association role.
      */
-    protected abstract void createAssociation(T type, Collection<T> scope,
-            T reifier, Collection<String> iids, Collection<IRole<T>> roles)
-            throws MIOException;
+    public interface IRole<T> {
 
-    /**
-     * 
-     * 
-     */
-    public interface IVariant<T> {
-
+        /**
+         * Returns a (maybe empty) iterable of absolute IRIs which represent
+         * the item identifiers of the role.
+         *
+         * @return A (maybe empty) iterable of absolute IRIs.
+         */
         public Iterable<String> getItemIdentifiers();
 
-        public String getValue();
+        /**
+         * Returns the type of the role.
+         *
+         * @return The type of the role.
+         */
+        public T getType();
 
-        public String getDatatype();
+        /**
+         * Returns the role player.
+         *
+         * @return The role player.
+         */
+        public T getPlayer();
 
-        public Collection<T> getScope();
-
+        /**
+         * Returns the reifier or <tt>null</tt> if the role is not reified.
+         *
+         * @return The reifier or <tt>null</tt>.
+         */
         public T getReifier();
     }
 
     /**
-     * 
-     * 
+     * Represents a variant.
      */
-    public interface IRole<T> {
+    public interface IVariant<T> {
 
+        /**
+         * Returns a (maybe empty) iterable of absolute IRIs which represent
+         * the item identifiers of the variant.
+         *
+         * @return A (maybe empty) iterable of absolute IRIs.
+         */
         public Iterable<String> getItemIdentifiers();
 
-        public T getType();
+        /**
+         * Returns the value of the variant.
+         *
+         * @return The variant's value.
+         */
+        public String getValue();
 
-        public T getPlayer();
+        /**
+         * Returns an absolute IRI indicating the datatype.
+         *
+         * @return The datatype IRI.
+         */
+        public String getDatatype();
 
+        /**
+         * Returns the scope of the variant.
+         * <p>
+         * Note: The returned collection may not include the scope of the 
+         * variant's parent.
+         * </p>
+         *
+         * @return The variant's scope.
+         */
+        public Collection<T> getScope();
+
+        /**
+         * Returns the reifier or <tt>null</tt> if the variant is not reified.
+         *
+         * @return The reifier or <tt>null</tt>.
+         */
         public T getReifier();
     }
 

@@ -32,7 +32,7 @@ import com.semagia.mio.Syntax;
  * "role" or "variant" even if they are valid according to the JTM specification. 
  * </p>
  * <p>
- * Further the reader expects that at least one identity of a topic 
+ * Further, the reader expects that at least one identity of a topic 
  * (item identifier, subject identifier, subject locator) occurs before any
  * occurrence / name.
  * </p>

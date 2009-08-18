@@ -311,10 +311,10 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /**
-     * 
+     * Merges the <tt>source</tt> into the <tt>target</tt>.
      *
-     * @param source
-     * @param target
+     * @param source The source topic (will be removed).
+     * @param target The target topic.
      */
     private void _merge(TopicIF source, TopicIF target) {
         MergeUtils.mergeInto(target, source);
@@ -322,10 +322,10 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /**
-     * 
+     * Sets the scope of the scoped construct.
      *
-     * @param scoped
-     * @param scope
+     * @param scoped The scoped construct.
+     * @param scope A collection of topics or <tt>null</tt>.
      */
     private void _applyScope(ScopedIF scoped, Collection<TopicIF> scope) {
         if (scope != null) {

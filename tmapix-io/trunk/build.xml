@@ -192,12 +192,12 @@
     </target>
     
     <target name="test" depends="compile.tests">
-        <antcall target="test-ontopia"></antcall>
-        <antcall target="test-generic"></antcall>
-        <antcall target="test-tinytim"></antcall>
+        <antcall target="test.ontopia"></antcall>
+        <antcall target="test.generic"></antcall>
+        <antcall target="test.tinytim"></antcall>
     </target>
     
-    <target name="test-tinytim">
+    <target name="test.tinytim">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
@@ -209,7 +209,7 @@
         </junit>
     </target>
 
-    <target name="test-tinytim-1" depends="compile.tests">
+    <target name="test.tinytim-1" depends="compile.tests">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
@@ -221,7 +221,7 @@
         </junit>
     </target>
 
-    <target name="test-ontopia">
+    <target name="test.ontopia">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
@@ -233,7 +233,7 @@
         </junit>
     </target>
 
-    <target name="test-generic">
+    <target name="test.generic">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>

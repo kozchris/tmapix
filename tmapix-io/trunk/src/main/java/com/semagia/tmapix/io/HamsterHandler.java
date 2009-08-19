@@ -189,7 +189,7 @@ abstract class HamsterHandler<T> {
          *
          * @return A (maybe empty) iterable of absolute IRIs.
          */
-        public Iterable<String> getItemIdentifiers();
+        public Collection<String> getItemIdentifiers();
 
         /**
          * Returns the type of the role.
@@ -224,7 +224,7 @@ abstract class HamsterHandler<T> {
          *
          * @return A (maybe empty) iterable of absolute IRIs.
          */
-        public Iterable<String> getItemIdentifiers();
+        public Collection<String> getItemIdentifiers();
 
         /**
          * Returns the value of the variant.

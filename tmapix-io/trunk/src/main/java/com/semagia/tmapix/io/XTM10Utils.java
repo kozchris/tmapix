@@ -34,11 +34,11 @@ import com.semagia.tmapix.voc.XTM10;
  */
 final class XTM10Utils {
 
+    private static final Logger LOG = Logger.getLogger(XTM10Utils.class.getName());
+
     private XTM10Utils() {
         // noop.
     }
-
-    private static final Logger LOG = Logger.getLogger(XTM10Utils.class.getName());
 
     /**
      * Converts XTM 1.0 PSIs to TMDM PSIs and converts the XTM 1.0 

@@ -38,6 +38,8 @@ import com.semagia.mio.Syntax;
  */
 public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
 
+    private boolean _convertToTMDM;
+
     /**
      * Constructs a new instance.
      *
@@ -89,12 +91,39 @@ public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
         super(topicMap, Syntax.XTM_10, source);
     }
 
+    /**
+     * Enables / disables translation of XTM 1.0 PSIs and the XTM 1.0
+     * reification mechanism to the TMDM equivalent.
+     * <p>
+     * The reader will convert XTM 1.0 PSIs like 
+     * <tt>http://www.topicmaps.org/xtm/1.0/core.xtm#class-instance</tt>, 
+     * <tt>http://www.topicmaps.org/xtm/1.0/core.xtm#class</tt> etc. and the 
+     * XTM 1.0 reification mechanism to the TMDM equivalent (disabled by default). 
+     * </p>
+     *
+     * @param translate <tt>true</tt> to enable the translation, 
+     *          <tt>false</tt> to disable the translation.
+     */
+    public void setTranslateToTMDM(boolean translate) {
+        _convertToTMDM = translate;
+    }
+
+    /**
+     * Returns if the reader translates XTM 1.0 topic maps into the TMDM 
+     * equivalent.
+     *
+     * @return <tt>true</tt> if the XTM 1.0 is translated, otherwise <tt>false</tt>.
+     */
+    public boolean isTranslatingXTM10SubjectIdentifiers() {
+        return _convertToTMDM;
+    }
+
     /* (non-Javadoc)
      * @see com.semagia.tmapix.io.AbstractTopicMapReader#postProcess()
      */
     @Override
     protected void postProcess() {
-        if (super._tm != null) {
+        if (_convertToTMDM && super._tm != null) {
             XTM10Utils.convertToTMDM(super._tm);
         }
     }

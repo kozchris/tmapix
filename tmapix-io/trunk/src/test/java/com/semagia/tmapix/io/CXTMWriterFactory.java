@@ -24,7 +24,7 @@ import org.tmapi.core.TopicMap;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 class CXTMWriterFactory {
 
@@ -36,7 +36,12 @@ class CXTMWriterFactory {
             return new OntopiaCXTMWriter(out);
         }
         else if (TMAPIChooser.isGenericTMAPI(topicMap)) {
-            return new GenericCXTMWriter(out, base);
+            if (TMAPIChooser.isTinyTim(((GenericTMAPITopicMap) topicMap).getWrappedTopicMap())) {
+                return new GenericTinyTimCXTMWriter(out, base);
+            }
+            else {
+                return new GenericOntopiaCXTMWriter(out);
+            }
         }
         throw new IOException("No CXTM serializer found");
     }
@@ -55,17 +60,15 @@ class CXTMWriterFactory {
         
     }
 
-    private static class GenericCXTMWriter implements TopicMapWriter {
+    private static class GenericTinyTimCXTMWriter extends TinyTimCXTMWriter {
 
-        private final org.tinytim.mio.CXTMTopicMapWriter _writer;
-
-        public GenericCXTMWriter(OutputStream out, String base) throws IOException {
-            _writer = new org.tinytim.mio.CXTMTopicMapWriter(out, base);
+        public GenericTinyTimCXTMWriter(OutputStream out, String base) throws IOException {
+            super(out, base);
         }
 
         @Override
         public void write(TopicMap topicMap) throws IOException {
-            _writer.write(((com.semagia.tmapix.io.GenericTMAPITopicMap)topicMap).getWrappedTopicMap()); 
+            super.write(((com.semagia.tmapix.io.GenericTMAPITopicMap)topicMap).getWrappedTopicMap()); 
         }
         
     }
@@ -81,6 +84,19 @@ class CXTMWriterFactory {
         @Override
         public void write(TopicMap topicMap) throws IOException {
             _writer.write(TMAPIChooser.unwrapOntopia(topicMap));
+        }
+
+    }
+
+    private static class GenericOntopiaCXTMWriter extends OntopiaCXTMWriter {
+
+        public GenericOntopiaCXTMWriter(OutputStream out) throws IOException {
+            super(out);
+        }
+
+        @Override
+        public void write(TopicMap topicMap) throws IOException {
+            super.write(((com.semagia.tmapix.io.GenericTMAPITopicMap)topicMap).getWrappedTopicMap()); 
         }
 
     }

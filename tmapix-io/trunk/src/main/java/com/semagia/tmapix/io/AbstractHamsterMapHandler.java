@@ -16,6 +16,7 @@
 package com.semagia.tmapix.io;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.semagia.mio.IMapHandler;
@@ -26,7 +27,7 @@ import com.semagia.mio.MIOException;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> implements IMapHandler {
 
@@ -527,7 +528,7 @@ abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> implements
         }
 
         @Override
-        public Iterable<String> getItemIdentifiers() {
+        public Collection<String> getItemIdentifiers() {
             return iids;
         }
 
@@ -579,7 +580,7 @@ abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> implements
             return datatype;
         }
         @Override
-        public Iterable<String> getItemIdentifiers() {
+        public Collection<String> getItemIdentifiers() {
             return iids;
         }
         @Override

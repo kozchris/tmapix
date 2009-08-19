@@ -34,7 +34,8 @@ final class TMAPIChooser {
     static final String TMAPI_SYSTEM_FACTORY = "org.tmapi.core.TopicMapSystemFactory";
     static final String TINYTIM_SYSTEM_FACTORY = "org.tinytim.core.TopicMapSystemFactoryImpl";
     static final String ONTOPIA_SYSTEM_FACTORY = "net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory";
-    static final String GENERIC_SYSTEM_FACTORY = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactory";
+    static final String GENERIC_SYSTEM_FACTORY_ONTOPIA = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia";
+    static final String GENERIC_SYSTEM_FACTORY_TINYTIM = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim";
 
     static IMapHandler createMapHandler(TopicMap topicMap) {
         if (topicMap == null) {

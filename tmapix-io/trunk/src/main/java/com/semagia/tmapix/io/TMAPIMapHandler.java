@@ -15,12 +15,17 @@
  */
 package com.semagia.tmapix.io;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.Locator;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Reifiable;
@@ -40,10 +45,12 @@ import com.semagia.tmapix.voc.XSD;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-//TODO: Make this public?
 final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
 
-    private final static Collection<Topic> _EMPTY_SCOPE = Collections.emptyList();
+    /**
+     * Represents the unconstrained scope.
+     */
+    private final static Collection<Topic> _UCS = Collections.emptySet();
     
     private TopicMap _tm;
     private final Locator _defaultNameType;
@@ -178,14 +185,36 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     protected void createAssociation(Topic type, Collection<Topic> scope, Topic reifier,
             Collection<String> iids, Collection<IRole<Topic>> roles)
             throws MIOException {
+        if (roles.isEmpty()) {
+            throw new MIOException("Invalid association: No roles provided");
+        }
         Association assoc = _tm.createAssociation(type, _scope(scope));
+        Map<String, Collection<String>> role2IIDs = new HashMap<String, Collection<String>>();
+        Map<String, Topic> role2Reifier = new HashMap<String, Topic>();
         for (IRole<Topic> r: roles) {
             Role role = assoc.createRole(r.getType(), r.getPlayer());
-            _applyItemIdentifiers(role, r.getItemIdentifiers());
-            _applyReifier(role, r.getReifier());
+            if (!r.getItemIdentifiers().isEmpty() || r.getReifier() != null) {
+                String signature = SignatureGenerator.generateSignature(role);
+                if (!r.getItemIdentifiers().isEmpty()) {
+                    role2IIDs.put(signature, r.getItemIdentifiers());
+                }
+                if (r.getReifier() != null) {
+                    role2Reifier.put(signature, r.getReifier());
+                }
+            }
         }
-        _applyItemIdentifiers(assoc, iids);
+        assoc = (Association) _applyItemIdentifiers(assoc, iids);
         _applyReifier(assoc, reifier);
+        if (!role2IIDs.isEmpty() || !role2Reifier.isEmpty()) {
+            for (Role role: new ArrayList<Role>(assoc.getRoles())) {
+                String signature = SignatureGenerator.generateSignature(role);
+                Collection<String> roleIIDs = role2IIDs.get(signature);
+                if (roleIIDs != null) {
+                    role = (Role) _applyItemIdentifiers(role, roleIIDs);
+                }
+                _applyReifier(role, role2Reifier.get(signature));
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -196,20 +225,20 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
             Collection<Topic> scope, Topic reifier, Collection<String> iids,
             Collection<IVariant<Topic>> variants) throws MIOException {
         Name name = parent.createName(type != null ? type : _defaultNameType(), value, _scope(scope));
-        for (IVariant<Topic> variant: variants) {
-            Variant var = null;
-            final String datatype = variant.getDatatype();
+        for (IVariant<Topic> v: variants) {
+            Variant variant = null;
+            final String datatype = v.getDatatype();
             if (XSD.ANY_URI.equals(datatype)) {
-                var = name.createVariant(_createLocator(variant.getValue()), variant.getScope());
+                variant = name.createVariant(_createLocator(v.getValue()), v.getScope());
             }
             else if (XSD.STRING.equals(datatype)) {
-                var = name.createVariant(variant.getValue(), variant.getScope());
+                variant = name.createVariant(v.getValue(), v.getScope());
             }
             else {
-                var = name.createVariant(variant.getValue(), _createLocator(datatype), variant.getScope());
+                variant = name.createVariant(v.getValue(), _createLocator(datatype), v.getScope());
             }
-            _applyItemIdentifiers(var, variant.getItemIdentifiers());
-            _applyReifier(var, variant.getReifier());
+            _applyItemIdentifiers(variant, v.getItemIdentifiers());
+            _applyReifier(variant, v.getReifier());
         }
         _applyItemIdentifiers(name, iids);
         _applyReifier(name, reifier);
@@ -246,20 +275,21 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     }
 
     /**
-     * 
+     * Returns the provided collection or an empty collection if <tt>scope</tt> 
+     * is <tt>null</tt>.
      *
-     * @param scope
-     * @return
+     * @param scope A collection of topics or <tt>null</tt>.
+     * @return A collection of topics.
      */
     private Collection<Topic> _scope(Collection<Topic> scope) {
-        return scope != null ? scope : _EMPTY_SCOPE;
+        return scope != null ? scope : _UCS;
     }
 
     /**
-     * 
+     * Creates a locator with the specified address.
      *
-     * @param iri
-     * @return
+     * @param iri The IRI.
+     * @return A locator.
      */
     private Locator _createLocator(String iri) {
         return _tm.createLocator(iri);
@@ -271,10 +301,22 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
      * @param reifiable
      * @param iids
      */
-    private void _applyItemIdentifiers(Reifiable reifiable, Iterable<String> iids) {
+    private Reifiable _applyItemIdentifiers(Reifiable reifiable, Iterable<String> iids) {
         for (String iid: iids) {
-            reifiable.addItemIdentifier(_createLocator(iid));
+            try {
+                reifiable.addItemIdentifier(_createLocator(iid));
+            }
+            catch (IdentityConstraintException ex) {
+                final Construct existing = ex.getExisting();
+                if (_mergable(reifiable, existing)) {
+                    reifiable = _merge((Reifiable) existing, reifiable);
+                }
+                else {
+                    throw ex;
+                }
+            }
         }
+        return reifiable;
     }
 
     /**
@@ -283,10 +325,39 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
      * @param reifiable
      * @param reifier
      */
-    private void _applyReifier(Reifiable reifiable, Topic reifier) {
-        if (reifier != null) {
+    private Reifiable _applyReifier(Reifiable reifiable, Topic reifier) {
+        if (reifier == null) {
+            return reifiable;
+        }
+        try {
             reifiable.setReifier(reifier);
         }
+        catch (ModelConstraintException ex) {
+            final Reifiable existingReifiable = reifier.getReified();
+            if (_mergable(reifiable, existingReifiable)) {
+                reifiable = _merge(existingReifiable, reifiable);
+            }
+            else {
+                throw ex;
+            }
+        }
+        return reifiable;
+    }
+
+    private boolean _mergable(Reifiable reifiable, Construct construct) {
+        return construct instanceof Reifiable 
+                && _mergable(reifiable, (Reifiable) construct);
+    }
+
+    private boolean _mergable(Reifiable reifiableA, Reifiable reifiableB) {
+        return (reifiableA.getClass().equals(reifiableB.getClass())
+                && SignatureGenerator.generateSignature(reifiableA)
+                    .equals(SignatureGenerator.generateSignature(reifiableB))
+                );
+    }
+
+    private Reifiable _merge(Reifiable source, Reifiable target) {
+        return MergeUtils.merge(source, target);
     }
 
     /**

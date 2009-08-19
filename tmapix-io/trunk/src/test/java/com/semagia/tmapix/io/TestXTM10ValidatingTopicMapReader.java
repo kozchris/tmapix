@@ -54,6 +54,7 @@ public class TestXTM10ValidatingTopicMapReader extends TestSuite {
         protected TopicMapReader makeReader(TopicMap tm, URL file) throws Exception {
             XTM10TopicMapReader reader = new XTM10TopicMapReader(tm, file.openStream(), file.toExternalForm());
             reader.setValidation(_validate);
+            reader.setTranslateToTMDM(true);
             return reader;
         }
 

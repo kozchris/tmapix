@@ -193,7 +193,8 @@
     
     <target name="test" depends="compile.tests">
         <antcall target="test.ontopia"></antcall>
-        <antcall target="test.generic"></antcall>
+        <antcall target="test.generic.ontopia"></antcall>
+        <antcall target="test.generic.tinytim"></antcall>
         <antcall target="test.tinytim"></antcall>
     </target>
     
@@ -233,15 +234,27 @@
         </junit>
     </target>
 
-    <target name="test.generic">
+    <target name="test.generic.ontopia">
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
-            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactory"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia"/>
             <classpath refid="path.test"/>
             <formatter type="plain"/>
             <test name="com.semagia.tmapix.io.AllTests" 
-                todir="${dir.build}" outfile="generic-results"/>
+                todir="${dir.build}" outfile="generic-ontopia-results"/>
+        </junit>
+    </target>
+
+    <target name="test.generic.tinytim">
+        <junit printsummary="true" showoutput="false"
+            errorProperty="test.failed" failureProperty="test.failed">
+            <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim"/>
+            <classpath refid="path.test"/>
+            <formatter type="plain"/>
+            <test name="com.semagia.tmapix.io.AllTests" 
+                todir="${dir.build}" outfile="generic-tinyim-results"/>
         </junit>
     </target>
 

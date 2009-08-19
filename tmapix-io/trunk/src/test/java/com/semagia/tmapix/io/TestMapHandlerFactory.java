@@ -80,7 +80,12 @@ public class TestMapHandlerFactory extends TestCase {
     }
 
     public void testUnknownTMAPIImplementation() throws Exception {
-        assertTrue(makeMapHandler(TMAPIChooser.GENERIC_SYSTEM_FACTORY) instanceof TMAPIMapHandler);
+        assertTrue(makeMapHandler(TMAPIChooser.GENERIC_SYSTEM_FACTORY_TINYTIM) instanceof TMAPIMapHandler);
     }
+
+    public void testUnknownTMAPIImplementation2() throws Exception {
+        assertTrue(makeMapHandler(TMAPIChooser.GENERIC_SYSTEM_FACTORY_ONTOPIA) instanceof TMAPIMapHandler);
+    }
+
 
 }

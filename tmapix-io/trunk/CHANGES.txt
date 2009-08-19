@@ -7,6 +7,8 @@ Changes Log
 - Added XTM 1.0 writer
 - Added XTM 2.0 writer
 - Added JSON Topic Maps 1.0 writer
+- Added experimental Snello reader
+- Added experimental CTM reader
 - Internal code changes
 
 

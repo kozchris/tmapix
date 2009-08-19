@@ -112,7 +112,7 @@ public final class XTMTopicMapReader extends AbstractXTMTopicMapReader {
      *
      * @return <tt>true</tt> if the XTM 1.0 is translated, otherwise <tt>false</tt>.
      */
-    public boolean isTranslatingXTM10SubjectIdentifiers() {
+    public boolean isTranslatingToTMDM() {
         return _convertToTMDM;
     }
 

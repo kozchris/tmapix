@@ -27,14 +27,38 @@ import com.semagia.mio.IMapHandler;
  */
 public class MapHandlerFactory {
 
+    private MapHandlerFactory() {
+        // noop.
+    }
+
     /**
      * Creates a {@link IMapHandler} for the specified topic map.
+     * <p>
+     * This method may return a {@link IMapHandler} that is optimized for the 
+     * particular TMAPI implementation. If the such a {@link IMapHandler} is 
+     * not available, a {@link IMapHandler} is returned which works for all 
+     * TMAPI implementations.
+     * </p>
      *
      * @param topicMap A topic map.
      * @return A {@link IMapHandler} instance that acts upon the specified topic map.
      */
     public static IMapHandler createMapHandler(final TopicMap topicMap) {
         return TMAPIChooser.createMapHandler(topicMap);
+    }
+
+    /**
+     * Creates a {@link IMapHandler} that works upon TMAPI.
+     * <p>
+     * This method returns never an implementation-specific {@link IMapHandler} 
+     * implementation but returns one which works directly on top of TMAPI.
+     * </p>
+     * 
+     * @param topicMap A topic map.
+     * @return A {@link IMapHandler} instance that acts upon the specified topic map.
+     */
+    public static IMapHandler createTMAPIMapHandler(final TopicMap topicMap) {
+        return new TMAPIMapHandler(topicMap);
     }
 
 }

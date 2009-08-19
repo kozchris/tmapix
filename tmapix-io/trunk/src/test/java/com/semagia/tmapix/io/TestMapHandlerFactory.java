@@ -87,5 +87,12 @@ public class TestMapHandlerFactory extends TestCase {
         assertTrue(makeMapHandler(TMAPIChooser.GENERIC_SYSTEM_FACTORY_ONTOPIA) instanceof TMAPIMapHandler);
     }
 
+    public void testIgnoreTinyTim() throws Exception {
+        assertTrue(MapHandlerFactory.createTMAPIMapHandler(makeTopicMap(TMAPIChooser.TINYTIM_SYSTEM_FACTORY)) instanceof TMAPIMapHandler);
+    }
+
+    public void testIgnoreOntopia() throws Exception {
+        assertTrue(MapHandlerFactory.createTMAPIMapHandler(makeTopicMap(TMAPIChooser.ONTOPIA_SYSTEM_FACTORY)) instanceof TMAPIMapHandler);
+    }
 
 }

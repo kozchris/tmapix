@@ -38,6 +38,10 @@ import org.tmapi.core.Variant;
  */
 final class SignatureGenerator {
 
+    private SignatureGenerator() {
+        // noop.
+    }
+
     public static String generateSignature(Reifiable reifiable) {
         if (reifiable instanceof Association) {
             return generateSignature((Association) reifiable);

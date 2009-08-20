@@ -191,6 +191,7 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         Association assoc = _tm.createAssociation(type, _scope(scope));
         Map<String, Collection<String>> role2IIDs = new HashMap<String, Collection<String>>();
         Map<String, Topic> role2Reifier = new HashMap<String, Topic>();
+        
         for (IRole<Topic> r: roles) {
             Role role = assoc.createRole(r.getType(), r.getPlayer());
             if (!r.getItemIdentifiers().isEmpty() || r.getReifier() != null) {
@@ -204,7 +205,7 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
             }
         }
         assoc = (Association) _applyItemIdentifiers(assoc, iids);
-        _applyReifier(assoc, reifier);
+        assoc = (Association) _applyReifier(assoc, reifier);
         if (!role2IIDs.isEmpty() || !role2Reifier.isEmpty()) {
             for (Role role: new ArrayList<Role>(assoc.getRoles())) {
                 String signature = SignatureGenerator.generateSignature(role);

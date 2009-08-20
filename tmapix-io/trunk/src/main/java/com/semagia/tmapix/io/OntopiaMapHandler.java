@@ -16,7 +16,10 @@
 package com.semagia.tmapix.io;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.semagia.mio.MIOException;
 import com.semagia.tmapix.voc.XSD;
@@ -33,8 +36,10 @@ import net.ontopia.topicmaps.core.TopicIF;
 import net.ontopia.topicmaps.core.TopicMapBuilderIF;
 import net.ontopia.topicmaps.core.TopicMapIF;
 import net.ontopia.topicmaps.core.TopicNameIF;
+import net.ontopia.topicmaps.core.UniquenessViolationException;
 import net.ontopia.topicmaps.core.VariantNameIF;
 import net.ontopia.topicmaps.utils.ClassInstanceUtils;
+import net.ontopia.topicmaps.utils.KeyGenerator;
 import net.ontopia.topicmaps.utils.MergeUtils;
 
 /**
@@ -66,19 +71,44 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     /* (non-Javadoc)
      * @see com.semagia.tmapix.io.HamsterHandler#createAssociation(java.lang.Object, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void createAssociation(TopicIF type, Collection<TopicIF> scope,
             TopicIF reifier, Collection<String> iids,
             Collection<IRole<TopicIF>> roles) throws MIOException {
         AssociationIF assoc = _builder.makeAssociation(type);
+        _applyScope(assoc, scope);
+        Map<String, TopicIF> role2Reifier = new HashMap<String, TopicIF>();
+        Map<String, Collection<String>> role2IIds = new HashMap<String, Collection<String>>();
         for (IRole<TopicIF> r: roles) {
             AssociationRoleIF role = _builder.makeAssociationRole(assoc, r.getType(), r.getPlayer());
-            _applyItemIdentifiers(role, r.getItemIdentifiers());
-            _applyReifier(role, r.getReifier());
+            if (r.getReifier() != null || !r.getItemIdentifiers().isEmpty()) {
+                final String key = KeyGenerator.makeKey(role);
+                if (r.getReifier() != null) {
+                    if (r.getReifier().getReified() != null) {
+                        role2Reifier.put(key, r.getReifier());
+                    }
+                    else {
+                        _applyReifier(role, r.getReifier());
+                    }
+                }
+                if (!r.getItemIdentifiers().isEmpty()) {
+                    role2IIds.put(key, r.getItemIdentifiers());
+                }
+            }
         }
-        _applyScope(assoc, scope);
-        _applyItemIdentifiers(assoc, iids);
-        _applyReifier(assoc, reifier);
+        assoc = _applyReifier(assoc, reifier);
+        assoc = _applyItemIdentifiers(assoc, iids);
+        if (!role2Reifier.isEmpty() || !role2IIds.isEmpty()) {
+            for (AssociationRoleIF role: new ArrayList<AssociationRoleIF>(assoc.getRoles())) {
+                String key = KeyGenerator.makeKey(role);
+                role = _applyReifier(role, role2Reifier.get(key));
+                Collection<String> roleIIds = role2IIds.get(key);
+                if (roleIIds != null) {
+                    _applyItemIdentifiers(role, roleIIds);
+                }
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -301,7 +331,7 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      * @return
      * @throws MIOException
      */
-    private LocatorIF _createLocator(String iri) throws MIOException {
+    private static LocatorIF _createLocator(String iri) throws MIOException {
         try {
             return new URILocator(iri);
         }
@@ -342,10 +372,22 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      * @param iids
      * @throws MIOException
      */
-    private void _applyItemIdentifiers(ReifiableIF reifiable, Iterable<String> iids) throws MIOException {
+    private <T extends ReifiableIF> T _applyItemIdentifiers(T reifiable, Iterable<String> iids) throws MIOException {
         for (String iid: iids) {
-            reifiable.addItemIdentifier(_createLocator(iid));
+            try {
+                reifiable.addItemIdentifier(_createLocator(iid));
+            }
+            catch (UniquenessViolationException ex) {
+                final TMObjectIF existing = reifiable.getTopicMap().getObjectByItemIdentifier(_createLocator(iid));
+                if (_mergable(reifiable, existing)) {
+                    reifiable = _merge((ReifiableIF) existing, reifiable);
+                }
+                else {
+                    throw ex;
+                }
+            }
         }
+        return reifiable;
     }
 
     /**
@@ -353,11 +395,45 @@ class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      *
      * @param reifiable
      * @param reifier
+     * @throws MIOException 
      */
-    private void _applyReifier(ReifiableIF reifiable, TopicIF reifier) {
+    private <T extends ReifiableIF> T _applyReifier(T reifiable, TopicIF reifier) throws MIOException {
         if (reifier != null) {
-            reifiable.setReifier(reifier);
+            if (reifier.getReified() != null) {
+                final ReifiableIF existing = reifier.getReified();
+                if (_mergable(reifiable, existing)) {
+                    reifiable = _merge(existing, reifiable);
+                }
+                else {
+                    throw new MIOException("The topic reifies another construct");
+                }
+            }
+            else {
+                reifiable.setReifier(reifier);
+            }
         }
+        return reifiable;
+    }
+
+    private static boolean _mergable(ReifiableIF reifiableA, TMObjectIF tmo) {
+        return tmo instanceof ReifiableIF 
+                && _mergable(reifiableA, (ReifiableIF) tmo);
+    }
+
+    private static boolean _mergable(ReifiableIF reifiableA, ReifiableIF reifiableB) {
+        return reifiableA.getClass().equals(reifiableB.getClass()) 
+                && KeyGenerator.makeKey(reifiableA).equals(KeyGenerator.makeKey(reifiableB));
+    }
+
+    private <T extends ReifiableIF> T _merge(ReifiableIF source, T target) {
+        if (target instanceof AssociationRoleIF && 
+                !((AssociationRoleIF) target).getAssociation().equals(((AssociationRoleIF) source).getAssociation())) {
+            MergeUtils.mergeInto(((AssociationRoleIF) target).getAssociation(), ((AssociationRoleIF) source).getAssociation()); 
+        }
+        else {
+            MergeUtils.mergeInto(target, source);
+        }
+        return target;
     }
 
 }

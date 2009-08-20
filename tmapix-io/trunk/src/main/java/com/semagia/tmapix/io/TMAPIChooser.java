@@ -29,50 +29,34 @@ final class TMAPIChooser {
 
     private static final String _TINYTIM = "org.tinytim";
     private static final String _ONTOPIA = "net.ontopia.topicmaps.impl.tmapi2.";
-    private static final String _GENERIC = "com.semagia.tmapix.io.";
 
     static final String TMAPI_SYSTEM_FACTORY = "org.tmapi.core.TopicMapSystemFactory";
     static final String TINYTIM_SYSTEM_FACTORY = "org.tinytim.core.TopicMapSystemFactoryImpl";
     static final String ONTOPIA_SYSTEM_FACTORY = "net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory";
-    static final String GENERIC_SYSTEM_FACTORY_ONTOPIA = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia";
-    static final String GENERIC_SYSTEM_FACTORY_TINYTIM = "com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim";
+
+    private TMAPIChooser() {
+        // noop.
+    }
 
     static IMapHandler createMapHandler(TopicMap topicMap) {
         if (topicMap == null) {
             throw new IllegalArgumentException("The topic map must not be null");
         }
-        final String className = topicMap.getClass().getName();
-        if (isTinyTim(className)) {
+        if (isTinyTim(topicMap)) {
             return makeTinyTimMapInputHandler(topicMap);
         }
-        else if (isOntopia(className)) {
+        else if (isOntopia(topicMap)) {
             return makeOntopiaMapInputHandler(topicMap);
         }
         return new TMAPIMapHandler(topicMap);
     }
 
     static boolean isTinyTim(TopicMap topicMap) {
-        return isTinyTim(topicMap.getClass().getName());
-    }
-
-    private static boolean isTinyTim(String className) {
-        return className.startsWith(_TINYTIM);
+        return topicMap.getClass().getName().startsWith(_TINYTIM);
     }
 
     static boolean isOntopia(TopicMap topicMap) {
-        return isOntopia(topicMap.getClass().getName());
-    }
-
-    private static boolean isOntopia(String className) {
-        return className.startsWith(_ONTOPIA);
-    }
-
-    static boolean isGenericTMAPI(TopicMap topicMap) {
-        return isGenericTMAPI(topicMap.getClass().getName());
-    }
-
-    private static boolean isGenericTMAPI(String className) {
-        return className.startsWith(_GENERIC);
+        return topicMap.getClass().getName().startsWith(_ONTOPIA);
     }
 
     private static IMapHandler makeTinyTimMapInputHandler(final TopicMap topicMap) {

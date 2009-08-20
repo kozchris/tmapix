@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestGenericTMAPITinyTim extends AllTests {
+public class TestGenericTMAPITinyTim extends AllTests implements ITestConstants {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
@@ -31,7 +31,7 @@ public class TestGenericTMAPITinyTim extends AllTests {
 
     public TestGenericTMAPITinyTim() {
         super();
-        System.setProperty(TMAPIChooser.TMAPI_SYSTEM_FACTORY, TMAPIChooser.GENERIC_SYSTEM_FACTORY_TINYTIM);
+        System.setProperty(TMAPIChooser.TMAPI_SYSTEM_FACTORY, GENERIC_SYSTEM_FACTORY_TINYTIM);
     }
 
     public static TestSuite suite() {

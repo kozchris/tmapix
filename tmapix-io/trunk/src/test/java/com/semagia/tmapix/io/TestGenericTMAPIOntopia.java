@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestGenericTMAPIOntopia extends AllTests {
+public class TestGenericTMAPIOntopia extends AllTests implements ITestConstants {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
@@ -31,7 +31,7 @@ public class TestGenericTMAPIOntopia extends AllTests {
 
     public TestGenericTMAPIOntopia() {
         super();
-        System.setProperty(TMAPIChooser.TMAPI_SYSTEM_FACTORY, TMAPIChooser.GENERIC_SYSTEM_FACTORY_ONTOPIA);
+        System.setProperty(TMAPIChooser.TMAPI_SYSTEM_FACTORY, GENERIC_SYSTEM_FACTORY_ONTOPIA);
     }
 
     public static TestSuite suite() {

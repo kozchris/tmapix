@@ -26,7 +26,7 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-class CXTMWriterFactory {
+class CXTMWriterFactory implements ITestConstants {
 
     static TopicMapWriter createCXTMTopicMapWriter(TopicMap topicMap, OutputStream out, String base) throws IOException {
         if (TMAPIChooser.isTinyTim(topicMap)) {
@@ -35,7 +35,7 @@ class CXTMWriterFactory {
         else if (TMAPIChooser.isOntopia(topicMap)) {
             return new OntopiaCXTMWriter(out);
         }
-        else if (TMAPIChooser.isGenericTMAPI(topicMap)) {
+        else if (isGenericTMAPI(topicMap)) {
             if (TMAPIChooser.isTinyTim(((GenericTMAPITopicMap) topicMap).getWrappedTopicMap())) {
                 return new GenericTinyTimCXTMWriter(out, base);
             }
@@ -44,6 +44,18 @@ class CXTMWriterFactory {
             }
         }
         throw new IOException("No CXTM serializer found");
+    }
+
+    static boolean isGenericTMAPI(TopicMap topicMap) {
+        return isGenericTMAPI(topicMap.getClass().getName());
+    }
+
+    private static boolean isGenericTMAPI(String className) {
+        return className.startsWith(GENERIC_PACKAGE);
+    }
+
+    private static TopicMap _unwrap(TopicMap topicMap) {
+        return ((GenericTMAPITopicMap)topicMap).getWrappedTopicMap();
     }
 
     private static class TinyTimCXTMWriter implements TopicMapWriter {
@@ -68,7 +80,7 @@ class CXTMWriterFactory {
 
         @Override
         public void write(TopicMap topicMap) throws IOException {
-            super.write(((com.semagia.tmapix.io.GenericTMAPITopicMap)topicMap).getWrappedTopicMap()); 
+            super.write(_unwrap(topicMap)); 
         }
         
     }
@@ -96,7 +108,7 @@ class CXTMWriterFactory {
 
         @Override
         public void write(TopicMap topicMap) throws IOException {
-            super.write(((com.semagia.tmapix.io.GenericTMAPITopicMap)topicMap).getWrappedTopicMap()); 
+            super.write(_unwrap(topicMap)); 
         }
 
     }

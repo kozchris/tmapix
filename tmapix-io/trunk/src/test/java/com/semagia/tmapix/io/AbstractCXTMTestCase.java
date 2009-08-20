@@ -81,7 +81,7 @@ public abstract class AbstractCXTMTestCase extends TestCase {
         byte[] res = result.toByteArray();
         byte[] ref = expected.toByteArray();
         if (!Arrays.equals(res, ref)) {
-            System.out.println(result.toString("utf-8"));
+            //System.out.println(result.toString("utf-8"));
             fail("Expected: " + expected.toString("utf-8") + "\n, got: " + result.toString("utf-8"));
         }
     }

@@ -48,6 +48,10 @@ final class TMAPIChooser {
         else if (isOntopia(topicMap)) {
             return makeOntopiaMapInputHandler(topicMap);
         }
+        return createTMAPIMapHandler(topicMap);
+    }
+
+    static IMapHandler createTMAPIMapHandler(TopicMap topicMap) {
         return new TMAPIMapHandler(topicMap);
     }
 

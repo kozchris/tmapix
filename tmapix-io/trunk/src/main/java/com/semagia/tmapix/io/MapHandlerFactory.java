@@ -58,7 +58,7 @@ public class MapHandlerFactory {
      * @return A {@link IMapHandler} instance that acts upon the specified topic map.
      */
     public static IMapHandler createTMAPIMapHandler(final TopicMap topicMap) {
-        return new TMAPIMapHandler(topicMap);
+        return TMAPIChooser.createTMAPIMapHandler(topicMap);
     }
 
 }

@@ -5,7 +5,7 @@
     <property name="release_type" value="-snapshot-${DSTAMP}${TSTAMP}"/>
     
     <property name="project.name" value="TMAPIX I/O"/>
-    <property name="project.iri" value="http://www.semagia.com/"/>
+    <property name="project.iri" value="http://www.tmapix.org/"/>
 
     <!-- Directories -->
     <property name="dir.src" value="${basedir}/src/main/java"/>
@@ -157,7 +157,7 @@
     <target name="doc" depends="init">
         <mkdir dir="${dir.javadocs}"/>
         <javadoc destdir="${dir.javadocs}"
-            packagenames="com.semagia.tmapix.*"
+            packagenames="org.tmapix.*"
             author="true"
             version="true"
             use="true"
@@ -205,7 +205,7 @@
             <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tinytim.core.TopicMapSystemFactoryImpl"/>
             <classpath refid="path.test"/>
             <formatter type="plain"/>
-            <test name="com.semagia.tmapix.io.AllTests" 
+            <test name="org.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="tinytim-results"/>
         </junit>
     </target>
@@ -217,7 +217,7 @@
             <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tinytim.TopicMapSystemFactoryImpl"/>
             <classpath refid="path.test-tmapi-1"/>
             <formatter type="plain"/>
-            <test name="com.semagia.tmapix.io.AllTests" 
+            <test name="org.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="tinytim-1-results"/>
         </junit>
     </target>
@@ -229,7 +229,7 @@
             <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory"/>
             <classpath refid="path.test"/>
             <formatter type="plain"/>
-            <test name="com.semagia.tmapix.io.AllTests" 
+            <test name="org.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="ontopia-results"/>
         </junit>
     </target>
@@ -238,10 +238,10 @@
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
-            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia"/>
             <classpath refid="path.test"/>
             <formatter type="plain"/>
-            <test name="com.semagia.tmapix.io.AllTests" 
+            <test name="org.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="generic-ontopia-results"/>
         </junit>
     </target>
@@ -250,10 +250,10 @@
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
-            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="com.semagia.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim"/>
+            <sysproperty key="org.tmapi.core.TopicMapSystemFactory" value="org.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim"/>
             <classpath refid="path.test"/>
             <formatter type="plain"/>
-            <test name="com.semagia.tmapix.io.AllTests" 
+            <test name="org.tmapix.io.AllTests" 
                 todir="${dir.build}" outfile="generic-tinyim-results"/>
         </junit>
     </target>

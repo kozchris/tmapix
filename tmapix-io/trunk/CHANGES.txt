@@ -4,6 +4,7 @@ Changes Log
 
 0.3.0 -- 2009-08-xx
 -------------------
+- Changed package name from ``com.semagia.tmapix`` to ``org.tmapix``
 - Added XTM 1.0 writer
 - Added XTM 2.0 writer
 - Added JSON Topic Maps 1.0 writer

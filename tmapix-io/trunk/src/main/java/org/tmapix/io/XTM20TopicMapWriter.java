@@ -32,13 +32,12 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
+import org.tmapix.voc.Namespace;
+import org.tmapix.voc.TMDM;
+import org.tmapix.voc.XSD;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-
-import com.semagia.tmapix.voc.Namespace;
-import com.semagia.tmapix.voc.TMDM;
-import com.semagia.tmapix.voc.XSD;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into
@@ -78,7 +77,7 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
+     * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
     @Override
     public void write(final TopicMap topicMap) throws IOException {

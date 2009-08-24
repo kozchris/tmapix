@@ -23,9 +23,8 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
-
-import com.semagia.tmapix.voc.TMDM;
-import com.semagia.tmapix.voc.XTM10;
+import org.tmapix.voc.TMDM;
+import org.tmapix.voc.XTM10;
 
 /**
  * Utility functions to convert XTM 1.0 legacy features into the TMDM equivalent.

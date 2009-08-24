@@ -37,8 +37,8 @@ import org.tmapix.io.internal.utils.SignatureGenerator;
 
 import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.AbstractHamsterMapHandler;
-import com.semagia.tmapix.voc.TMDM;
-import com.semagia.tmapix.voc.XSD;
+import com.semagia.mio.voc.TMDM;
+import com.semagia.mio.voc.XSD;
 
 /**
  * {@link com.semagia.mio.IMapHandler} implementation that works upon any
@@ -56,7 +56,7 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     
     private TopicMap _tm;
     private final Locator _defaultNameType;
-    private Collection<DelayedEvents> _delayedEvents;
+    private Collection<DelayedRoleEvents> _delayedRoleEvents;
 
     /**
      * 
@@ -66,7 +66,7 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     public TMAPIMapHandler(TopicMap topicMap) {
         _tm = topicMap;
         _defaultNameType = _tm.createLocator(TMDM.TOPIC_NAME);
-        _delayedEvents = new ArrayList<DelayedEvents>();
+        _delayedRoleEvents = new ArrayList<DelayedRoleEvents>();
     }
 
     /* (non-Javadoc)
@@ -189,24 +189,21 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     protected void createAssociation(Topic type, Collection<Topic> scope, Topic reifier,
             Collection<String> iids, Collection<IRole<Topic>> roles)
             throws MIOException {
-        if (roles.isEmpty()) {
-            throw new MIOException("Invalid association: No roles provided");
-        }
         Association assoc = _tm.createAssociation(type, _scope(scope));
         for (IRole<Topic> r: roles) {
             Role role = assoc.createRole(r.getType(), r.getPlayer());
             if (!r.getItemIdentifiers().isEmpty() || r.getReifier() != null) {
-                _delayedEvents.add(new DelayedEvents(role, r.getReifier(), r.getItemIdentifiers()));
+                _delayedRoleEvents.add(new DelayedRoleEvents(role, r.getReifier(), r.getItemIdentifiers()));
             }
         }
         _applyItemIdentifiers(assoc, iids);
         _applyReifier(assoc, reifier);
-        if (!_delayedEvents.isEmpty()) {
-            for (DelayedEvents evt: _delayedEvents) {
-                _applyReifier(evt.getReifiable(), evt.getReifier());
-                _applyItemIdentifiers(evt.getReifiable(), evt.getItemIdentifiers());
+        if (!_delayedRoleEvents.isEmpty()) {
+            for (DelayedRoleEvents evt: _delayedRoleEvents) {
+                _applyReifier(evt.getRole(), evt.getReifier());
+                _applyItemIdentifiers(evt.getRole(), evt.getItemIdentifiers());
             }
-            _delayedEvents.clear();
+            _delayedRoleEvents.clear();
         }
     }
 
@@ -217,10 +214,9 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     protected void createName(Topic parent, Topic type, String value,
             Collection<Topic> scope, Topic reifier, Collection<String> iids,
             Collection<IVariant<Topic>> variants) throws MIOException {
-        if (value == null) {
-            throw new MIOException("The name value must not be null");
-        }
         Name name = parent.createName(type != null ? type : _defaultNameType(), value, _scope(scope));
+        _applyItemIdentifiers(name, iids);
+        _applyReifier(name, reifier);
         final Set<Topic> nameScope = name.getScope();
         for (IVariant<Topic> v: variants) {
             if (nameScope.containsAll(v.getScope())) {
@@ -240,8 +236,6 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
             _applyItemIdentifiers(variant, v.getItemIdentifiers());
             _applyReifier(variant, v.getReifier());
         }
-        _applyItemIdentifiers(name, iids);
-        _applyReifier(name, reifier);
     }
 
     /**
@@ -260,12 +254,6 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
     protected void createOccurrence(Topic parent, Topic type, String value,
             String datatype, Collection<Topic> scope, Topic reifier,
             Collection<String> iids) throws MIOException {
-        if (type == null) {
-            throw new MIOException("The occurrence type must not be null");
-        }
-        if (value == null) {
-            throw new MIOException("The occurrence value must not be null");
-        }
         Occurrence occ = null;
         if (XSD.ANY_URI.equals(datatype)) {
             occ = parent.createOccurrence(type, _createLocator(value), _scope(scope));
@@ -386,17 +374,17 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
         super.notifyMerge(source, target);
     }
 
-    private static final class DelayedEvents {
-        private final Reifiable _reifiable;
+    private static final class DelayedRoleEvents {
+        private final Role _role;
         private final Topic _reifier;
         private final Collection<String> _iids;
-        public DelayedEvents(Reifiable reifiable, Topic reifier, Collection<String> iids) {
-            _reifiable = reifiable;
+        public DelayedRoleEvents(Role role, Topic reifier, Collection<String> iids) {
+            _role = role;
             _reifier = reifier;
             _iids = iids;
         }
-        public Reifiable getReifiable() {
-            return _reifiable;
+        public Role getRole() {
+            return _role;
         }
         public Topic getReifier() {
             return _reifier;

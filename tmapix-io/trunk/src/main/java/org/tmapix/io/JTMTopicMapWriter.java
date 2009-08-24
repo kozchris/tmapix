@@ -33,9 +33,8 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 import org.tmapi.index.TypeInstanceIndex;
-
-import com.semagia.tmapix.voc.TMDM;
-import com.semagia.tmapix.voc.XSD;
+import org.tmapix.voc.TMDM;
+import org.tmapix.voc.XSD;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into

@@ -22,7 +22,7 @@ import java.util.Collection;
 import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.AbstractHamsterMapHandler;
 import com.semagia.mio.voc.TMDM;
-import com.semagia.tmapix.voc.XSD;
+import com.semagia.mio.voc.XSD;
 
 import net.ontopia.infoset.core.LocatorIF;
 import net.ontopia.infoset.impl.basic.URILocator;
@@ -43,22 +43,31 @@ import net.ontopia.topicmaps.utils.KeyGenerator;
 import net.ontopia.topicmaps.utils.MergeUtils;
 
 /**
- * {@link IMapHandler} implementation that works upon Ontopia's native API.
+ * PUBLIC: {@link com.semagia.mio.IMapHandler} implementation.
+ * 
  */
 public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
 
-    private TopicMapIF _tm;
-    private TopicMapBuilderIF _builder;
-    private Collection<DelayedEvents> _delayedEvents;
+    private final TopicMapIF _tm;
+    private final TopicMapBuilderIF _builder;
+    private final Collection<DelayedRoleEvents> _delayedRoleEvents;
 
+    /**
+     * Creates a map handler which operates upon the provided topic map.
+     *
+     * @param topicMap The topic map.
+     */
     public OntopiaMapHandler(TopicMapIF topicMap) {
+        if (topicMap == null) {
+            throw new IllegalArgumentException("The topic map must not be null");
+        }
         _tm = topicMap;
         _builder = topicMap.getBuilder();
-        _delayedEvents = new ArrayList<DelayedEvents>();
+        _delayedRoleEvents = new ArrayList<DelayedRoleEvents>();
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.AbstractHamsterMapHandler#endTopicMap()
+     * @see com.semagia.mio.helpers.AbstractHamsterMapHandler#endTopicMap()
      */
     @Override
     public void endTopicMap() throws MIOException {
@@ -68,33 +77,33 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createAssociation(java.lang.Object, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
+     * @see com.semagia.mio.helpers.HamsterHandler#createAssociation(java.lang.Object, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
      */
     @Override
     protected void createAssociation(TopicIF type, Collection<TopicIF> scope,
             TopicIF reifier, Collection<String> iids,
             Collection<IRole<TopicIF>> roles) throws MIOException {
         AssociationIF assoc = _builder.makeAssociation(type);
-        _applyScope(assoc, scope);
+        applyScope(assoc, scope);
         for (IRole<TopicIF> r: roles) {
             AssociationRoleIF role = _builder.makeAssociationRole(assoc, r.getType(), r.getPlayer());
             if (r.getReifier() != null || !r.getItemIdentifiers().isEmpty()) {
-                _delayedEvents.add(new DelayedEvents(role, r.getReifier(), r.getItemIdentifiers()));
+                _delayedRoleEvents.add(new DelayedRoleEvents(role, r.getReifier(), r.getItemIdentifiers()));
             }
         }
-        _applyReifier(assoc, reifier);
-        _applyItemIdentifiers(assoc, iids);
-        if (!_delayedEvents.isEmpty()) {
-            for (DelayedEvents evt: _delayedEvents) {
-                _applyReifier(evt.getReifiable(), evt.getReifier());
-                _applyItemIdentifiers(evt.getReifiable(), evt.getItemIdentifiers());
+        applyReifier(assoc, reifier);
+        applyItemIdentifiers(assoc, iids);
+        if (!_delayedRoleEvents.isEmpty()) {
+            for (DelayedRoleEvents evt: _delayedRoleEvents) {
+                applyReifier(evt.role, evt.reifier);
+                applyItemIdentifiers(evt.role, evt.iids);
             }
-            _delayedEvents.clear();
+            _delayedRoleEvents.clear();
         }
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createName(java.lang.Object, java.lang.Object, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
+     * @see com.semagia.mio.helpers.HamsterHandler#createName(java.lang.Object, java.lang.Object, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection, java.util.Collection)
      */
     @Override
     protected void createName(TopicIF parent, TopicIF type, String value,
@@ -102,16 +111,13 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
             Collection<String> iids, Collection<IVariant<TopicIF>> variants)
             throws MIOException {
         TopicNameIF name = null;
-        if (value == null) {
-            throw new MIOException("The name value must not be null");
-        }
         if (type == null) {
             type = _defaultNameType();
         }
         name = _builder.makeTopicName(parent, type, value);
-        _applyScope(name, scope);
-        _applyItemIdentifiers(name, iids);
-        _applyReifier(name, reifier);
+        applyScope(name, scope);
+        applyItemIdentifiers(name, iids);
+        applyReifier(name, reifier);
         @SuppressWarnings("unchecked")
         final Collection<TopicIF> nameScope = name.getScope();
         for (IVariant<TopicIF> v: variants) {
@@ -121,16 +127,16 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
             VariantNameIF var = null;
             final String datatype = v.getDatatype();
             if (XSD.ANY_URI.equals(datatype)) {
-                var = _builder.makeVariantName(name, _createLocator(v.getValue()), v.getScope());
+                var = _builder.makeVariantName(name, createLocator(v.getValue()), v.getScope());
             }
             else if (XSD.STRING.equals(datatype)) {
                 var = _builder.makeVariantName(name, v.getValue(), v.getScope());
             }
             else {
-                var = _builder.makeVariantName(name, v.getValue(), _createLocator(datatype), v.getScope());
+                var = _builder.makeVariantName(name, v.getValue(), createLocator(datatype), v.getScope());
             }
-            _applyItemIdentifiers(var, v.getItemIdentifiers());
-            _applyReifier(var, v.getReifier());
+            applyItemIdentifiers(var, v.getItemIdentifiers());
+            applyReifier(var, v.getReifier());
         }
     }
 
@@ -139,40 +145,34 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createOccurrence(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection)
+     * @see com.semagia.mio.helpers.HamsterHandler#createOccurrence(java.lang.Object, java.lang.Object, java.lang.String, java.lang.String, java.util.Collection, java.lang.Object, java.util.Collection)
      */
     @Override
     protected void createOccurrence(TopicIF parent, TopicIF type, String value,
             String datatype, Collection<TopicIF> scope, TopicIF reifier,
             Collection<String> iids) throws MIOException {
-        if (type == null) {
-            throw new MIOException("The occurrence type must not be null");
-        }
-        if (value == null) {
-            throw new MIOException("The occurrence value must not be null");
-        }
         OccurrenceIF occ = null;
         if (XSD.ANY_URI.equals(datatype)) {
-            occ = _builder.makeOccurrence(parent, type, _createLocator(value));
+            occ = _builder.makeOccurrence(parent, type, createLocator(value));
         }
         else if (XSD.STRING.equals(datatype)) {
             occ = _builder.makeOccurrence(parent, type, value);
         }
         else {
-            occ = _builder.makeOccurrence(parent, type, value, _createLocator(datatype));
+            occ = _builder.makeOccurrence(parent, type, value, createLocator(datatype));
         }
-        _applyScope(occ, scope);
-        _applyItemIdentifiers(occ, iids);
-        _applyReifier(occ, reifier);
+        applyScope(occ, scope);
+        applyItemIdentifiers(occ, iids);
+        applyReifier(occ, reifier);
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createTopicByItemIdentifier(java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#createTopicByItemIdentifier(java.lang.String)
      */
     @Override
     protected TopicIF createTopicByItemIdentifier(String iri)
             throws MIOException {
-        final LocatorIF iid = _createLocator(iri);
+        final LocatorIF iid = createLocator(iri);
         final TMObjectIF existingConstruct = _tm.getObjectByItemIdentifier(iid);
         if (existingConstruct != null) {
             if (existingConstruct instanceof TopicIF) {
@@ -194,12 +194,12 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createTopicBySubjectIdentifier(java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#createTopicBySubjectIdentifier(java.lang.String)
      */
     @Override
     protected TopicIF createTopicBySubjectIdentifier(String iri)
             throws MIOException {
-        final LocatorIF sid = _createLocator(iri);
+        final LocatorIF sid = createLocator(iri);
         TopicIF topic = _tm.getTopicBySubjectIdentifier(sid);
         if (topic != null) {
             return topic;
@@ -216,12 +216,12 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#createTopicBySubjectLocator(java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#createTopicBySubjectLocator(java.lang.String)
      */
     @Override
     protected TopicIF createTopicBySubjectLocator(String iri)
             throws MIOException {
-        final LocatorIF slo = _createLocator(iri);
+        final LocatorIF slo = createLocator(iri);
         TopicIF topic = _tm.getTopicBySubjectLocator(slo);
         if (topic == null) {
             topic = _builder.makeTopic();
@@ -231,17 +231,17 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleItemIdentifier(java.lang.Object, java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleItemIdentifier(java.lang.Object, java.lang.String)
      */
     @Override
     protected void handleItemIdentifier(TopicIF topic, String iri)
             throws MIOException {
-        final LocatorIF iid = _createLocator(iri);
+        final LocatorIF iid = createLocator(iri);
         final TMObjectIF existingConstruct = _tm.getObjectByItemIdentifier(iid);
         if (existingConstruct != null) {
             if (existingConstruct instanceof TopicIF) {
                 if (!existingConstruct.equals(topic)) {
-                    _merge(topic, (TopicIF) existingConstruct);
+                    merge(topic, (TopicIF) existingConstruct);
                     topic = (TopicIF) existingConstruct;
                 }
                 return;
@@ -252,45 +252,45 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
         }
         final TopicIF existingTopic = _tm.getTopicBySubjectIdentifier(iid);
         if (existingTopic != null && !existingTopic.equals(topic)) {
-            _merge(topic, existingTopic);
+            merge(topic, existingTopic);
             topic = existingTopic;
         }
         topic.addItemIdentifier(iid);
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleSubjectIdentifier(java.lang.Object, java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleSubjectIdentifier(java.lang.Object, java.lang.String)
      */
     @Override
     protected void handleSubjectIdentifier(TopicIF topic, String iri)
             throws MIOException {
-        final LocatorIF sid = _createLocator(iri);
+        final LocatorIF sid = createLocator(iri);
         TopicIF existingTopic = _tm.getTopicBySubjectIdentifier(sid);
         if (existingTopic != null) {
             if (!existingTopic.equals(topic)) {
-                _merge(topic, existingTopic);
+                merge(topic, existingTopic);
             }
             return;
         }
         final TMObjectIF existing = _tm.getObjectByItemIdentifier(sid);
         if (existing != null && existing instanceof TopicIF && !existing.equals(topic)) {
             existingTopic = (TopicIF) existing;
-            _merge(topic, existingTopic);
+            merge(topic, existingTopic);
             topic = existingTopic;
         }
         topic.addSubjectIdentifier(sid);
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleSubjectLocator(java.lang.Object, java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleSubjectLocator(java.lang.Object, java.lang.String)
      */
     @Override
     protected void handleSubjectLocator(TopicIF topic, String iri)
             throws MIOException {
-        final LocatorIF slo = _createLocator(iri);
+        final LocatorIF slo = createLocator(iri);
         final TopicIF existing = _tm.getTopicBySubjectLocator(slo);
         if (existing != null && !existing.equals(topic)) {
-            _merge(topic, existing);
+            merge(topic, existing);
         }
         else {
             topic.addSubjectLocator(slo);
@@ -298,15 +298,15 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleTopicMapItemIdentifier(java.lang.String)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleTopicMapItemIdentifier(java.lang.String)
      */
     @Override
     protected void handleTopicMapItemIdentifier(String iri) throws MIOException {
-        _tm.addItemIdentifier(_createLocator(iri));
+        _tm.addItemIdentifier(createLocator(iri));
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleTopicMapReifier(java.lang.Object)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleTopicMapReifier(java.lang.Object)
      */
     @Override
     protected void handleTopicMapReifier(TopicIF reifier) throws MIOException {
@@ -314,7 +314,7 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.HamsterHandler#handleTypeInstance(java.lang.Object, java.lang.Object)
+     * @see com.semagia.mio.helpers.HamsterHandler#handleTypeInstance(java.lang.Object, java.lang.Object)
      */
     @Override
     protected void handleTypeInstance(TopicIF instance, TopicIF type)
@@ -329,7 +329,7 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      * @return
      * @throws MIOException
      */
-    private static LocatorIF _createLocator(String iri) throws MIOException {
+    private static LocatorIF createLocator(String iri) throws MIOException {
         try {
             return new URILocator(iri);
         }
@@ -344,7 +344,7 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      * @param source The source topic (will be removed).
      * @param target The target topic.
      */
-    private void _merge(TopicIF source, TopicIF target) {
+    private void merge(TopicIF source, TopicIF target) {
         MergeUtils.mergeInto(target, source);
         super.notifyMerge(source, target);
     }
@@ -355,7 +355,7 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
      * @param scoped The scoped construct.
      * @param scope A collection of topics or <tt>null</tt>.
      */
-    private void _applyScope(ScopedIF scoped, Collection<TopicIF> scope) {
+    private void applyScope(ScopedIF scoped, Collection<TopicIF> scope) {
         if (scope != null) {
             for (TopicIF theme: scope) {
                 scoped.addTheme(theme);
@@ -364,21 +364,21 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /**
-     * 
+     * Sets the item identifiers of the provided reifiable.
      *
-     * @param reifiable
-     * @param iids
-     * @throws MIOException
+     * @param reifiable The construct.
+     * @param iids The item identifiers.
+     * @throws MIOException In case of an identity conflict.
      */
-    private void _applyItemIdentifiers(ReifiableIF reifiable, Iterable<String> iids) throws MIOException {
+    private void applyItemIdentifiers(ReifiableIF reifiable, Iterable<String> iids) throws MIOException {
         for (String iid: iids) {
             try {
-                reifiable.addItemIdentifier(_createLocator(iid));
+                reifiable.addItemIdentifier(createLocator(iid));
             }
             catch (UniquenessViolationException ex) {
-                final TMObjectIF existing = reifiable.getTopicMap().getObjectByItemIdentifier(_createLocator(iid));
-                if (_mergable(reifiable, existing)) {
-                    _merge((ReifiableIF) existing, reifiable);
+                final TMObjectIF existing = reifiable.getTopicMap().getObjectByItemIdentifier(createLocator(iid));
+                if (areMergable(reifiable, existing)) {
+                    merge((ReifiableIF) existing, reifiable);
                 }
                 else {
                     throw new MIOException(ex);
@@ -388,13 +388,13 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
     }
 
     /**
-     * 
+     * Sets the reifier of <tt>reifiable</tt> if <tt>reifier</tt> is not <tt>null</tt>.
      *
-     * @param reifiable
-     * @param reifier
-     * @throws MIOException 
+     * @param reifiable The reifiable construct.
+     * @param reifier The reifier or <tt>null</tt>.
+     * @throws MIOException In case of a model constraint violation.
      */
-    private void _applyReifier(ReifiableIF reifiable, TopicIF reifier) throws MIOException {
+    private void applyReifier(ReifiableIF reifiable, TopicIF reifier) throws MIOException {
         if (reifier == null) {
             return;
         }
@@ -403,8 +403,8 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
             if (existing.equals(reifiable)) {
                 return;
             }
-            if (_mergable(reifiable, existing)) {
-                _merge(existing, reifiable);
+            if (areMergable(reifiable, existing)) {
+                merge(existing, reifiable);
             }
             else {
                 throw new MIOException("The topic reifies another construct");
@@ -415,28 +415,56 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
         }
     }
 
-    private static boolean _mergable(ReifiableIF reifiableA, TMObjectIF tmo) {
+    /**
+     * Returns if the constructs are mergable.
+     * 
+     * @see #areMergable(ReifiableIF, ReifiableIF)
+     *
+     * @param reifiable The first construct.
+     * @param tmo The second construct.
+     * @return <tt>true</tt> if the constructs are mergable, otherwise <tt>false</tt>.
+     */
+    private static boolean areMergable(ReifiableIF reifiable, TMObjectIF tmo) {
         return tmo instanceof ReifiableIF 
-                && _mergable(reifiableA, (ReifiableIF) tmo);
+                && areMergable(reifiable, (ReifiableIF) tmo);
     }
 
-    private static boolean _mergable(ReifiableIF reifiableA, ReifiableIF reifiableB) {
+    /**
+     * Returns if the constructs are mergable.
+     * <p>
+     * The constructs are mergable if they are duplicates.
+     * </p>
+     *
+     * @param reifiableA The first construct.
+     * @param reifiableB The second construct.
+     * @return <tt>true</tt> if the constructs are mergable, otherwise <tt>false</tt>.
+     */
+    private static boolean areMergable(ReifiableIF reifiableA, ReifiableIF reifiableB) {
         boolean res = reifiableA.getClass().equals(reifiableB.getClass()) 
                         && KeyGenerator.makeKey(reifiableA).equals(KeyGenerator.makeKey(reifiableB));
         if (reifiableA instanceof AssociationRoleIF) {
+            // Only mergable if the parents are equal
             res = res && KeyGenerator.makeAssociationKey(((AssociationRoleIF) reifiableA).getAssociation())
                             .equals(KeyGenerator.makeAssociationKey(((AssociationRoleIF) reifiableB).getAssociation()));
         }
         else if (reifiableA instanceof VariantNameIF) {
             final TopicNameIF parentA = ((VariantNameIF) reifiableA).getTopicName();
             final TopicNameIF parentB = ((VariantNameIF) reifiableB).getTopicName();
+            // Only mergable if the parents belong to the same topic
             res = res && parentA.getTopic().equals(parentB.getTopic())
                       && KeyGenerator.makeTopicNameKey(parentA).equals(KeyGenerator.makeTopicNameKey(parentB));
         }
         return res;
     }
 
-    private void _merge(ReifiableIF source, ReifiableIF target) {
+    /**
+     * Merges the <tt>source</tt> into the <tt>target</tt>. The <tt>source</tt>
+     * will be removed.
+     *
+     * @param source The source.
+     * @param target The target.
+     */
+    private void merge(ReifiableIF source, ReifiableIF target) {
         if (target instanceof AssociationRoleIF && 
                 !((AssociationRoleIF) target).getAssociation().equals(((AssociationRoleIF) source).getAssociation())) {
             MergeUtils.mergeInto(((AssociationRoleIF) target).getAssociation(), ((AssociationRoleIF) source).getAssociation()); 
@@ -446,23 +474,19 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
         }
     }
 
-    private static final class DelayedEvents {
-        private final ReifiableIF _reifiable;
-        private final TopicIF _reifier;
-        private final Collection<String> _iids;
-        public DelayedEvents(ReifiableIF reifiable, TopicIF reifier, Collection<String> iids) {
-            _reifiable = reifiable;
-            _reifier = reifier;
-            _iids = iids;
-        }
-        public ReifiableIF getReifiable() {
-            return _reifiable;
-        }
-        public TopicIF getReifier() {
-            return _reifier;
-        }
-        public Collection<String> getItemIdentifiers() {
-            return _iids;
+    /**
+     * INTENRAL: Helper class to keep track of the role's reifier and item 
+     * identifiers.
+     */
+    private static final class DelayedRoleEvents {
+        final AssociationRoleIF role;
+        final TopicIF reifier;
+        final Collection<String> iids;
+        
+        DelayedRoleEvents(AssociationRoleIF role, TopicIF reifier, Collection<String> iids) {
+            this.role = role;
+            this.reifier = reifier;
+            this.iids = iids;
         }
     }
 

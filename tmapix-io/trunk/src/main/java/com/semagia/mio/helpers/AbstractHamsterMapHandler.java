@@ -25,7 +25,12 @@ import com.semagia.mio.IRef;
 import com.semagia.mio.MIOException;
 
 /**
- * 
+ * {@link IMapHandler} implementation that generates events for a
+ * {@link HamsterHandler}.
+ * <p>
+ * This implmentation ensures that the {@link HamsterHandler} never gets
+ * illegal <tt>null</tt> values.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -99,6 +104,9 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void itemIdentifier(String iid) throws MIOException {
+        if (iid == null) {
+            throw new MIOException("The item identifier must not be null");
+        }
         final byte state = _state();
         if (state == TOPIC) {
             handleItemIdentifier(peekTopic(), iid);
@@ -113,11 +121,17 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void subjectIdentifier(String iri) throws MIOException {
+        if (iri == null) {
+            throw new MIOException("The subject identifier must not be null");
+        }
         handleSubjectIdentifier(peekTopic(), iri);
     }
 
     @Override
     public void subjectLocator(String iri) throws MIOException {
+        if (iri == null) {
+            throw new MIOException("The subject locator must not be null");
+        }
         handleSubjectLocator(peekTopic(), iri);
     }
 
@@ -135,12 +149,18 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void startAssociation() throws MIOException {
-        _enterState(ASSOCIATION, makeAssociation());
+        _enterState(ASSOCIATION, new Association());
     }
 
     @Override
     public void endAssociation() throws MIOException {
         Association assoc = (Association) _leaveStatePopConstruct(ASSOCIATION);
+        if (assoc.type == null) {
+            throw new MIOException("The association's type must not be null");
+        }
+        if (assoc.roles.isEmpty()) {
+            throw new MIOException("The association has no roles");
+        }
         createAssociation(assoc.type, 
                             assoc.scope, 
                             assoc.reifier, 
@@ -150,12 +170,15 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void startName() throws MIOException {
-        _enterState(NAME, makeName());
+        _enterState(NAME, new Name());
     }
 
     @Override
     public void endName() throws MIOException {
         Name name = (Name) _leaveStatePopConstruct(NAME);
+        if (name.value == null) {
+            throw new MIOException("The name's value must not be null");
+        }
         createName(peekTopic(), 
                     name.type,
                     name.value,
@@ -167,12 +190,21 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void startOccurrence() throws MIOException {
-        _enterState(OCCURRENCE, makeOccurrence());
+        _enterState(OCCURRENCE, new Occurrence());
     }
 
     @Override
     public void endOccurrence() throws MIOException {
         Occurrence occ = (Occurrence) _leaveStatePopConstruct(OCCURRENCE);
+        if (occ.type == null) {
+            throw new MIOException("The type of the occurrence must not be null");
+        }
+        if (occ.value == null) {
+            throw new MIOException("The value of the occurrence must not be null");
+        }
+        if (occ.datatype == null) {
+            throw new MIOException("The datatype of the occurrence must not be null");
+        }
         createOccurrence(peekTopic(), 
                             occ.type, 
                             occ.value, 
@@ -185,12 +217,18 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
     @Override
     public void startRole() throws MIOException {
         assert _state() == ASSOCIATION;
-        _enterState(ROLE, makeRole());
+        _enterState(ROLE, new Role());
     }
 
     @Override
     public void endRole() throws MIOException {
         Role role = (Role) _leaveStatePopConstruct(ROLE);
+        if (role.type == null) {
+            throw new MIOException("The type of the role must not be null");
+        }
+        if (role.player == null) {
+            throw new MIOException("The player of the role must not be null");
+        }
         assert _state() == ASSOCIATION;
         peekAssociation().addRole(role);
     }
@@ -198,20 +236,20 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
     @Override
     public void startVariant() throws MIOException {
         assert _state() == NAME;
-        _enterState(VARIANT, makeVariant());
+        _enterState(VARIANT, new Variant());
     }
 
     @Override
     public void endVariant() throws MIOException {
         Variant variant = (Variant) _leaveStatePopConstruct(VARIANT);
         assert _state() == NAME;
-        if (variant.getValue() == null) {
+        if (variant.value == null) {
             throw new MIOException("The variant's value must not be null");
         }
-        if (variant.getDatatype() == null) {
+        if (variant.datatype == null) {
             throw new MIOException("The variant's datatype must not be null");
         }
-        if (variant.getScope() == null) {
+        if (variant.scope == null) {
             throw new MIOException("The variant's scope must not be unconstrained");
         }
         peekName().addVariant(variant);
@@ -280,6 +318,8 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void value(String value, String datatype) throws MIOException {
+        // No need to check to value == null / datatype == null, it's done in 
+        // endOccurrence / endVariant
         if (_state() == OCCURRENCE) {
             Occurrence occ = peekOccurrence();
             occ.value = value;
@@ -297,6 +337,7 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     @Override
     public void value(String value) throws MIOException {
+        // No need to check to value == null it's done in endName
         peekName().value = value;
     }
 
@@ -402,6 +443,9 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
      * @throws MIOException
      */
     private T createTopic(IRef ref) throws MIOException {
+        if (ref == null) {
+            throw new MIOException("The topic's identity must not be null");
+        }
         switch (ref.getType()) {
             case IRef.ITEM_IDENTIFIER:
                 return createTopicByItemIdentifier(ref.getIRI());
@@ -471,26 +515,6 @@ public abstract class AbstractHamsterMapHandler<T> extends HamsterHandler<T> imp
 
     private Variant peekVariant() {
         return (Variant) _peek();
-    }
-
-    private Association makeAssociation() {
-        return new Association();
-    }
-
-    private Role makeRole() {
-        return new Role();
-    }
-
-    private Occurrence makeOccurrence() {
-        return new Occurrence();
-    }
-
-    private Name makeName() {
-        return new Name();
-    }
-
-    private Variant makeVariant() {
-        return new Variant();
     }
 
 

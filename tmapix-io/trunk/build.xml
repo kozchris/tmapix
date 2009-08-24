@@ -40,7 +40,7 @@
     <path id="libs.tmapi">
         <fileset dir="${dir.lib}">
             <include name="tmapi-2.*.jar"/>
-            <include name="tmapix-core-*.jar"/>
+            <include name="tmapix-commons-*.jar"/>
         </fileset>
     </path>
 
@@ -166,6 +166,7 @@
             windowtitle="${project.name} API v${dist.version}"
             doctitle="${project.name} v${dist.version}">
             <fileset dir="${dir.src}">
+                <exclude name="org/tmapix/io/internal/**"/>
             </fileset>
 <!--            
             <doclet name="net.gleamynode.apiviz.APIviz"

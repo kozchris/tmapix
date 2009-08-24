@@ -120,7 +120,7 @@ public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
     }
 
     /* (non-Javadoc)
-     * @see com.semagia.tmapix.io.AbstractTopicMapReader#postProcess()
+     * @see org.tmapix.io.AbstractTopicMapReader#postProcess()
      */
     @Override
     protected void postProcess() {

@@ -195,14 +195,14 @@ public abstract class HamsterHandler<T> {
         /**
          * Returns the type of the role.
          *
-         * @return The type of the role.
+         * @return The type of the role, never <tt>null</tt>
          */
         public T getType();
 
         /**
          * Returns the role player.
          *
-         * @return The role player.
+         * @return The role player, never <tt>null</tt>
          */
         public T getPlayer();
 
@@ -230,14 +230,14 @@ public abstract class HamsterHandler<T> {
         /**
          * Returns the value of the variant.
          *
-         * @return The variant's value.
+         * @return The variant's value, never <tt>null</tt>
          */
         public String getValue();
 
         /**
          * Returns an absolute IRI indicating the datatype.
          *
-         * @return The datatype IRI.
+         * @return The datatype IRI, never <tt>null</tt>
          */
         public String getDatatype();
 

@@ -27,8 +27,7 @@ import org.tmapi.core.Reifiable;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
-
-import com.semagia.tmapix.voc.XSD;
+import org.tmapix.voc.XSD;
 
 /**
  * 

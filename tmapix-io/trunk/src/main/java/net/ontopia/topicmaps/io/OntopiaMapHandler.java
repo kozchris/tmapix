@@ -443,14 +443,14 @@ public class OntopiaMapHandler extends AbstractHamsterMapHandler<TopicIF> {
         boolean res = reifiableA.getClass().equals(reifiableB.getClass()) 
                         && KeyGenerator.makeKey(reifiableA).equals(KeyGenerator.makeKey(reifiableB));
         if (reifiableA instanceof AssociationRoleIF) {
-            // Only mergable if the parents are equal
+            // Only mergable if the parents are equal (they are duplicates)
             res = res && KeyGenerator.makeAssociationKey(((AssociationRoleIF) reifiableA).getAssociation())
                             .equals(KeyGenerator.makeAssociationKey(((AssociationRoleIF) reifiableB).getAssociation()));
         }
         else if (reifiableA instanceof VariantNameIF) {
             final TopicNameIF parentA = ((VariantNameIF) reifiableA).getTopicName();
             final TopicNameIF parentB = ((VariantNameIF) reifiableB).getTopicName();
-            // Only mergable if the parents belong to the same topic
+            // Only mergable if the parents belong to the same topic and if the names are equal (they are duplicates)
             res = res && parentA.getTopic().equals(parentB.getTopic())
                       && KeyGenerator.makeTopicNameKey(parentA).equals(KeyGenerator.makeTopicNameKey(parentB));
         }

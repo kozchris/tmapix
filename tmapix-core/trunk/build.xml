@@ -4,7 +4,7 @@
     <tstamp/>
     <property name="release_type" value="-snapshot-${DSTAMP}${TSTAMP}"/>
     
-    <property name="project.name" value="TMAPIX Core"/>
+    <property name="project.name" value="TMAPIX Commons"/>
     <property name="project.iri" value="http://www.semagia.com/"/>
 
     <!-- Directories -->
@@ -52,7 +52,7 @@
 
     <target name="init">
         <property name="dist.version" value="${version}${version_suffix}${release_type}"/>
-        <property name="dist.name" value="tmapix-core-${dist.version}"/>
+        <property name="dist.name" value="tmapix-commons-${dist.version}"/>
 
         <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
         <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
@@ -85,7 +85,7 @@
     <target name="doc" depends="init">
         <mkdir dir="${dir.javadocs}"/>
         <javadoc destdir="${dir.javadocs}"
-            packagenames="com.semagia.tmapix.*"
+            packagenames="org.tmapix.*"
             author="true"
             version="true"
             use="true"

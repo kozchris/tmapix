@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.semagia.tmapix.voc;
+package org.tmapix.voc;
 
 /**
  * Constants for XTM 1.0 PSIs.

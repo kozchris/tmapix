@@ -33,7 +33,7 @@
     <path id="libs.tmapi-1">
         <fileset dir="${dir.lib}">
             <include name="tmapi-1*.jar"/>
-            <include name="tmapix-core-*.jar"/>
+            <include name="tmapix-commons-*.jar"/>
         </fileset>
     </path>
 

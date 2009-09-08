@@ -158,6 +158,7 @@
         <mkdir dir="${dir.javadocs}"/>
         <javadoc destdir="${dir.javadocs}"
             packagenames="org.tmapix.*"
+            access="public"
             author="true"
             version="true"
             use="true"

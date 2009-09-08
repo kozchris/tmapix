@@ -167,6 +167,7 @@
             windowtitle="${project.name} API v${dist.version}"
             doctitle="${project.name} v${dist.version}">
             <fileset dir="${dir.src}">
+                <exclude name="net/**"/>
                 <exclude name="org/tmapix/io/internal/**"/>
             </fileset>
 <!--            

@@ -32,6 +32,7 @@ import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
+
 import org.tmapix.voc.TMDM;
 
 /**
@@ -39,7 +40,7 @@ import org.tmapix.voc.TMDM;
  * utility methods.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractBaseTextualTopicMapWriter extends
         AbstractTextualTopicMapWriter {
@@ -48,7 +49,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
     protected static final String UNTYPED = "[untyped]";
     protected final String _encoding;
     protected final String _baseIRI;
-    private Topic _defaultNameType;
+    protected Topic _defaultNameType;
     private final Comparator<Locator> _locatorComparator;
     
     protected AbstractBaseTextualTopicMapWriter(OutputStream stream, String baseIRI) throws IOException {

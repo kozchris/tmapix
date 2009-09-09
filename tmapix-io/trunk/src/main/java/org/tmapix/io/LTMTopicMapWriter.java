@@ -49,7 +49,7 @@ import org.tmapix.voc.XTM10;
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
 
@@ -106,15 +106,14 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writePrefixes();
         final Collection<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
         
-        final Topic defaultNameType = super.getDefaultNameType();
-        final boolean omitDefaultNameType = defaultNameType != null
-                                            && defaultNameType.getNames().isEmpty()
-                                            && defaultNameType.getOccurrences().isEmpty()
-                                            && defaultNameType.getSubjectIdentifiers().size() == 1
-                                            && defaultNameType.getSubjectLocators().isEmpty()
-                                            && defaultNameType.getRolesPlayed().isEmpty();
+        final boolean omitDefaultNameType = _defaultNameType != null
+                                            && _defaultNameType.getNames().isEmpty()
+                                            && _defaultNameType.getOccurrences().isEmpty()
+                                            && _defaultNameType.getSubjectIdentifiers().size() == 1
+                                            && _defaultNameType.getSubjectLocators().isEmpty()
+                                            && _defaultNameType.getRolesPlayed().isEmpty();
         if (omitDefaultNameType) {
-            topics.remove(defaultNameType);
+            topics.remove(_defaultNameType);
         }
         
         if (topicMap.getReifier() != null) {
@@ -138,7 +137,7 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         if (omitDefaultNameType) {
             // Need a copy since the returned collection is read-only
             nameTypes = new ArrayList<Topic>(nameTypes);
-            nameTypes.remove(defaultNameType);
+            nameTypes.remove(_defaultNameType);
         }
         _writeOntologySection(nameTypes, topics, "Name Types");
         tiIdx.close();

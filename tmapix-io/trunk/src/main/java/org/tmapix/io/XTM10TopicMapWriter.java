@@ -118,7 +118,7 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
 
     protected void _writeTopic(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "id", "", "CDATA",  _getId(topic));
+        _attrs.addAttribute("", "id", "", "CDATA",  getId(topic));
         _out.startElement("topic", _attrs);
         _writeIdentities(topic);
         for (Topic type: topic.getTypes()) {
@@ -212,7 +212,7 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "xlink:href", "", "CDATA", "#" + _getId(topic));
+        _attrs.addAttribute("", "xlink:href", "", "CDATA", "#" + getId(topic));
         _out.emptyElement("topicRef", _attrs);
     }
 

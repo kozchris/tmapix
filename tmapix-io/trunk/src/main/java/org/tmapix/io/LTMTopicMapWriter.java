@@ -61,10 +61,25 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
     private final Map<String, String> _sidPrefixes;
     private final Map<String, String> _sloPrefixes;
 
+    /**
+     * Creates a LTM writer, using "utf-8" encoding.
+     *
+     * @param out The stream the LTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @throws IOException If an error occurs.
+     */
     public LTMTopicMapWriter(OutputStream stream, String baseIRI) throws IOException {
         this(stream, baseIRI, "utf-8");
     }
 
+    /**
+     * Creates a LTM writer.
+     *
+     * @param out The stream the LTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @param encoding The encoding to use.
+     * @throws IOException If an error occurs.
+     */
     public LTMTopicMapWriter(OutputStream stream, String baseIRI, String encoding)
         throws IOException {
         super(stream, baseIRI, encoding);
@@ -90,12 +105,24 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writeFileHeader();
         _writePrefixes();
         final Collection<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
-
+        
+        final Topic defaultNameType = super.getDefaultNameType();
+        final boolean omitDefaultNameType = defaultNameType != null
+                                            && defaultNameType.getNames().isEmpty()
+                                            && defaultNameType.getOccurrences().isEmpty()
+                                            && defaultNameType.getSubjectIdentifiers().size() == 1
+                                            && defaultNameType.getSubjectLocators().isEmpty()
+                                            && defaultNameType.getRolesPlayed().isEmpty();
+        if (omitDefaultNameType) {
+            topics.remove(defaultNameType);
+        }
+        
         if (topicMap.getReifier() != null) {
             _writeSection("Topic Map");
             _out.write("#TOPICMAP");
             _writeReifier(topicMap);
             super.newline();
+            _writeTopic(topicMap.getReifier(), false);
             topics.remove(topicMap.getReifier());
         }
         _writeSection("ONTOLOGY");
@@ -107,7 +134,13 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writeOntologySection(tiIdx.getAssociationTypes(), topics, "Association Types");
         _writeOntologySection(tiIdx.getRoleTypes(), topics, "Role Types");
         _writeOntologySection(tiIdx.getOccurrenceTypes(), topics, "Occurrence Types");
-        _writeOntologySection(tiIdx.getNameTypes(), topics, "Name Types");
+        Collection<Topic> nameTypes = tiIdx.getNameTypes();
+        if (omitDefaultNameType) {
+            // Need a copy since the returned collection is read-only
+            nameTypes = new ArrayList<Topic>(nameTypes);
+            nameTypes.remove(defaultNameType);
+        }
+        _writeOntologySection(nameTypes, topics, "Name Types");
         tiIdx.close();
         final ScopedIndex scopedIdx = topicMap.getIndex(ScopedIndex.class);
         if (!scopedIdx.isAutoUpdated()) {
@@ -126,16 +159,30 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
             _writeAssociation(assoc);
         }
         super.newline();
-        _out.write("/*");
-        super.newline();
-        super.indent();
-        _out.write("Thanks for using TMAPIX I/O :)");
-        super.newline();
-        _out.write("*/");
+        _out.write("/* Thanks for using TMAPIX I/O :) */");
         super.newline();
         _out.flush();
+        _sloPrefixes.clear();
+        _sidPrefixes.clear();
+        _topic2Reference.clear();
     }
 
+    /**
+     * Adds a subject identifier prefix to the writer.
+     * <p>
+     * The writer converts all subject identifiers into QNames which start 
+     * with the provided <tt>reference</tt>.
+     * </p>
+     * <p>
+     * I.e. if a prefix "wp" is set to "http://en.wikipedia.org/wiki", a 
+     * subject identifier like "http://en.wikipedia.org/wiki/John_Lennon" is 
+     * converted into a QName "wp:John_Lennon".
+     * </p>
+     *
+     * @param prefix The prefix to add, an existing prefix with the same name
+     *                  will be overridden.
+     * @param reference The IRI to which the prefix should be assigned to.
+     */
     public void addSubjectIdentifierPrefix(String prefix, String reference) {
         if (prefix == null) {
             throw new IllegalArgumentException("The prefix must not be null");
@@ -155,10 +202,31 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _sidPrefixes.put(prefix, reference);
     }
 
+    /**
+     * Removes a subject identifier prefix mapping.
+     *
+     * @param prefix The prefix to remove.
+     */
     public void removeSubjectIdentifierPrefix(String prefix) {
         _sidPrefixes.remove(prefix);
     }
 
+    /**
+     * Adds a subject locator prefix to the writer.
+     * <p>
+     * The writer converts all subject locators into QNames which start 
+     * with the provided <tt>reference</tt>.
+     * </p>
+     * <p>
+     * I.e. if a prefix "wp" is set to "http://en.wikipedia.org/wiki", a 
+     * subject locator like "http://en.wikipedia.org/wiki/John_Lennon" is 
+     * converted into a QName "wp:John_Lennon".
+     * </p>
+     *
+     * @param prefix The prefix to add, an existing prefix with the same name
+     *                  will be overridden.
+     * @param reference The IRI to which the prefix should be assigned to.
+     */
     public void addSubjectLocatorPrefix(String prefix, String reference) {
         if (prefix == null) {
             throw new IllegalArgumentException("The prefix must not be null");
@@ -173,11 +241,16 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
             throw new IllegalArgumentException("The IRI is invalid: " + reference);
         }
         if (_sidPrefixes.containsKey(prefix)) {
-            throw new IllegalArgumentException("The prefix is already used as subject locator");
+            throw new IllegalArgumentException("The prefix is already used as subject identifier");
         }
         _sloPrefixes.put(prefix, reference);
     }
 
+    /**
+     * Removes a subject locator prefix mapping.
+     *
+     * @param prefix The prefix to remove.
+     */
     public void removeSubjectLocatorPrefix(String prefix) {
         _sloPrefixes.remove(prefix);
     }
@@ -196,11 +269,18 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writePrefixes(_sloPrefixes, '%');
     }
     
-    private void _writePrefixes(final Map<String, String> prefixes, final char delimiter) throws IOException {
+    /**
+     * Writes the provided prefixes.
+     *
+     * @param prefixes The prefixes to write.
+     * @param locIndicator The kind of prefix, either <tt>%</tt> or <tt>@</tt>.
+     * @throws IOException In case of an error.
+     */
+    private void _writePrefixes(final Map<String, String> prefixes, final char locIndicator) throws IOException {
         String[] keys = prefixes.keySet().toArray(new String[0]);
         Arrays.sort(keys);
         for (String ident: keys) {
-            _out.write("#PREFIX " + ident + " " + delimiter);
+            _out.write("#PREFIX " + ident + " " + locIndicator);
             _writeString(prefixes.get(ident));
             super.newline();
         }
@@ -217,10 +297,10 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         super.newline();
         _out.write("/*");
         super.newline();
-        super.indent();
-        _out.write("Generated by TMAPIX I/O <http://www.tmapix.org/>");
+        _out.write(" *  ");
+        _out.write("Generated by TMAPIX I/O <http://www.tmapix.org/io/>");
         super.newline();
-        _out.write("*/");
+        _out.write(" */");
     }
 
     /**
@@ -276,14 +356,6 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeTopic(final Topic topic, final boolean topicTypeHeader) throws IOException {
-        if (topic.equals(getDefaultNameType())
-                && topic.getSubjectIdentifiers().size() == 1
-                && topic.getSubjectLocators().isEmpty()
-                && topic.getNames().isEmpty()
-                && topic.getOccurrences().isEmpty()
-                && topic.getRolesPlayed().isEmpty()) {
-            return;
-        }
         final Topic[] types = getTypes(topic);
         if (topicTypeHeader) {
             _writeTopicHeader(types);
@@ -321,6 +393,15 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         }
     }
 
+    /**
+     * Writes a header with the very first topic type.
+     * 
+     * The header is written if the the first topic type is not equal to 
+     * the last written header.
+     *
+     * @param types The topic types.
+     * @throws IOException In case of an error.
+     */
     private void _writeTopicHeader(Topic[] types) throws IOException {
         final String reference = types.length > 0 ? getTopicReference(types[0]) : UNTYPED;
         if (!reference.equals(_lastReference)) {
@@ -493,6 +574,14 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         }
     }
 
+    /**
+     * Writes a string.
+     * 
+     * This method converts <tt>"</tt> within the string to <tt>""</tt>.
+     *
+     * @param str The string to write.
+     * @throws IOException In case of an error.
+     */
     private void _writeString(final String str) throws IOException {
         final char[] ch = str.toCharArray();
         _out.write('"');

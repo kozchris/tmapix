@@ -44,7 +44,7 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
      * @param topic The topic to return an identifier for.
      * @return An identifier, never <tt>null</tt>.
      */
-    protected String _getId(final Topic topic) {
+    protected String getId(final Topic topic) {
         String id = null;
         for (Locator loc: topic.getItemIdentifiers()) {
             String reference = loc.getReference();

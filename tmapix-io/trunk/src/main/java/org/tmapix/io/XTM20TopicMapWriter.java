@@ -116,7 +116,7 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
             return;
         }
         _attrs.clear();
-        _attrs.addAttribute("", "id", "", "CDATA", _getId(topic));
+        _attrs.addAttribute("", "id", "", "CDATA", getId(topic));
         _out.startElement("topic", _attrs);
         _writeItemIdentifiers(topic);
         _writeLocators("subjectIdentifier", topic.getSubjectIdentifiers());
@@ -222,12 +222,12 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
     }
 
     private void _addReifier(final AttributesImpl attrs, final Topic reifier) {
-        attrs.addAttribute("", "reifier", "", "CDATA", "#" + _getId(reifier));
+        attrs.addAttribute("", "reifier", "", "CDATA", "#" + getId(reifier));
     }
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "href", "", "CDATA", "#" + _getId(topic));
+        _attrs.addAttribute("", "href", "", "CDATA", "#" + getId(topic));
         _out.emptyElement("topicRef", _attrs);
     }
 

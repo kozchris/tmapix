@@ -107,6 +107,8 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         final Collection<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
         
         final boolean omitDefaultNameType = _defaultNameType != null
+                                            && _defaultNameType.getTypes().isEmpty()
+                                            && _defaultNameType.getReified() == null
                                             && _defaultNameType.getNames().isEmpty()
                                             && _defaultNameType.getOccurrences().isEmpty()
                                             && _defaultNameType.getSubjectIdentifiers().size() == 1

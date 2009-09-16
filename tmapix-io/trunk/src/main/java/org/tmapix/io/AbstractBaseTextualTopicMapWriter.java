@@ -45,7 +45,7 @@ import org.tmapix.voc.TMDM;
 abstract class AbstractBaseTextualTopicMapWriter extends
         AbstractTextualTopicMapWriter {
 
-    private static final Topic[] _EMPTY_TOPIC_ARRAY = new Topic[0];
+    protected static final Topic[] _EMPTY_TOPIC_ARRAY = new Topic[0];
     protected static final String UNTYPED = "[untyped]";
     protected final String _encoding;
     protected final String _baseIRI;
@@ -164,7 +164,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      */
     protected Variant[] getVariants(Name name) {
         final Collection<Variant> variants = name.getVariants();
-        final Variant[] vars = variants.toArray(new Variant[0]);
+        final Variant[] vars = variants.toArray(new Variant[variants.size()]);
         Arrays.sort(vars, getVariantComparator());
         return vars;
     }

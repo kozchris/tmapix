@@ -29,6 +29,9 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
     protected final String _baseIRI;
 
     protected AbstractTopicMapWriter(final String baseIRI) {
+        if (baseIRI == null) {
+            throw new IllegalArgumentException("The base IRI must not be null");
+        }
         _baseIRI = baseIRI;
     }
 
@@ -59,11 +62,14 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
             if (id.startsWith("id-")) {
                 id = null;
             }
-            if (id != null) {
+            if (id != null && isValidNCName(id)) {
                 break;
             }
         }
         return id != null ? id : "id-" + topic.getId();
     }
 
+    protected static boolean isValidNCName(final String ident) {
+        return XMLChar.isValidNCName(ident);
+    }
 }

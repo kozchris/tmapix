@@ -39,6 +39,8 @@ public class MapHandlerFactory {
      * not available, a {@link IMapHandler} is returned which works for all 
      * TMAPI implementations.
      * </p>
+     * 
+     * @see #createTMAPIMapHandler(TopicMap)
      *
      * @param topicMap A topic map.
      * @return A {@link IMapHandler} instance that acts upon the specified topic map.
@@ -51,8 +53,10 @@ public class MapHandlerFactory {
      * Creates a {@link IMapHandler} that works upon TMAPI.
      * <p>
      * This method returns never an implementation-specific {@link IMapHandler} 
-     * implementation but returns one which works directly on top of TMAPI.
+     * but returns one which works directly on top of TMAPI.
      * </p>
+     * 
+     * @see #createMapHandler(TopicMap)
      * 
      * @param topicMap A topic map.
      * @return A {@link IMapHandler} instance that acts upon the specified topic map.

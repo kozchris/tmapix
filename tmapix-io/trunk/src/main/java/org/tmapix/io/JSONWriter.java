@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import java.util.Arrays;
+
 /**
  * Simple JSON serializer. This class is not usable as a generic JSON writer 
  * since it is possible to create an invalid JSON representation, but
@@ -86,11 +88,8 @@ final class JSONWriter {
         if (_depth > 0) {
             _out.write('\n');
         }
-        int indent = _depth*2;
-        char[] chars = new char[indent];
-        for (int i=0; i<indent; i++) {
-            chars[i] = ' ';
-        }
+        final char[] chars = new char[_depth*2];
+        Arrays.fill(chars, ' ');
         _out.write(chars);
     }
 
@@ -222,7 +221,7 @@ final class JSONWriter {
                 sb.append("\\r");
                 break;
             default:
-                if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
+                if (c < ' ' || (c >= '€' && c < ' ') ||
                                (c >= '\u2000' && c < '\u2100')) {
                     sb.append("\\u000")
                         .append(Integer.toHexString(c));

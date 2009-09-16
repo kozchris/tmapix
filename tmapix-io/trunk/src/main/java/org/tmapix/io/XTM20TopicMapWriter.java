@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2009 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
+
 import org.tmapix.voc.Namespace;
 import org.tmapix.voc.TMDM;
 import org.tmapix.voc.XSD;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into
@@ -47,7 +47,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
+public class XTM20TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     private Topic _defaultNameType;
 
@@ -84,12 +84,9 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
         // Cache the default name type. May be null, though
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
         _out.startDocument();
-        _attrs.addAttribute("", "xmlns", "", "CDATA", Namespace.XTM_20);
-        _attrs.addAttribute("", "version", "", "CDATA", "2.0");
-        if (topicMap.getReifier() != null) {
-            _addReifier(_attrs, topicMap.getReifier());
-        }
-        _out.startElement("topicMap", _attrs);
+        super.addAttribute("xmlns", Namespace.XTM_20);
+        super.addAttribute("version", "2.0");
+        _out.startElement("topicMap", _reifier(topicMap));
         _writeItemIdentifiers(topicMap);
         for (Topic topic: topicMap.getTopics()) {
             _writeTopic(topic);
@@ -116,7 +113,7 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
             return;
         }
         _attrs.clear();
-        _attrs.addAttribute("", "id", "", "CDATA", getId(topic));
+        super.addAttribute("id", getId(topic));
         _out.startElement("topic", _attrs);
         _writeItemIdentifiers(topic);
         _writeLocators("subjectIdentifier", topic.getSubjectIdentifiers());
@@ -193,12 +190,12 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
         _attrs.clear();
         final String datatype = datatyped.getDatatype().getReference();
         if (XSD.ANY_URI.equals(datatype)) {
-            _attrs.addAttribute("", "href", "", "CDATA", datatyped.locatorValue().toExternalForm());
+            super.addAttribute("href", datatyped.locatorValue().toExternalForm());
             _out.emptyElement("resourceRef", _attrs);
         }
         else {
             if (!XSD.STRING.equals(datatype)) {
-                _attrs.addAttribute("", "datatype", "", "CDATA", datatyped.getDatatype().toExternalForm());
+                super.addAttribute("datatype", datatyped.getDatatype().toExternalForm());
             }
             _out.dataElement("resourceData", _attrs, datatyped.getValue());
         }
@@ -214,20 +211,14 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
     private Attributes _reifier(final Reifiable reifiable) {
         final Topic reifier = reifiable.getReifier();
         if (reifier != null) {
-            _attrs.clear();
-            _addReifier(_attrs, reifier);
-            return _attrs;
+            super.addAttribute("reifier", "#" + super.getId(reifier));
         }
-        return XMLWriter.EMPTY_ATTRS;
-    }
-
-    private void _addReifier(final AttributesImpl attrs, final Topic reifier) {
-        attrs.addAttribute("", "reifier", "", "CDATA", "#" + getId(reifier));
+        return _attrs;
     }
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "href", "", "CDATA", "#" + getId(topic));
+        super.addAttribute("href", "#" + super.getId(topic));
         _out.emptyElement("topicRef", _attrs);
     }
 
@@ -253,10 +244,10 @@ public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
         _writeLocators("itemIdentity", construct.getItemIdentifiers());
     }
 
-    private void _writeLocators(final String name, final Set<Locator> locs) throws IOException {
+    private void _writeLocators(final String name, final Iterable<Locator> locs) throws IOException {
         for (Locator loc: locs) {
             _attrs.clear();
-            _attrs.addAttribute("", "href", "", "CDATA", loc.toExternalForm());
+            super.addAttribute("href", loc.toExternalForm());
             _out.emptyElement(name, _attrs);
         }
     }

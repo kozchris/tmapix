@@ -18,9 +18,11 @@ package org.tmapix.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
 
 /**
  * Simple SAX-alike XML writer.
@@ -30,7 +32,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 final class XMLWriter {
 
-    public static final Attributes EMPTY_ATTRS = new AttributesImpl(); 
+    private static final Attributes _EMPTY_ATTRS = new AttributesImpl(); 
 
     private static final char _NL = '\n';
 
@@ -42,16 +44,16 @@ final class XMLWriter {
 
     private boolean _prettify;
 
-    public XMLWriter(OutputStream out) throws IOException {
+    public XMLWriter(final OutputStream out) throws IOException {
         this(out, "utf-8");
     }
 
-    public XMLWriter(OutputStream out, String encoding) throws IOException {
+    public XMLWriter(final OutputStream out, final String encoding) throws IOException {
         _out = new OutputStreamWriter(out, encoding);
         _encoding = encoding;
     }
 
-    public void setPrettify(boolean prettify) {
+    public void setPrettify(final boolean prettify) {
         _prettify = prettify;
     }
 
@@ -90,14 +92,14 @@ final class XMLWriter {
     /**
      * Writes an element start with no attributes.
      */
-    public void startElement(String name) throws IOException {
-        startElement(name, EMPTY_ATTRS);
+    public void startElement(final String name) throws IOException {
+        startElement(name, _EMPTY_ATTRS);
     }
 
     /**
      * @see org.xml.sax.DocumentHandler#startElement(java.lang.String, org.xml.sax.AttributeList)
      */
-    public void startElement(String name, Attributes attrs) throws IOException {
+    public void startElement(final String name, final Attributes attrs) throws IOException {
         _indent();
         _out.write('<');
         _out.write(name);
@@ -109,11 +111,11 @@ final class XMLWriter {
     /**
      * @see org.xml.sax.DocumentHandler#endElement(java.lang.String)
      */
-    public void endElement(String name) throws IOException {
+    public void endElement(final String name) throws IOException {
         _endElement(name, true);
     }
 
-    private void _endElement(String name, boolean indent) throws IOException {
+    private void _endElement(final String name, final boolean indent) throws IOException {
         _depth--;
         if (indent) {
             _indent();
@@ -123,7 +125,11 @@ final class XMLWriter {
         _out.write('>');
     }
 
-    public void emptyElement(String name, Attributes attrs) throws IOException {
+    public void emptyElement(final String name) throws IOException {
+        emptyElement(name, _EMPTY_ATTRS);
+    }
+
+    public void emptyElement(final String name, final Attributes attrs) throws IOException {
         _indent();
         _out.write('<');
         _out.write(name);
@@ -131,17 +137,17 @@ final class XMLWriter {
         _out.write("/>");
     }
 
-    public void dataElement(String name, String data) throws IOException {
-        dataElement(name, EMPTY_ATTRS, data);
+    public void dataElement(final String name, final String data) throws IOException {
+        dataElement(name, _EMPTY_ATTRS, data);
     }
 
-    public void dataElement(String name, Attributes attrs, String data) throws IOException {
+    public void dataElement(final String name, final Attributes attrs, final String data) throws IOException {
         startElement(name, attrs);
         characters(data);
         _endElement(name, false);
     }
 
-    private void _writeAttributes(Attributes attrs) throws IOException {
+    private void _writeAttributes(final Attributes attrs) throws IOException {
         char[] chars;
         for (int i=0; i < attrs.getLength(); i++) {
             _out.write(' ');
@@ -167,11 +173,8 @@ final class XMLWriter {
             return;
         }
         _newline();
-        int indent = _depth*2;
-        final char[] chars = new char[indent];
-        for (int i=0; i<indent; i++) {
-            chars[i] = ' ';
-        }
+        final char[] chars = new char[_depth*2];
+        Arrays.fill(chars, ' ');
         _out.write(chars);
     }
 
@@ -182,19 +185,19 @@ final class XMLWriter {
      * @throws IOException If an error occurs.
      */
     public void characters(final String data) throws IOException {
-        char[] chars = data.toCharArray();
+        final char[] chars = data.toCharArray();
         characters(chars, 0, chars.length);
     }
 
     /**
      * @see org.xml.sax.DocumentHandler#characters(char[], int, int)
      */
-    public void characters(char[] chars, int start, int length) throws IOException {
+    public void characters(final char[] chars, final int start, final int length) throws IOException {
         _writeEscapedCharacters(chars, start, length, false);
     }
 
-    private void _writeEscapedCharacters(char[] ch, int start, int length,
-            boolean attributeValue) throws IOException {
+    private void _writeEscapedCharacters(final char[] ch, final int start, final int length,
+            final boolean attributeValue) throws IOException {
         for (int i = start; i < start + length; i++) {
             switch (ch[i]) {
             case '&':

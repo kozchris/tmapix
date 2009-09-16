@@ -221,7 +221,7 @@ final class JSONWriter {
                 sb.append("\\r");
                 break;
             default:
-                if (c < ' ' || (c >= '€' && c < ' ') ||
+                if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
                                (c >= '\u2000' && c < '\u2100')) {
                     sb.append("\\u000")
                         .append(Integer.toHexString(c));

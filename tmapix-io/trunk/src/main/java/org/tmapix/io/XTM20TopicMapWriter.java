@@ -33,6 +33,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
+import org.tmapix.io.XMLWriter;
 import org.tmapix.voc.Namespace;
 import org.tmapix.voc.TMDM;
 import org.tmapix.voc.XSD;
@@ -86,7 +87,10 @@ public class XTM20TopicMapWriter extends AbstractXMLTopicMapWriter {
         _out.startDocument();
         super.addAttribute("xmlns", Namespace.XTM_20);
         super.addAttribute("version", "2.0");
-        _out.startElement("topicMap", _reifier(topicMap));
+        if (topicMap.getReifier() != null) {
+            super.addAttribute("reifier", "#" + super.getId(topicMap.getReifier()));
+        }
+        _out.startElement("topicMap", _attrs);
         _writeItemIdentifiers(topicMap);
         for (Topic topic: topicMap.getTopics()) {
             _writeTopic(topic);
@@ -211,9 +215,13 @@ public class XTM20TopicMapWriter extends AbstractXMLTopicMapWriter {
     private Attributes _reifier(final Reifiable reifiable) {
         final Topic reifier = reifiable.getReifier();
         if (reifier != null) {
+            _attrs.clear();
             super.addAttribute("reifier", "#" + super.getId(reifier));
+            return _attrs;
         }
-        return _attrs;
+        else {
+            return XMLWriter.EMPTY_ATTRS;
+        }
     }
 
     private void _writeTopicRef(final Topic topic) throws IOException {

@@ -32,7 +32,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 final class XMLWriter {
 
-    private static final Attributes _EMPTY_ATTRS = new AttributesImpl(); 
+    public static final Attributes EMPTY_ATTRS = new AttributesImpl(); 
 
     private static final char _NL = '\n';
 
@@ -93,7 +93,7 @@ final class XMLWriter {
      * Writes an element start with no attributes.
      */
     public void startElement(final String name) throws IOException {
-        startElement(name, _EMPTY_ATTRS);
+        startElement(name, EMPTY_ATTRS);
     }
 
     /**
@@ -126,7 +126,7 @@ final class XMLWriter {
     }
 
     public void emptyElement(final String name) throws IOException {
-        emptyElement(name, _EMPTY_ATTRS);
+        emptyElement(name, EMPTY_ATTRS);
     }
 
     public void emptyElement(final String name, final Attributes attrs) throws IOException {
@@ -138,7 +138,7 @@ final class XMLWriter {
     }
 
     public void dataElement(final String name, final String data) throws IOException {
-        dataElement(name, _EMPTY_ATTRS, data);
+        dataElement(name, EMPTY_ATTRS, data);
     }
 
     public void dataElement(final String name, final Attributes attrs, final String data) throws IOException {
@@ -218,7 +218,7 @@ final class XMLWriter {
                 }
                 break;
             default:
-                if (ch[i] > '\u007f') {
+                if (ch[i] > '') {
                     _out.write("&#");
                     _out.write(Integer.toString(ch[i]));
                     _out.write(';');

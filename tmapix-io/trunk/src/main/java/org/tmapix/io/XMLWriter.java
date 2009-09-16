@@ -218,7 +218,7 @@ final class XMLWriter {
                 }
                 break;
             default:
-                if (ch[i] > '') {
+                if (ch[i] > '\u007f') {
                     _out.write("&#");
                     _out.write(Integer.toString(ch[i]));
                     _out.write(';');

@@ -48,7 +48,7 @@ import org.tmapix.voc.XSD;
  * format.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements TopicMapFragmentWriter {
 
@@ -73,6 +73,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
     private final Map<Topic, String> _topic2Reference;
     private final Set<String> _exportedAssocIds;
     private int _prefixCounter = 0;
+    private String _stylesheet;
 
     /**
      * Creates a TM/XML writer using "utf-8" encoding.
@@ -157,6 +158,24 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
      */
     public String getRootElement() {
         return _rootElement;
+    }
+
+    /**
+     * Sets a reference to an XSL stylesheet.
+     *
+     * @param reference An IRI reference.
+     */
+    public void setStylesheet(final String reference) {
+        _stylesheet = reference;
+    }
+
+    /**
+     * Returns the reference to the XSL stylesheet.
+     *
+     * @return An IRI reference or <tt>null</tt>.
+     */
+    public String getStylesheet() {
+        return _stylesheet;
     }
 
     /**
@@ -290,6 +309,9 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             _addReifier(topicMap);
         }
         _out.startDocument();
+        if (_stylesheet != null) {
+            _out.processingInstruction("xml-stylesheet", "href=\"" + _stylesheet + "\" type=\"text/xsl\"");
+        }
         _out.startElement(_rootElement, _attrs);
     }
 
@@ -557,7 +579,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
      * Retuns the subject locators of the topic.
      *
      * @param topic The topic.
-     * @return A (maybe empty) sorted array of subject locators.
+     * @return A (maybe empty) array of subject locators.
      */
     private String[] _getSubjectLocators(final Topic topic) {
         final Locator[] slos = topic.getSubjectLocators().toArray(new Locator[0]);
@@ -565,7 +587,6 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         for (int i=0; i<slos.length; i++) {
             sloArray[i] = slos[i].toExternalForm();
         }
-        Arrays.sort(sloArray);
         return sloArray;
     }
 

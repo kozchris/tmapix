@@ -90,6 +90,23 @@ final class XMLWriter {
     }
 
     /**
+     * @see org.xml.sax.DocumentHandler#processingInstruction(String, String)
+     * 
+     * Note: Neither the target nor the data is checked for validity.
+     * This method MUST NOT be used to create <?xml ...?> header!
+     *
+     * @param target The target.
+     * @param data The data.
+     */
+    public void processingInstruction(final String target, final String data) throws IOException {
+        _out.write("<?");
+        _out.write(target);
+        _out.write(' ');
+        _out.write(data);
+        _out.write("?>");
+    }
+
+    /**
      * Writes an element start with no attributes.
      */
     public void startElement(final String name) throws IOException {

@@ -150,7 +150,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         if (root.length() == 0) {
             throw new IllegalArgumentException("The root element must not be an empty string");
         }
-        if (root.indexOf(':') > 0 
+        if (root.indexOf(':') != -1 
                 && _prefix2IRI.get(root.substring(0, root.indexOf(':'))) == null) {
             throw new IllegalStateException("The prefix is not registered: " + root.substring(0, root.indexOf(':')));
         }

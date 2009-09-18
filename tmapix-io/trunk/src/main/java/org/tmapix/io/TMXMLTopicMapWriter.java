@@ -65,13 +65,12 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         _EL_SLO = _PREFIX_TMXML + ":locator",
         _EL_VARIANT = _PREFIX_TMXML + ":variant"
         ;
-
-    private String _rootElement = "topicmap";
-    private Locator _defaultNameTypeLocator;
     private final Map<String, String> _prefix2IRI;
     private final Map<String, String> _iri2Prefix;
     private final Map<Topic, String> _topic2Reference;
     private final Set<String> _exportedAssocIds;
+    private String _rootElement = "topicmap";
+    private Locator _defaultNameTypeLocator;
     private int _prefixCounter = 0;
     private String _stylesheet;
 
@@ -102,8 +101,8 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         _iri2Prefix = new HashMap<String, String>();
         _topic2Reference = new HashMap<Topic, String>();
         _exportedAssocIds = new HashSet<String>();
-        registerPrefix(_PREFIX_TMXML, Namespace.TMXML);
-        registerPrefix(_PREFIX_TMDM, Namespace.TMDM_MODEL);
+        _registerPrefix(_PREFIX_TMXML, Namespace.TMXML);
+        _registerPrefix(_PREFIX_TMDM, Namespace.TMDM_MODEL);
     }
 
     /* (non-Javadoc)
@@ -138,6 +137,9 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
 
     /**
      * Sets the root element, by default it is <tt>topicmap</tt>.
+     * 
+     * If the root element is a QName (i.e. <tt>q:name</tt>), the prefix has
+     * to be registered in advance.
      *
      * @param root The name of the root element.
      */
@@ -147,6 +149,10 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         }
         if (root.length() == 0) {
             throw new IllegalArgumentException("The root element must not be an empty string");
+        }
+        if (root.indexOf(':') > 0 
+                && _prefix2IRI.get(root.substring(0, root.indexOf(':'))) == null) {
+            throw new IllegalStateException("The prefix is not registered: " + root.substring(0, root.indexOf(':')));
         }
         _rootElement = root;
     }
@@ -190,6 +196,12 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         if (prefix == null) {
             throw new IllegalArgumentException("The prefix must not be null");
         }
+        if (_PREFIX_TMDM.equals(prefix)) {
+            throw new IllegalArgumentException("The prefix '" + _PREFIX_TMDM + "' is reserved");
+        }
+        if (_PREFIX_TMXML.equals(prefix)) {
+            throw new IllegalArgumentException("The prefix '" + _PREFIX_TMXML + "' is reserved");
+        }
         if (prefix.length() == 0) {
             throw new IllegalArgumentException("The prefix must not be empty");
         }
@@ -199,6 +211,16 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         if (reference.length() == 0) {
             throw new IllegalArgumentException("The reference must not be empty");
         }
+        _registerPrefix(prefix, reference);
+    }
+
+    /**
+     * Registeres a prefix without checking the parameters for validity.
+     *
+     * @param prefix The prefix.
+     * @param reference The IRI reference.
+     */
+    private void _registerPrefix(final String prefix, final String reference) {
         _prefix2IRI.put(prefix, reference);
         _iri2Prefix.put(reference, prefix);
     }
@@ -556,7 +578,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             if (lastSlash > -1 && previousSlash > -1) {
                 prefix = ref.substring(previousSlash+1, lastSlash);
                 if (super.isValidNCName(prefix) && !_prefix2IRI.containsKey(prefix)) {
-                    registerPrefix(prefix, ref);
+                    _registerPrefix(prefix, ref);
                 }
                 else {
                     prefix = null;
@@ -570,7 +592,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
                 prefix = "ns-" + _prefixCounter;
                 _prefixCounter++;
             }
-            registerPrefix(prefix, ref);
+            _registerPrefix(prefix, ref);
         }
         return prefix + ":" + localname;
     }

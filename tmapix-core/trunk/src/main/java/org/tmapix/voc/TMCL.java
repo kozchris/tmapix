@@ -171,12 +171,6 @@ public final class TMCL {
     public static final String TOPIC_ROLE_CONSTRAINT = _BASE + "topic-role-constraint";
 
     /**
-     * Use {@link #TOPIC_ROLE_CONSTRAINT}.
-     */
-    @Deprecated
-    public static final String ROLE_PLAYER_CONSTRAINT = TOPIC_ROLE_CONSTRAINT;
-
-    /**
      * Constrains the types of topics which may appear in the scope of a name, 
      * occurrence, or association of a particular type.
      * 

@@ -48,11 +48,6 @@ public class Namespace {
     public static final String TMDM_MODEL = "http://psi.topicmaps.org/iso13250/model/";
 
     /**
-     * .
-     */
-    public static final String TMXML = "http://psi.ontopia.net/xml/tm-xml/";
-
-    /**
      * TMCL namespace (<tt>http://psi.topicmaps.org/tmcl/</tt>)
      */
     public static final String TMCL = "http://psi.topicmaps.org/tmcl/";
@@ -66,5 +61,10 @@ public class Namespace {
      * XML Schema Datatypes namespace (<tt>http://www.w3.org/2001/XMLSchema#</tt>).
      */
     public static final String XSD = "http://www.w3.org/2001/XMLSchema#";
+
+    /**
+     * TM/XML namespace (<tt>http://psi.ontopia.net/xml/tm-xml/</tt>).
+     */
+    public static final String TMXML = "http://psi.ontopia.net/xml/tm-xml/";
 
 }

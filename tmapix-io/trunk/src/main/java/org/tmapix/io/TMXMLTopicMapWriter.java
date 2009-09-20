@@ -150,7 +150,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         if (root.length() == 0) {
             throw new IllegalArgumentException("The root element must not be an empty string");
         }
-        if (root.indexOf(':') != -1 
+        if (root.indexOf(':') > -1 
                 && _prefix2IRI.get(root.substring(0, root.indexOf(':'))) == null) {
             throw new IllegalStateException("The prefix is not registered: " + root.substring(0, root.indexOf(':')));
         }
@@ -202,8 +202,8 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         if (_PREFIX_TMXML.equals(prefix)) {
             throw new IllegalArgumentException("The prefix '" + _PREFIX_TMXML + "' is reserved");
         }
-        if (prefix.length() == 0) {
-            throw new IllegalArgumentException("The prefix must not be empty");
+        if (!super.isValidNCName(prefix)) {
+            throw new IllegalArgumentException("The prefix an invalid NCName");
         }
         if (reference == null) {
             throw new IllegalArgumentException("The reference must not be null");
@@ -251,7 +251,8 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             _endTopicMap();
         }
         else {
-            _out.emptyElement(_rootElement);
+            _startTopicMap(null);
+            _endTopicMap();
         }
         _prefix2IRI.clear();
         _iri2Prefix.clear();
@@ -292,7 +293,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             Association assoc = rolePlayed.getParent();
             _generatePrefixes(assoc);
             for (Role role: assoc.getRoles()) {
-                _generatePrefixes(role);
+                _getTopicReference(role.getType());
             }
         }
     }
@@ -410,15 +411,12 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
                 _out.emptyElement(assocElement, _attrs);
             }
             else if (arity == 2) {
-                Role otherRole = null;
                 for (Role role: assoc.getRoles()) {
                     if (!role.equals(playedRole)) {
-                        otherRole = role;
-                        break;
+                        _addToAttributes("topicref", role.getPlayer());
+                        _addToAttributes("otherrole", role.getType());
                     }
                 }
-                _addToAttributes("topicref", otherRole.getType());
-                _addToAttributes("otherrole", otherRole.getPlayer());
                 _out.emptyElement(assocElement, _attrs);
             }
             else {
@@ -452,18 +450,86 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
     }
 
     /**
-     * Generates prefixes for the specified topic. The played roles and
-     * occurrences / names are ignored.
+     * Generates a reference (i.e. a QName) to the specified topic.
      *
      * @param topic The topic generate a reference to.
      * @return The generated reference.
      */
     private String _generateReference(final Topic topic) {
-        final String[] sids = _getSubjectIdentifiers(topic);
-        if (sids.length > 0) {
-            return _getSubjectIdentifierReference(sids[0]);
+        NamespaceTuple fallback = null;
+        for (String sid: _getSubjectIdentifiers(topic)) {
+            NamespaceTuple nsTuple = _makePrefixTuple(sid);
+            if (nsTuple == null) {
+                continue;
+            }
+            if (nsTuple.prefix != null) {
+                return nsTuple.prefix + ":" + nsTuple.localName;
+            }
+            else if (fallback == null) {
+                fallback = nsTuple;
+            }
+        }
+        // No prefix / localname found
+        if (fallback != null) {
+            String prefix = "ns-" + _prefixCounter++;
+            while (_prefix2IRI.containsKey(prefix)) {
+                prefix = "ns-" + _prefixCounter++;
+            }
+            _registerPrefix(prefix, fallback.iri);
+            return prefix + ":" + fallback.localName;
         }
         return super.getId(topic);
+    }
+
+    /**
+     * Returns a namespace tuple for the specified subject identifier.
+     * 
+     * Side effect: If a new prefix is generated, the prefix is registered
+     * as namespace.
+     *
+     * @param sid The subject identifier.
+     * @return A namespace tuple (where the prefix component may be null) or
+     *          <tt>null</tt> if the algorithm was not able to generate a 
+     *          suitable prefix, local name, iri combination.
+     */
+    private NamespaceTuple _makePrefixTuple(String sid) {
+        final int length = sid.length();
+        final char lastChar = sid.charAt(length-1);
+        if (lastChar == '/') {
+            return null;
+        }
+        // Acc. to RFC 3987 an empty fragment or query string has to be kept
+        // If the sid has one of them, cut them silently to enhance the chance
+        // to get a valid local name
+        if (lastChar == '#' || lastChar == '?') {
+            sid = sid.substring(0, length-1);
+        }
+        final int slash = sid.lastIndexOf('/');
+        final int hash = sid.lastIndexOf('#');
+        final int pos = Math.max(slash, hash);
+        final String localName = sid.substring(pos + 1);
+        if (!super.isValidNCName(localName)) {
+            return null;
+        }
+        final String ref = sid.substring(0, pos + 1);
+        String prefix = _iri2Prefix.get(ref);
+        if (prefix != null) {
+            return new NamespaceTuple(prefix, localName, ref);
+        }
+        // No prefix found
+        final int lastSlash = ref.lastIndexOf('/');
+        final int previousSlash = ref.lastIndexOf('/', lastSlash > -1 ? lastSlash-1 : lastSlash);
+        if (lastSlash > -1 && previousSlash > -1) {
+            prefix = ref.substring(previousSlash+1, lastSlash);
+            if (!_prefix2IRI.containsKey(prefix) && super.isValidNCName(prefix)) {
+                _registerPrefix(prefix, ref);
+                return new NamespaceTuple(prefix, localName, ref);
+            }
+            else {
+                return new NamespaceTuple(null, localName, ref);
+            }
+        }
+        return null;
     }
 
     /**
@@ -555,46 +621,6 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         }
         Arrays.sort(sidArray);
         return sidArray;
-    }
-
-    /**
-     * Returns a QName based on the specified subject identifier.
-     *
-     * @param sid The subject identifier.
-     * @return A QName.
-     */
-    private String _getSubjectIdentifierReference(final String sid) {
-        final int length = sid.length();
-        final char lastChar = sid.charAt(length-1);
-        final int slash = sid.substring(0, lastChar == '/' ? length-2 : length-1).lastIndexOf('/');
-        final int hash = lastChar == '#' ? -1 : sid.lastIndexOf('#');
-        final int pos = Math.max(slash, hash);
-        final String localname = sid.substring(pos + 1);
-        final String ref = sid.substring(0, pos + 1);
-        String prefix = _iri2Prefix.get(ref);
-        if (prefix == null) {
-            final int lastSlash = ref.lastIndexOf('/');
-            final int previousSlash = ref.lastIndexOf('/', lastSlash > 0 ? lastSlash-1 : lastSlash);
-            if (lastSlash > -1 && previousSlash > -1) {
-                prefix = ref.substring(previousSlash+1, lastSlash);
-                if (super.isValidNCName(prefix) && !_prefix2IRI.containsKey(prefix)) {
-                    _registerPrefix(prefix, ref);
-                }
-                else {
-                    prefix = null;
-                }
-            }
-        }
-        if (prefix == null) {
-            prefix = "ns-" + _prefixCounter;
-            _prefixCounter++;
-            while (_prefix2IRI.containsKey(prefix)) {
-                prefix = "ns-" + _prefixCounter;
-                _prefixCounter++;
-            }
-            _registerPrefix(prefix, ref);
-        }
-        return prefix + ":" + localname;
     }
 
     /**
@@ -695,6 +721,21 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
      */
     private void _addToAttributes(final String name, final Topic topic) {
         super.addAttribute(name, _getTopicReference(topic));
+    }
+
+    /**
+     * Represents a tuple consisting of a prefix (which might be <tt>null</tt>),
+     * a local name and a namespace IRI.
+     */
+    private static class NamespaceTuple {
+        final String prefix;
+        final String localName;
+        final String iri;
+        NamespaceTuple(String prefix, String localName, String iri) {
+            this.prefix = prefix;
+            this.localName = localName;
+            this.iri = iri;
+        }
     }
 
 }

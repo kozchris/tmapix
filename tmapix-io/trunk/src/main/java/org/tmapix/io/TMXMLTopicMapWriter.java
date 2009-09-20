@@ -236,6 +236,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
      */
     private void _write(final Iterable<Topic> topics, final TopicMap topicMap) throws IOException {
         _registerPrefixes(topics);
+        _startTopicMap(topicMap);
         final Iterator<Topic> iter = topics.iterator();
         if (iter.hasNext()) {
             final Topic topic = iter.next();
@@ -243,17 +244,12 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             // Assuming that the locator can be used for all topics even if
             // they originate from different topic maps.
             _defaultNameTypeLocator = tm.createLocator(TMDM.TOPIC_NAME);
-            _startTopicMap(topicMap);
             _writeTopic(topic);
             while (iter.hasNext()) {
                 _writeTopic(iter.next());
             }
-            _endTopicMap();
         }
-        else {
-            _startTopicMap(null);
-            _endTopicMap();
-        }
+        _endTopicMap();
         _prefix2IRI.clear();
         _iri2Prefix.clear();
         _topic2Reference.clear();

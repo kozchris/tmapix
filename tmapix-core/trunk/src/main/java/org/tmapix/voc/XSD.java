@@ -318,7 +318,7 @@ public final class XSD {
 
     /**
      * IRI for the 
-     * <a href="http://www.w3.org/2001/XMLSchema#String">xsd:byte</a>
+     * <a href="http://www.w3.org/2001/XMLSchema#byte">xsd:byte</a>
      * datatype.
      */
     public static final String BYTE            = _BASE + "byte";

@@ -27,7 +27,7 @@
     <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.5.jar"/>
     <property name="lib.rdf" value="${dir.lib}/semagia-mio-rdf-0.9.3.jar"/>
     <property name="lib.snello" value="${dir.lib}/semagia-mio-snello-0.9.3.jar"/>
-    <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
+    <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.4.jar"/>
     <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.5.jar"/>
 
     <path id="libs.tmapi-1">

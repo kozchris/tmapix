@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2009 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.tmapix.voc.XSD;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into
- * a <a href="http://www.cerny-online.com/jtm/">JSON Topic Maps (JTM)</a>
+ * a <a href="http://www.cerny-online.com/jtm/">JSON Topic Maps (JTM) 1.0</a>
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
@@ -46,9 +46,9 @@ import org.tmapix.voc.XSD;
  */
 public class JTMTopicMapWriter implements TopicMapWriter {
 
-    private static final String _TMDM_TYPE_INSTANCE = TMDM.TYPE_INSTANCE;
-    private static final String _TMDM_TYPE = TMDM.TYPE;
-    private static final String _TMDM_INSTANCE = TMDM.INSTANCE;
+    private static final String _TMDM_TYPE_INSTANCE = "si:" + TMDM.TYPE_INSTANCE;
+    private static final String _TMDM_TYPE = "si:" + TMDM.TYPE;
+    private static final String _TMDM_INSTANCE = "si:" + TMDM.INSTANCE;
 
     private JSONWriter _out;
     private String _baseIRI;
@@ -61,7 +61,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param baseIRI The base IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs.
      */
-    public JTMTopicMapWriter(OutputStream out, String baseIRI) throws IOException {
+    public JTMTopicMapWriter(final OutputStream out, final String baseIRI) throws IOException {
         this(out, baseIRI, "utf-8");
     }
 
@@ -73,7 +73,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param encoding The encoding to use.
      * @throws IOException If an error occurs.
      */
-    public JTMTopicMapWriter(OutputStream out, String baseIRI, String encoding) throws IOException {
+    public JTMTopicMapWriter(final OutputStream out, final String baseIRI, final String encoding) throws IOException {
         if (encoding == null) {
             throw new IOException("The encoding must not be null");
         }
@@ -105,7 +105,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
     @Override
-    public void write(TopicMap topicMap) throws IOException {
+    public void write(final TopicMap topicMap) throws IOException {
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
         _out.startDocument();
         _out.startObject();
@@ -150,7 +150,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param topic The topic to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeTopic(Topic topic) throws IOException {
+    private void _writeTopic(final Topic topic) throws IOException {
         // Ignore the topic if it is the default name type and it has no further
         // characteristics
         if (topic.equals(_defaultNameType)
@@ -195,7 +195,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param name The name to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeName(Name name) throws IOException {
+    private void _writeName(final Name name) throws IOException {
         _out.startObject();
         _writeReifier(name);
         _writeItemIdentifiers(name);
@@ -222,7 +222,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param variant The variant to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeVariant(Variant variant) throws IOException {
+    private void _writeVariant(final Variant variant) throws IOException {
         _out.startObject();
         _writeReifier(variant);
         _writeItemIdentifiers(variant);
@@ -237,7 +237,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param occ The occurrence.
      * @throws IOException If an error occurs.
      */
-    private void _writeOccurrence(Occurrence occ) throws IOException {
+    private void _writeOccurrence(final Occurrence occ) throws IOException {
         _out.startObject();
         _writeReifier(occ);
         _writeItemIdentifiers(occ);
@@ -253,7 +253,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param datatyped The datatype-aware construct.
      * @throws IOException If an error occurs.
      */
-    private void _writeDatatypeAware(DatatypeAware datatyped) throws IOException {
+    private void _writeDatatypeAware(final DatatypeAware datatyped) throws IOException {
         final String datatype = datatyped.getDatatype().getReference();
         String value = XSD.ANY_URI.equals(datatype) ? datatyped.locatorValue().toExternalForm()
                                                     : datatyped.getValue();
@@ -269,7 +269,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param construct The construct to serialize the iids from.
      * @throws IOException If an error occurs.
      */
-    private void _writeItemIdentifiers(Construct construct) throws IOException {
+    private void _writeItemIdentifiers(final Construct construct) throws IOException {
         _writeLocators("item_identifiers", construct.getItemIdentifiers());
     }
 
@@ -281,7 +281,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param locators A (maybe empty) set of locators.
      * @throws IOException If an error occurs.
      */
-    private void _writeLocators(String name, Set<Locator> locators) throws IOException {
+    private void _writeLocators(final String name, final Set<Locator> locators) throws IOException {
         if (locators.isEmpty()) {
             return;
         }
@@ -299,7 +299,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param assoc The association to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeAssociation(Association assoc) throws IOException {
+    private void _writeAssociation(final Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
         if (roles.isEmpty()) {
             return;
@@ -324,7 +324,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param role The role to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeRole(Role role) throws IOException {
+    private void _writeRole(final Role role) throws IOException {
         _out.startObject();
         _writeReifier(role);
         _writeItemIdentifiers(role);
@@ -339,7 +339,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param typed The typed construct.
      * @throws IOException If an error occurs.
      */
-    private void _writeType(Typed typed) throws IOException {
+    private void _writeType(final Typed typed) throws IOException {
         _writeKeyValue("type", _topicRef(typed.getType()));
     }
 
@@ -349,7 +349,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param scoped The scoped construct to retrieve the scope from.
      * @throws IOException If an error occurs.
      */
-    private void _writeScope(Scoped scoped) throws IOException {
+    private void _writeScope(final Scoped scoped) throws IOException {
         Set<Topic> scope = scoped.getScope();
         if (scope.isEmpty()) {
             return;
@@ -374,7 +374,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @param instance The topic which plays the <tt>tmdm:instance</tt> role.
      * @throws IOException If an error occurs.
      */
-    private void _writeTypeInstance(Topic type, Topic instance) throws IOException {
+    private void _writeTypeInstance(final Topic type, final Topic instance) throws IOException {
         _out.startObject();
         _writeKeyValue("type", _TMDM_TYPE_INSTANCE);
         _out.key("roles");

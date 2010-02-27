@@ -154,6 +154,12 @@
                 <attribute name="Implementation-Title" value="${project.name}"/>
                 <attribute name="Implementation-Version" value="${dist.version}"/>
                 <attribute name="Implementation-URL" value="${project.iri}"/>
+                <!-- OSGi-specific -->
+                <attribute name="Export-Package" value="org.tmapix.voc;version=${dist.version}"/>
+                <attribute name="Bundle-Name" value="TMAPIX Core"/>
+                <attribute name="Bundle-SymbolicName" value="org.tmapix"/>
+                <attribute name="Bundle-Vendor" value="TMAPIX project"/>
+                <attribute name="Bundle-Version" value="${dist.version}"/>
             </manifest>
         </jar>
     </target>

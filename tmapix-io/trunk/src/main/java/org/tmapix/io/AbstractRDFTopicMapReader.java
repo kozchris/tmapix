@@ -36,23 +36,56 @@ import com.semagia.mio.Syntax;
 abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
         implements RDFTopicMapReader {
 
-    protected AbstractRDFTopicMapReader(TopicMap topicMap, Syntax syntax,
-            File source, String docIRI) throws IOException {
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @param docIRI
+     * @throws IOException
+     */
+    protected AbstractRDFTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final File source, final String docIRI)
+            throws IOException {
         super(topicMap, syntax, source, docIRI);
     }
 
-    protected AbstractRDFTopicMapReader(TopicMap topicMap, Syntax syntax,
-            File source) throws IOException {
+    /**
+     * 
+     * 
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @throws IOException
+     */
+    protected AbstractRDFTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final File source) throws IOException {
         super(topicMap, syntax, source);
     }
 
-    protected AbstractRDFTopicMapReader(TopicMap topicMap, Syntax syntax,
-            InputStream source, String docIRI) {
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @param docIRI
+     */
+    protected AbstractRDFTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final InputStream source, final String docIRI) {
         super(topicMap, syntax, source, docIRI);
     }
 
-    protected AbstractRDFTopicMapReader(TopicMap topicMap, Syntax syntax,
-            Source source) {
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     */
+    protected AbstractRDFTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final Source source) {
         super(topicMap, syntax, source);
     }
 
@@ -98,7 +131,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      */
     @Override
     public MappingSyntax getMappingSourceSyntax() {
-        Syntax syntax = (Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
+        final Syntax syntax = (Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
         return _toMappingSyntax(syntax); 
     }
 
@@ -116,7 +149,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @param syntax The syntax to convert.
      * @return The MappingSyntax instance.
      */
-    private static MappingSyntax _toMappingSyntax(Syntax syntax) {
+    private static MappingSyntax _toMappingSyntax(final Syntax syntax) {
         if (syntax == null) {
             return null;
         }
@@ -148,7 +181,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @param syntax The syntax to translate.
      * @return The translated syntax.
      */
-    private static Syntax _fromMappingSyntax(MappingSyntax syntax) {
+    private static Syntax _fromMappingSyntax(final MappingSyntax syntax) {
         if (syntax == null) {
             return null;
         }

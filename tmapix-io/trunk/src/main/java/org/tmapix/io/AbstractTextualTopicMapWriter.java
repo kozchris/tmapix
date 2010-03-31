@@ -43,7 +43,7 @@ import org.tmapi.core.Variant;
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
 
@@ -61,7 +61,7 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
     private final Comparator<Variant> _variantComparator;
     private final Comparator<Collection<Topic>> _topicCollectionComparator;
 
-    protected AbstractTextualTopicMapWriter(Writer out) {
+    protected AbstractTextualTopicMapWriter(final Writer out) {
         _out = out;
         _topicIdComparator = new TopicIdComparator();
         _topicComparator = new TopicComparator();

@@ -52,16 +52,40 @@ abstract class AbstractBaseTextualTopicMapWriter extends
     protected Topic _defaultNameType;
     private final Comparator<Locator> _locatorComparator;
     
-    protected AbstractBaseTextualTopicMapWriter(OutputStream stream, String baseIRI) throws IOException {
+    /**
+     * 
+     *
+     * @param stream The stream to write upon, never {@code null}.
+     * @param baseIRI The document IRI, not {@code null}.
+     * @throws IOException In case of an error.
+     */
+    protected AbstractBaseTextualTopicMapWriter(final OutputStream stream,
+            final String baseIRI) throws IOException {
         this(stream, baseIRI, "utf-8");
     }
 
-    protected AbstractBaseTextualTopicMapWriter(OutputStream stream, String baseIRI, String encoding)
-        throws IOException {
+    /**
+     * 
+     *
+     * @param stream The stream to write upon, never.
+     * @param baseIRI The document IRI.
+     * @param encoding The encoding to use.
+     * @throws IOException In case of an error.
+     */
+    protected AbstractBaseTextualTopicMapWriter(final OutputStream stream,
+            final String baseIRI, final String encoding) throws IOException {
         this(new OutputStreamWriter(stream, encoding), baseIRI, encoding);
     }
 
-    private AbstractBaseTextualTopicMapWriter(Writer out, String baseIRI, String encoding) {
+    /**
+     * 
+     *
+     * @param out The writer to use to serialize the stream.
+     * @param baseIRI The document IRI.
+     * @param encoding The encoding to use.
+     */
+    private AbstractBaseTextualTopicMapWriter(final Writer out,
+            final String baseIRI, final String encoding) {
         super(out);
         if (encoding == null) {
             throw new IllegalArgumentException("The encoding must not be null");
@@ -81,7 +105,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      *
      * @param topicMap A topic map.
      */
-    protected void init(TopicMap topicMap) {
+    protected void init(final TopicMap topicMap) {
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
     }
 
@@ -123,7 +147,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * @param topic The topic to retrieve the occurrences from.
      * @return A sorted array of occurrences.
      */
-    protected Occurrence[] getOccurrences(Topic topic) {
+    protected Occurrence[] getOccurrences(final Topic topic) {
         final Collection<Occurrence> occs = topic.getOccurrences();
         final Occurrence[] occArray = occs.toArray(new Occurrence[occs.size()]);
         Arrays.sort(occArray, getOccurrenceComparator());
@@ -136,7 +160,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * @param topic The topic to retrieve the names from.
      * @return A sorted array of names.
      */
-    protected Name[] getNames(Topic topic) {
+    protected Name[] getNames(final Topic topic) {
         final Collection<Name> names = topic.getNames();
         final Name[] nameArray = names.toArray(new Name[names.size()]);
         Arrays.sort(nameArray, getNameComparator());
@@ -149,7 +173,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * @param assoc The association to retrieve the roles from.
      * @return A sorted array of roles.
      */
-    protected Role[] getRoles(Association assoc) {
+    protected Role[] getRoles(final Association assoc) {
         final Collection<Role> roles = assoc.getRoles();
         final Role[] roleArray = roles.toArray(new Role[roles.size()]);
         Arrays.sort(roleArray, getRoleComparator());
@@ -162,7 +186,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * @param name The name to retrieve the variants from.
      * @return A sorted array of variants.
      */
-    protected Variant[] getVariants(Name name) {
+    protected Variant[] getVariants(final Name name) {
         final Collection<Variant> variants = name.getVariants();
         final Variant[] vars = variants.toArray(new Variant[variants.size()]);
         Arrays.sort(vars, getVariantComparator());
@@ -213,8 +237,6 @@ abstract class AbstractBaseTextualTopicMapWriter extends
         return _defaultNameType;
     }
 
-
-    
     /**
      * Comparator for locators.
      */

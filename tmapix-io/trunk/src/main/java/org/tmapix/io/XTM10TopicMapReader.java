@@ -32,10 +32,13 @@ import com.semagia.mio.Syntax;
  * Note: {@link XTMTopicMapReader} is a {@link TopicMapReader} which is able to 
  * parse any XTM version.
  * </p>
- * 
+ *
+ * @deprecated Use {@link XTMTopicMapReader}
+ *
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
+@Deprecated
 public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
 
     private boolean _convertToTMDM;

@@ -45,9 +45,12 @@ import org.xml.sax.Attributes;
  * a <a href="http://www.isotopicmaps.org/sam/sam-xtm/">XTM 2.0</a> 
  * representation.
  * 
+ * @deprecated Use {@link XTM2TopicMapWriter}
+ * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
+@Deprecated
 public class XTM20TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     private Topic _defaultNameType;

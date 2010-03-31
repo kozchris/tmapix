@@ -44,6 +44,10 @@ final class GenericTMAPITopicMap implements TopicMap {
         return _tm;
     }
 
+    public Locator getLocator() {
+        return _tm.getLocator();
+    }
+
     public void addItemIdentifier(Locator arg0) {
         _tm.addItemIdentifier(arg0);
     }

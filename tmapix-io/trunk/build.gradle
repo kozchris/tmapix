@@ -1,0 +1,55 @@
+/*
+ * Gradle 0.9 build file.
+ * 
+ * - Download Gradle from <http://www.gradle.org/>
+ * - Execute gradle build
+ * 
+ * TODO: Zip / Tar archives.
+ *
+ */
+group = 'org.tmapix'
+version = '0.4.0'
+
+apply plugin: 'java'
+apply plugin: 'osgi'
+apply plugin: 'maven'
+
+gradle.taskGraph.whenReady {taskGraph ->
+   if (!taskGraph.hasTask(':release')) {
+       version += '-SNAPSHOT'
+   }
+}
+
+repositories {
+    mavenCentral()
+    mavenRepo urls: 'http://www.tmapi.org/maven-repository/'
+    mavenRepo urls: 'http://www.tmapi.org/maven-repository/snapshots/'
+    mavenRepo urls: 'http://tinytim.sourceforge.net/maven-repository/'
+    mavenRepo urls: 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
+    mavenRepo urls: 'http://ontopia.googlecode.com/svn/maven-repository'
+    mavenRepo urls: 'http://ontopia.googlecode.com/svn/maven-snapshot-repository/'
+    mavenRepo urls: 'http://repository.jboss.com/maven2/'
+}
+
+dependencies {
+    compile group: 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
+    compile group: 'org.tmapi:tmapi:2.0.2'
+    compile group: 'net.ontopia:ontopia-engine:5.0.2'
+    compile group: 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
+    compile group: 'org.slf4j:slf4j-api:1.5.11'
+    
+    compile files('lib/semagia-mio-0.9.5.jar', 
+                  'lib/tmapix-commons-0.2.0-snapshot-200909161419.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+artifacts {
+    archives jar
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file://$buildDir/maven-repo/")
+    }
+}

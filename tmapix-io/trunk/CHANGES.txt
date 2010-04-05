@@ -2,14 +2,16 @@
 Changes Log
 ===========
 
-0.3.0 -- 2009-10-xx
+0.3.0 -- 2010-04-xx
 -------------------
 - Changed package name from ``com.semagia.tmapix`` to ``org.tmapix``
 - Added XTM 1.0 writer
 - Added XTM 2.0 writer
+- Added XTM 2.1 writer
 - Added LTM 1.3 writer
 - Added TM/XML 1.0 writer
 - Added JSON Topic Maps 1.0 writer
+- Added experimental XTM 2.1 reader
 - Added experimental Snello reader
 - Added experimental CTM reader
 - Internal code changes

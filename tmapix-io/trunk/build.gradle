@@ -32,11 +32,11 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
-    compile group: 'org.tmapi:tmapi:2.0.2'
-    compile group: 'net.ontopia:ontopia-engine:5.0.2'
-    compile group: 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
-    compile group: 'org.slf4j:slf4j-api:1.5.11'
+    compile 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
+    compile 'org.tmapi:tmapi:2.0.2'
+    compile 'net.ontopia:ontopia-engine:5.0.2'
+    compile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
+    compile 'org.slf4j:slf4j-api:1.5.11'
     
     compile files('lib/semagia-mio-0.9.5.jar', 
                   'lib/tmapix-commons-0.2.0-snapshot-200909161419.jar')

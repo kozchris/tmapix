@@ -34,7 +34,7 @@ repositories {
 dependencies {
     compile 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
     compile 'org.tmapi:tmapi:2.0.2'
-    compile 'net.ontopia:ontopia-engine:5.0.2'
+    compile 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT'
     compile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.5.11'
     

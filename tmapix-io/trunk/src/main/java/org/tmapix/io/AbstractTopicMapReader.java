@@ -108,7 +108,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      */
     private AbstractTopicMapReader(final IMapHandler handler,
             final Syntax syntax, final Source source) {
-        this(handler, DeserializerRegistry.createDeserializer(syntax), source, syntax);
+        this(handler, DeserializerRegistry.getInstance().createDeserializer(syntax), source, syntax);
     }
 
     private AbstractTopicMapReader(final IMapHandler handler,

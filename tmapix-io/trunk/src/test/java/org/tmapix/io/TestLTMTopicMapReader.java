@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestLTMTopicMapReader extends TestSuite {
 
@@ -52,7 +52,7 @@ public class TestLTMTopicMapReader extends TestSuite {
         @Override
         protected TopicMapReader makeReader(TopicMap tm, URL file) throws Exception {
             LTMTopicMapReader reader = new LTMTopicMapReader(tm, file.openStream(), file.toExternalForm());
-            reader.setLegacyReifierHandling(true);
+            reader.setLegacyMode(true);
             return reader;
         }
 

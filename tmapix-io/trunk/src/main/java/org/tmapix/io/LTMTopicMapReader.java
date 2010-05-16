@@ -106,9 +106,26 @@ public final class LTMTopicMapReader extends AbstractTopicMapReader {
     }
 
     /**
+     * @see #setLegacyMode(boolean)
+     */
+    @Deprecated
+    public void setLegacyReifierHandling(boolean enable) {
+        setLegacyMode(enable);
+    }
+
+    /**
+     * @see #getLegacyMode()
+     */
+    @Deprecated
+    public boolean getLegacyReifierHandling() {
+        return getLegacyMode();
+    }
+
+    /**
      * Indicates if reified construct should receive an item identifier of the 
      * form <tt>uri-of-file#--reified--id</tt> and the reifying topic should 
      * receive a subject identifier of the same form.
+     * Further the legacy mode allows only one subject locator.
      * <p>
      * By default this "feature" is disabled; the parser sets the [reifier] property 
      * of the reified construct and does not add any additional IRIs. To be 
@@ -118,18 +135,18 @@ public final class LTMTopicMapReader extends AbstractTopicMapReader {
      *
      * @param enable <tt>true</tt> to enable the legacy mode, otherwise <tt>false</tt>.
      */
-    public void setLegacyReifierHandling(boolean enable) {
-        _deserializer.setProperty(Property.XTM_10_LEGACY, Boolean.valueOf(enable));
+    public void setLegacyMode(boolean enable) {
+        _deserializer.setProperty(Property.LTM_LEGACY, Boolean.valueOf(enable));
     }
 
     /**
-     * Indicates if the parser handles the reification of constructs in a legacy
-     * way.
+     * Indicates if the parser handles the reification of constructs and subject
+     * locator handling in a legacy way.
      *
      * @return <tt>true</tt> if the parser is in legacy mode, otherwise <tt>false</tt>.
      */
-    public boolean getLegacyReifierHandling() {
-        return Boolean.TRUE.equals(_deserializer.getProperty(Property.XTM_10_LEGACY));
+    public boolean getLegacyMode() {
+        return Boolean.TRUE.equals(_deserializer.getProperty(Property.LTM_LEGACY));
     }
 
 }

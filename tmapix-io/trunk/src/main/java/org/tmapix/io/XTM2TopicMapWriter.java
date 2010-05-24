@@ -320,6 +320,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
         if (_version == Version.XTM_20) {
             super.addAttribute("href", "#" + super.getId(topic));
             _out.emptyElement("topicRef", _attrs);
+            return;
         }
         // XTM 2.1
         if (!topic.getSubjectIdentifiers().isEmpty()) {

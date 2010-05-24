@@ -117,12 +117,12 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
         _attrs.clear();
         super.addAttribute("id", getId(topic));
         _out.startElement("topic", _attrs);
-        _writeIdentities(topic);
         for (Topic type: topic.getTypes()) {
             _out.startElement("instanceOf");
             _writeTopicRef(type);
             _out.endElement("instanceOf");
         }
+        _writeIdentities(topic);
         for (Name name: topic.getNames()) {
             _writeName(name);
         }
@@ -240,6 +240,7 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
                 && slos.isEmpty()) {
             return;
         }
+        _attrs.clear();
         _out.startElement("subjectIdentity");
         if (!slos.isEmpty()) {
             if (slos.size() > 1) {

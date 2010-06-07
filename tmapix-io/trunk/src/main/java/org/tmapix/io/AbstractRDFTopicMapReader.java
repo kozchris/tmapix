@@ -130,7 +130,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @see org.tinytim.mio.RDFTopicMapReader#getMappingSourceSyntax()
      */
     @Override
-    public MappingSyntax getMappingSourceSyntax() {
+    public RDFSyntax getMappingSourceSyntax() {
         final Syntax syntax = (Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
         return _toMappingSyntax(syntax); 
     }
@@ -139,49 +139,49 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSourceSyntax(org.tinytim.mio.RDFTopicMapReader.MappingSyntax)
      */
     @Override
-    public void setMappingSourceSyntax(MappingSyntax syntax) {
+    public void setMappingSourceSyntax(RDFSyntax syntax) {
         _deserializer.setProperty(Property.RDF2TM_MAPPING_SYNTAX, _fromMappingSyntax(syntax));
     }
 
     /**
-     * Returns the {@link MappingSyntax} equivalent for the provided mio.Syntax.
+     * Returns the {@link RDFSyntax} equivalent for the provided mio.Syntax.
      *
      * @param syntax The syntax to convert.
      * @return The MappingSyntax instance.
      */
-    private static MappingSyntax _toMappingSyntax(final Syntax syntax) {
+    private static RDFSyntax _toMappingSyntax(final Syntax syntax) {
         if (syntax == null) {
             return null;
         }
         if (Syntax.N3.equals(syntax)) {
-            return MappingSyntax.N3;
+            return RDFSyntax.N3;
         }
         if (Syntax.NTRIPLES.equals(syntax)) {
-            return MappingSyntax.NTRIPLES;
+            return RDFSyntax.NTRIPLES;
         }
         if (Syntax.RDFXML.equals(syntax)) {
-            return MappingSyntax.RDFXML;
+            return RDFSyntax.RDFXML;
         }
         if (Syntax.TRIG.equals(syntax)) {
-            return MappingSyntax.TRIG;
+            return RDFSyntax.TRIG;
         }
         if (Syntax.TRIX.equals(syntax)) {
-            return MappingSyntax.TRIX;
+            return RDFSyntax.TRIX;
         }
         if (Syntax.TURTLE.equals(syntax)) {
-            return MappingSyntax.TURTLE;
+            return RDFSyntax.TURTLE;
         }
         throw new RuntimeException("Internal error, no MappingSyntax found for " + syntax.getName());
     }
 
 
     /**
-     * Returns the mio.Syntax equivalent for the provided {@link MappingSyntax}.
+     * Returns the mio.Syntax equivalent for the provided {@link RDFSyntax}.
      *
      * @param syntax The syntax to translate.
      * @return The translated syntax.
      */
-    private static Syntax _fromMappingSyntax(final MappingSyntax syntax) {
+    private static Syntax _fromMappingSyntax(final RDFSyntax syntax) {
         if (syntax == null) {
             return null;
         }

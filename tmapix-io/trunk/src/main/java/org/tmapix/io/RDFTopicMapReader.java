@@ -28,36 +28,6 @@ import java.net.URL;
 public interface RDFTopicMapReader extends TopicMapReader {
 
     /**
-     * Represents the syntax of a RTM mapping.
-     */
-    public enum MappingSyntax {
-        /**
-         * N3 syntax.
-         */
-        N3, 
-        /**
-         * N-Triples syntax.
-         */
-        NTRIPLES, 
-        /**
-         * RDF/XML syntax.
-         */
-        RDFXML, 
-        /**
-         * TriG syntax.
-         */
-        TRIG, 
-        /**
-         * TriX syntax.
-         */
-        TRIX, 
-        /**
-         * Turtle syntax.
-         */
-        TURTLE
-    };
-
-    /**
      * Sets the file to read the RDF2TM mapping from.
      * 
      * @see #setMappingSource(URL)
@@ -104,7 +74,7 @@ public interface RDFTopicMapReader extends TopicMapReader {
      * @param syntax The syntax of the mapping source or <tt>null</tt> to
      *                  let the reader autodetect the syntax.
      */
-    public void setMappingSourceSyntax(MappingSyntax syntax);
+    public void setMappingSourceSyntax(RDFSyntax syntax);
 
     /**
      * Returns the mapping source syntax or <tt>null</tt> if the syntax
@@ -113,6 +83,6 @@ public interface RDFTopicMapReader extends TopicMapReader {
      * @return The mapping syntax or <tt>null</tt> if the syntax is 
      *          automatically detected.
      */
-    public MappingSyntax getMappingSourceSyntax();
+    public RDFSyntax getMappingSourceSyntax();
 
 }

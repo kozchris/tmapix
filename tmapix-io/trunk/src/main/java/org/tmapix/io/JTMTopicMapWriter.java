@@ -125,7 +125,10 @@ public class JTMTopicMapWriter implements TopicMapWriter {
             _writeAssociation(assoc);
         }
         // Write type-instance relationships
-        TypeInstanceIndex tiIdx = topicMap.getIndex(TypeInstanceIndex.class);
+        final TypeInstanceIndex tiIdx = topicMap.getIndex(TypeInstanceIndex.class);
+        if (!tiIdx.isOpen()) {
+            tiIdx.open();
+        }
         if (!tiIdx.isAutoUpdated()) {
             tiIdx.reindex();
         }

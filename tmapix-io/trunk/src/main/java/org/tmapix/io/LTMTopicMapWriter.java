@@ -128,6 +128,9 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         }
         _writeSection("ONTOLOGY");
         final TypeInstanceIndex tiIdx = topicMap.getIndex(TypeInstanceIndex.class);
+        if (!tiIdx.isOpen()) {
+            tiIdx.open();
+        }
         if (!tiIdx.isAutoUpdated()) {
             tiIdx.reindex();
         }
@@ -144,6 +147,9 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writeOntologySection(nameTypes, topics, "Name Types");
         tiIdx.close();
         final ScopedIndex scopedIdx = topicMap.getIndex(ScopedIndex.class);
+        if (!scopedIdx.isOpen()) {
+            scopedIdx.open();
+        }
         if (!scopedIdx.isAutoUpdated()) {
             scopedIdx.reindex();
         }

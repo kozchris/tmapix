@@ -53,4 +53,9 @@ public enum RDFSyntax {
      */
     TURTLE,
 
+    /** 
+     * <a href="http://www.semagia.com/tr/crtm/">Compact RDF to Topic Maps Mapping Syntax (CRTM)</a>.
+     */
+    CRTM;
+
 }

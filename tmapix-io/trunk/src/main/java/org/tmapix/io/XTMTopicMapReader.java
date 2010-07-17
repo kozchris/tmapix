@@ -27,8 +27,9 @@ import com.semagia.mio.Syntax;
 
 /**
  * {@link TopicMapReader} implementation that is able to deserialize XML Topic 
- * Maps (XTM) <a href="http://www.topicmaps.org/xtm/1.0/">version 1.0</a> and
- * <a href="http://www.isotopicmaps.org/sam/sam-xtm/">version 2.0</a>.
+ * Maps (XTM) <a href="http://www.topicmaps.org/xtm/1.0/">version 1.0</a>,
+ * <a href="http://www.isotopicmaps.org/sam/sam-xtm/">version 2.0</a> and
+ * <a href="http://www.itscj.ipsj.or.jp/sc34/open/1378.htm">version 2.1</a>.
  * <p>
  * This reader detects automatically the XTM version.
  * </p>

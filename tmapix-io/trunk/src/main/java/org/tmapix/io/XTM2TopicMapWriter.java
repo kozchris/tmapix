@@ -52,13 +52,8 @@ import org.xml.sax.Attributes;
  */
 public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
 
-    /**
-     * Representation of an XML Topic Maps version.
-     */
-    public enum Version {XTM_20, XTM_21};
-
     private Topic _defaultNameType;
-    private final Version _version;
+    private final XTMVersion _version;
     private boolean _exportIIds = true;
 
     /**
@@ -70,7 +65,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      * @throws IOException If an error occurs.
      */
     public XTM2TopicMapWriter(final OutputStream out, final String baseIRI, 
-            final Version version) throws IOException {
+            final XTMVersion version) throws IOException {
         super(out, baseIRI);
         _version = version;
     }
@@ -85,7 +80,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      * @throws IOException If an error occurs.
      */
     public XTM2TopicMapWriter(final OutputStream out, final String baseIRI,
-            final String encoding, final Version version) throws IOException {
+            final String encoding, final XTMVersion version) throws IOException {
         super(out, baseIRI, encoding);
         _version = version;
     }
@@ -117,7 +112,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      *
      * @return The XTM version.
      */
-    public Version getVersion() {
+    public XTMVersion getVersion() {
         return _version;
     }
 
@@ -130,8 +125,8 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
         _out.startDocument();
         super.addAttribute("xmlns", Namespace.XTM_20);
-        super.addAttribute("version", _version == Version.XTM_20 ? "2.0" : "2.1");
-        if (_version == Version.XTM_20 && topicMap.getReifier() != null) {
+        super.addAttribute("version", _version == XTMVersion.XTM_2_0 ? "2.0" : "2.1");
+        if (_version == XTMVersion.XTM_2_0 && topicMap.getReifier() != null) {
             super.addAttribute("reifier", "#" + super.getId(topicMap.getReifier()));
         }
         _out.startElement("topicMap", _attrs);
@@ -166,7 +161,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
         Collection<Locator> sids = null;
         Collection<Locator> slos = null;
         _attrs.clear();
-        if (_version == Version.XTM_20) {
+        if (_version == XTMVersion.XTM_2_0) {
             super.addAttribute("id", getId(topic));
             iids = topic.getItemIdentifiers();
             sids = topic.getSubjectIdentifiers();
@@ -288,7 +283,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      */
     private void _writeReifier(final Reifiable reifiable) throws IOException {
         final Topic reifier = reifiable.getReifier();
-        if (_version == Version.XTM_21 && reifier != null) {
+        if (_version == XTMVersion.XTM_2_1 && reifier != null) {
             _out.startElement("reifier");
             _writeTopicRef(reifier);
             _out.endElement("reifier");
@@ -305,7 +300,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      */
     private Attributes _reifier(final Reifiable reifiable) {
         final Topic reifier = reifiable.getReifier();
-        if (_version == Version.XTM_20 && reifier != null) {
+        if (_version == XTMVersion.XTM_2_0 && reifier != null) {
             _attrs.clear();
             super.addAttribute("reifier", "#" + super.getId(reifier));
             return _attrs;
@@ -317,28 +312,29 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        if (_version == Version.XTM_20) {
+        if (_version == XTMVersion.XTM_2_0) {
             super.addAttribute("href", "#" + super.getId(topic));
             _out.emptyElement("topicRef", _attrs);
-            return;
-        }
-        // XTM 2.1
-        if (!topic.getSubjectIdentifiers().isEmpty()) {
-            super.addAttribute("href", topic.getSubjectIdentifiers().iterator().next().toExternalForm());
-            _out.emptyElement("subjectIdentifierRef", _attrs);
-        }
-        else if (!topic.getSubjectLocators().isEmpty()) {
-            super.addAttribute("href", topic.getSubjectLocators().iterator().next().toExternalForm());
-            _out.emptyElement("subjectLocatorRef", _attrs);
         }
         else {
-            if (!topic.getItemIdentifiers().isEmpty()){
-                super.addAttribute("href", topic.getItemIdentifiers().iterator().next().toExternalForm());
+            // XTM 2.1
+            if (!topic.getSubjectIdentifiers().isEmpty()) {
+                super.addAttribute("href", topic.getSubjectIdentifiers().iterator().next().toExternalForm());
+                _out.emptyElement("subjectIdentifierRef", _attrs);
+            }
+            else if (!topic.getSubjectLocators().isEmpty()) {
+                super.addAttribute("href", topic.getSubjectLocators().iterator().next().toExternalForm());
+                _out.emptyElement("subjectLocatorRef", _attrs);
             }
             else {
-                super.addAttribute("href", "#" + super.getId(topic));
+                if (!topic.getItemIdentifiers().isEmpty()){
+                    super.addAttribute("href", topic.getItemIdentifiers().iterator().next().toExternalForm());
+                }
+                else {
+                    super.addAttribute("href", "#" + super.getId(topic));
+                }
+                _out.emptyElement("topicRef", _attrs);
             }
-            _out.emptyElement("topicRef", _attrs);
         }
     }
 

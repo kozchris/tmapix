@@ -30,24 +30,41 @@ repositories {
     mavenRepo urls: 'http://ontopia.googlecode.com/svn/maven-snapshot-repository/'
     mavenRepo urls: 'http://repository.jboss.com/maven2/'
     mavenRepo urls: 'http://repository.semagia.com/snapshots/'
+    mavenRepo urls: 'http://repository.tmapix.org/releases/'
+    mavenRepo urls: 'http://repository.tmapix.org/snapshots/'
+}
+
+configurations {
+    compiledep
 }
 
 dependencies {
-    compile 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
+    compile 'org.tmapix:tmapix-core:0.2.0-SNAPSHOT'
     compile 'org.tmapi:tmapi:2.0.2'
-    compile 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT'
-    compile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
-    compile 'org.slf4j:slf4j-api:1.5.11'
+    compile 'org.slf4j:slf4j-api:1.6.1'
     compile 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
+    compile 'com.semagia.mio:mio-syntaxpack:0.1.0-SNAPSHOT'
     
-    compile files('lib/tmapix-commons-0.2.0-snapshot-200909161419.jar')
-
-    testCompile 'junit:junit:4.+'
+    // We need tinyTiM and Ontopia in the classpath at compile time
+    // (and in Eclipse) but they shouldn't be exposed as dependency
+    compiledep 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
+    compiledep 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar'
+    compiledep 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
+    
+    testCompile 'junit:junit:4.8.1'
     testCompile 'com.semagia.mio:mio-core-tests:0.9.6-SNAPSHOT'
+    
+    // This sucks! Would be cool if "compiledep" dependencies 
+    // could be used as testCompile deps *without* repeating the whole deps here
+    testCompile 'org.tinytim:tinytim:2.0.1-SNAPSHOT'
+    testCompile 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar'
+    testCompile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
 }
 
-artifacts {
-    archives jar
+sourceSets {
+    main {
+      compileClasspath = sourceSets.main.compileClasspath + configurations.compiledep
+    }
 }
 
 uploadArchives {

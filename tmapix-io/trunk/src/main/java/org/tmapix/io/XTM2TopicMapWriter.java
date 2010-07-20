@@ -48,7 +48,7 @@ import org.xml.sax.Attributes;
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev: 113 $ - $Date: 2009-09-16 13:55:47 +0200 (Mi, 16 Sep 2009) $
+ * @version $Rev$ - $Date$
  */
 public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
 

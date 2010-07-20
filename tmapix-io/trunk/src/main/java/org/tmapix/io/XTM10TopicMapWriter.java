@@ -241,12 +241,12 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
                 && slos.isEmpty()) {
             return;
         }
-        _attrs.clear();
         _out.startElement("subjectIdentity");
         if (!slos.isEmpty()) {
             if (slos.size() > 1) {
                 LOG.warn("The topic " + topic.getId() + " has more than one subject locator, exporting just one");
             }
+            _attrs.clear();
             // Choose one subject locator
             Locator slo = slos.iterator().next();
             _addLocator(slo);

@@ -253,6 +253,7 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
             _out.emptyElement("resourceRef", _attrs);
         }
         for (Locator sid: sids) {
+            _attrs.clear();
             _addLocator(sid);
             _out.emptyElement("subjectIndicatorRef", _attrs);
         }

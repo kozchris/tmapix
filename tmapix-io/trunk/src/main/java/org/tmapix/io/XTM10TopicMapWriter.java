@@ -258,7 +258,7 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
         }
         if (reifiable != null) {
             _attrs.clear();
-            super.addAttribute("xlink:href", _getId(reifiable));
+            super.addAttribute("xlink:href", "#" + _getId(reifiable));
             _out.emptyElement("subjectIndicatorRef", _attrs);
         }
         _out.endElement("subjectIdentity");

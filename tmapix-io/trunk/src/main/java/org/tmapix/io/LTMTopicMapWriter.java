@@ -395,7 +395,9 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         if (slos.length > 1) {
             super.newline();
             super.indent();
-            _out.write("/* The topic '" + topic.getId() + "' has more than one subject locator. Writing just one */");
+            _out.write("/* The topic has more than one subject locator. Writing just one */");
+        }
+        if (slos.length > 0) {
             super.newline();
             super.indent();
             _out.write('%');

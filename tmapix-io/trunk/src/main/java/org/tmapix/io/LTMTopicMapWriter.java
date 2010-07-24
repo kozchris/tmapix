@@ -53,6 +53,8 @@ import org.tmapix.voc.XTM10;
  */
 public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
 
+    private static final Locator[] _EMPTY_LOCATORS = new Locator[0];
+
     private String _lastReference;
     private Topic _xtmDisplayName;
     private Topic _xtmSortName;
@@ -391,8 +393,22 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
             }
             _writeName(names[i]);
         }
-        _writeLocators(super.getSubjectLocators(topic), '%');
-        _writeLocators(super.getSubjectIdentifiers(topic), '@');
+        final Locator[] slos = super.getSubjectLocators(topic);
+        if (slos.length > 1) {
+            super.newline();
+            super.indent();
+            _out.write("/* The topic '" + topic.getId() + "' has more than one subject locator. Writing just one */");
+            super.newline();
+            super.indent();
+            _out.write('%');
+            _writeString(slos[0].toExternalForm());
+        }
+        for (Locator sid: super.getSubjectIdentifiers(topic)) {
+            super.newline();
+            super.indent();
+            _out.write('@');
+            _writeString(sid.toExternalForm());
+        }
         _out.write(']');
         super.newline();
         for (Occurrence occ: super.getOccurrences(topic)) {
@@ -559,25 +575,6 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         for (int i=1; i<themes.length; i++) {
             _out.write(' ');
             _writeTopicRef(themes[i]);
-        }
-    }
-
-    /**
-     * 
-     *
-     * @param locs A sorted (maybe empty) array of locators.
-     * @param locIndicator The locator indicator.
-     * @throws IOException In case of an error.
-     */
-    private void _writeLocators(final Locator[] locs, char locIndicator) throws IOException {
-        if (locs.length == 0) {
-            return;
-        }
-        for (Locator loc: locs) {
-            super.newline();
-            super.indent();
-            _out.write(locIndicator);
-            _writeString(loc.toExternalForm());
         }
     }
 

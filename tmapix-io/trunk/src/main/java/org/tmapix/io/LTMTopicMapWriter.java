@@ -53,8 +53,6 @@ import org.tmapix.voc.XTM10;
  */
 public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
 
-    private static final Locator[] _EMPTY_LOCATORS = new Locator[0];
-
     private String _lastReference;
     private Topic _xtmDisplayName;
     private Topic _xtmSortName;

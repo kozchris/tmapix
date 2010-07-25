@@ -16,38 +16,30 @@
 package org.tmapix.io;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Collection;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
 import org.tmapi.core.TopicMap;
 
 /**
- * Tests against the {@link LTMTopicMapReader}.
+ * Tests against the {@link TMXMLTopicMapReader}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev: 255 $ - $Date: 2010-05-19 15:33:26 +0200 (Mi, 19 Mai 2010) $
  */
 @RunWith(Parameterized.class)
-public class TestLTMTopicMapReader extends AbstractValidCXTMReaderTestCase {
+public class TestTMXMLTopicMapReaderNonValidating extends TestTMXMLTopicMapReaderValidating {
 
-    public TestLTMTopicMapReader(File file, String inputDir, String referenceDir, boolean convertToTMDM) {
+    public TestTMXMLTopicMapReaderNonValidating(File file, String inputDir, String referenceDir, boolean convertToTMDM) {
         super(file, inputDir, referenceDir, convertToTMDM);
-    }
-
-    @Parameters
-    public static Collection<Object> makeTestCases() {
-        return CXTMTestUtils.findCXTMTests("ltm", "/cxtm/ltm/");
     }
 
     @Override
     protected TopicMapReader makeReader(final TopicMap tm, final String iri)
             throws Exception {
-        final LTMTopicMapReader reader = new LTMTopicMapReader(tm, new URL(iri).openStream(), iri);
-        reader.setLegacyMode(true);
+        final TMXMLTopicMapReader reader = (TMXMLTopicMapReader) super.makeReader(tm, iri);
+        reader.setValidation(false);
         return reader;
     }
 

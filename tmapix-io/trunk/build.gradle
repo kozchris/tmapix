@@ -66,6 +66,17 @@ sourceSets {
     }
 }
 
+task ontopiaTests(type: Test, dependsOn: jar) {
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory'
+}
+
+task tinyTiMTests(type: Test, dependsOn: jar) {
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tinytim.core.TopicMapSystemFactoryImpl'
+}
+
+//build.dependsOn tinyTiMTests
+build.dependsOn ontopiaTests
+
 uploadArchives {
     repositories.mavenDeployer {
         repository(url: "file://$buildDir/maven-repo/")

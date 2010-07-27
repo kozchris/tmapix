@@ -48,6 +48,8 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
             final com.semagia.mio.Syntax syntax, final File source, final String docIRI)
             throws IOException {
         super(topicMap, syntax, source, docIRI);
+        setMappingSource(source);
+        setMappingSourceSyntax(_toRDFSyntax(syntax));
     }
 
     /**
@@ -61,6 +63,8 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     protected AbstractRDFTopicMapReader(final TopicMap topicMap,
             final com.semagia.mio.Syntax syntax, final File source) throws IOException {
         super(topicMap, syntax, source);
+        setMappingSource(source);
+        setMappingSourceSyntax(_toRDFSyntax(syntax));
     }
 
     /**
@@ -86,6 +90,10 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     protected AbstractRDFTopicMapReader(final TopicMap topicMap,
             final com.semagia.mio.Syntax syntax, final Source source) {
         super(topicMap, syntax, source);
+        if (source.getIRI() != null) {
+            setMappingSource(source.getIRI());
+            setMappingSourceSyntax(_toRDFSyntax(syntax));
+        }
     }
 
     /* (non-Javadoc)
@@ -130,8 +138,8 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      */
     @Override
     public RDFSyntax getMappingSourceSyntax() {
-        final RDFSyntax syntax = (RDFSyntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
-        return _toMappingSyntax(syntax); 
+        final com.semagia.mio.Syntax syntax = (com.semagia.mio.Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
+        return _toRDFSyntax(syntax); 
     }
 
     /* (non-Javadoc)
@@ -139,7 +147,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      */
     @Override
     public void setMappingSourceSyntax(RDFSyntax syntax) {
-        _deserializer.setProperty(Property.RDF2TM_MAPPING_SYNTAX, _fromMappingSyntax(syntax));
+        _deserializer.setProperty(Property.RDF2TM_MAPPING_SYNTAX, _toMIOSyntax(syntax));
     }
 
     /**
@@ -148,7 +156,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @param syntax The syntax to convert.
      * @return The MappingSyntax instance.
      */
-    private static RDFSyntax _toMappingSyntax(final RDFSyntax syntax) {
+    private static RDFSyntax _toRDFSyntax(final com.semagia.mio.Syntax syntax) {
         if (syntax == null) {
             return null;
         }
@@ -173,7 +181,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
         if (com.semagia.mio.Syntax.CRTM.equals(syntax)) {
             return RDFSyntax.CRTM;
         }
-        throw new RuntimeException("Internal error, no MappingSyntax found for " + syntax.name());
+        throw new RuntimeException("Internal error, no MappingSyntax found for " + syntax.getName());
     }
 
 
@@ -183,7 +191,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
      * @param syntax The syntax to translate.
      * @return The translated syntax.
      */
-    private static com.semagia.mio.Syntax _fromMappingSyntax(final RDFSyntax syntax) {
+    private static com.semagia.mio.Syntax _toMIOSyntax(final RDFSyntax syntax) {
         if (syntax == null) {
             return null;
         }

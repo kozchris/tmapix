@@ -29,7 +29,7 @@ import org.tmapi.core.TopicMap;
  * Tests against the {@link CTMTopicMapReader}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev: 174 $ - $Date: 2010-07-27 10:55:28 +0200 (Di, 27 Jul 2010) $
+ * @version $Rev$ - $Date$
  */
 @RunWith(Parameterized.class)
 public class TestCTMTopicMapReader extends AbstractValidCXTMReaderTestCase {

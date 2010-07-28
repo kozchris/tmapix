@@ -41,7 +41,6 @@ gradle.taskGraph.whenReady {taskGraph ->
 repositories {
     mavenCentral()
     mavenRepo urls: REP_TMAPI
-    mavenRepo urls: REP_TMAPI_SNAPSHOT
     mavenRepo urls: REP_TINYTIM
     mavenRepo urls: REP_TINYTIM_SNAPSHOT
     mavenRepo urls: REP_ONTOPIA
@@ -150,14 +149,6 @@ uploadArchives {
                repository {
                   id 'tmapi'
                   url REP_TMAPI
-               }
-               repository {
-                  id 'tmapi-snapshots'
-                  url REP_TMAPI_SNAPSHOT
-               }
-               repository {
-                  id 'semagia'
-                  url REP_SEMAGIA
                }
                repository {
                   id 'semagia-snapshots'

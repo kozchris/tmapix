@@ -92,7 +92,7 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
     @Override
-    public void write(TopicMap topicMap) throws IOException {
+    public void write(final TopicMap topicMap) throws IOException {
         super.init(topicMap);
         _xtmDisplayName = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(XTM10.DISPLAY));
         _xtmSortName = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(XTM10.SORT));
@@ -622,6 +622,9 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeAssociation(final Association assoc) throws IOException {
+        if (super.isTypeInstanceAssociation(assoc, assoc.getRoles())) {
+            return;
+        }
         super.newline();
         _writeTopicRef(assoc.getType());
         _out.write('(');

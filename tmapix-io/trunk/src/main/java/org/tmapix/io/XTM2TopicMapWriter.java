@@ -123,6 +123,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
     public void write(final TopicMap topicMap) throws IOException {
         // Cache the default name type. May be null, though
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
+        super.init(topicMap);
         _out.startDocument();
         super.addAttribute("xmlns", Namespace.XTM_20);
         super.addAttribute("version", _version == XTMVersion.XTM_2_0 ? "2.0" : "2.1");
@@ -202,7 +203,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     private void _writeAssociation(final Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
-        if (roles.isEmpty()) {
+        if (roles.isEmpty() || isTypeInstanceAssociation(assoc, roles)) {
             return;
         }
         _out.startElement("association", _reifier(assoc));

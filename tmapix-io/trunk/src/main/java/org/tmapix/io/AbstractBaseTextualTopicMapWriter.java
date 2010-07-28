@@ -22,6 +22,8 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
@@ -51,6 +53,10 @@ abstract class AbstractBaseTextualTopicMapWriter extends
     protected final String _baseIRI;
     protected Topic _defaultNameType;
     private final Comparator<Locator> _locatorComparator;
+    private Topic _typeInstance;
+    private Topic _type;
+    private Topic _instance;
+    private boolean _checkForTypeInstanceAssociations;
     
     /**
      * 
@@ -107,6 +113,37 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      */
     protected void init(final TopicMap topicMap) {
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
+        _typeInstance = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TYPE_INSTANCE));
+        _type = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TYPE));
+        _instance = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.INSTANCE));
+        _checkForTypeInstanceAssociations = _typeInstance != null && _type != null && _instance != null;
+    }
+
+    /**
+     * Returns if the provided association represents a type-instance relationship.
+     *
+     * @param assoc The association.
+     * @param roles The roles of the association.
+     * @return {@code true} if the association represents a type-instance relationship,
+     *          otherwise {@code false}.
+     */
+    protected final boolean isTypeInstanceAssociation(final Association assoc, 
+            final Set<Role> roles) {
+        if (!_checkForTypeInstanceAssociations 
+                || !assoc.getType().equals(_typeInstance)
+                || assoc.getReifier() != null
+                || !assoc.getScope().isEmpty()
+                || roles.size() != 2) {
+            return false;
+        }
+        final Iterator<Role> roleIter = roles.iterator();
+        final Role firstRole = roleIter.next();
+        final Role secondRole = roleIter.next();
+        if (firstRole.getType().equals(_type)) {
+            return secondRole.getType().equals(_instance);
+        }
+        return secondRole.getType().equals(_instance) 
+                    && firstRole.getType().equals(_type);
     }
 
     /**

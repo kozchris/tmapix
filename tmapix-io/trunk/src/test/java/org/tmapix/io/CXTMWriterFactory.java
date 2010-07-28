@@ -30,6 +30,8 @@ import org.tmapix.io.TopicMapWriter;
  */
 class CXTMWriterFactory implements ITestConstants {
 
+    private static final String _MAJORTOM = "de.topicmapslab.majortom";
+
     static TopicMapWriter createCXTMTopicMapWriter(TopicMap topicMap, OutputStream out, String base) throws IOException {
         if (TMAPIChooser.isTinyTim(topicMap)) {
             return new TinyTimCXTMWriter(out, base);
@@ -37,6 +39,11 @@ class CXTMWriterFactory implements ITestConstants {
         else if (TMAPIChooser.isOntopia(topicMap)) {
             return new OntopiaCXTMWriter(out);
         }
+        /*
+        else if (topicMap.getClass().getName().startsWith(_MAJORTOM)) {
+            return new MajortomCXTMWriter(out, base);
+        }
+        */
         else if (isGenericTMAPI(topicMap)) {
             if (TMAPIChooser.isTinyTim(((GenericTMAPITopicMap) topicMap).getWrappedTopicMap())) {
                 return new GenericTinyTimCXTMWriter(out, base);
@@ -59,6 +66,22 @@ class CXTMWriterFactory implements ITestConstants {
     private static TopicMap _unwrap(TopicMap topicMap) {
         return ((GenericTMAPITopicMap)topicMap).getWrappedTopicMap();
     }
+
+/*
+    private static class MajortomCXTMWriter implements TopicMapWriter {
+
+        private final de.topicmapslab.majortom.io.CXTMTopicMapWriter _writer;
+
+        public MajortomCXTMWriter(OutputStream out, String base) throws IOException {
+            _writer = new de.topicmapslab.majortom.io.CXTMTopicMapWriter(out, base);
+        }
+
+        @Override
+        public void write(TopicMap topicMap) throws IOException {
+            _writer.write(topicMap); }
+        
+    }
+*/
 
     private static class TinyTimCXTMWriter implements TopicMapWriter {
 

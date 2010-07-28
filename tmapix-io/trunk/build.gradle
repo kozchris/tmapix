@@ -8,11 +8,29 @@ group = 'org.tmapix'
 version = '0.4.0'
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'osgi'
 apply plugin: 'maven'
+apply plugin: 'eclipse'
 
 defaultTasks 'clean', 'build'
+
+project.projectName = 'TMAPIX I/O'
+project.projectDescription = 'TMAPIX I/O' //TODO
+project.vendorName = 'Semagia'
+project.vendorURL = 'http://www.semagia.com/'
+project.licenseName = 'Apache Software License, Version 2.0'
+project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+project.projectURL = 'http://www.tmapix.org/'
+
+REP_SEMAGIA = 'http://repository.semagia.com/releases/'
+REP_SEMAGIA_SNAPSHOT = 'http://repository.semagia.com/snapshots/'
+REP_TINYTIM = 'http://tinytim.sourceforge.net/maven-repository/'
+REP_TINYTIM_SNAPSHOT = 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
+REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
+REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
+REP_ONTOPIA_SNAPSHOT = 'https://ontopia.googlecode.com/svn/maven-snapshot-repository/'
+REP_ONTOPIA = 'https://ontopia.googlecode.com/svn/maven-repository'
+REP_MAJORTOM = 'http://maven.topicmapslab.de/public/'
 
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
@@ -22,15 +40,15 @@ gradle.taskGraph.whenReady {taskGraph ->
 
 repositories {
     mavenCentral()
-    mavenRepo urls: 'http://www.tmapi.org/maven-repository/'
-    mavenRepo urls: 'http://www.tmapi.org/maven-repository/snapshots/'
-    mavenRepo urls: 'http://tinytim.sourceforge.net/maven-repository/'
-    mavenRepo urls: 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
-    mavenRepo urls: 'http://ontopia.googlecode.com/svn/maven-repository'
-    mavenRepo urls: 'http://ontopia.googlecode.com/svn/maven-snapshot-repository/'
+    mavenRepo urls: REP_TMAPI
+    mavenRepo urls: REP_TMAPI_SNAPSHOT
+    mavenRepo urls: REP_TINYTIM
+    mavenRepo urls: REP_TINYTIM_SNAPSHOT
+    mavenRepo urls: REP_ONTOPIA
+    mavenRepo urls: REP_ONTOPIA_SNAPSHOT
     mavenRepo urls: 'http://repository.jboss.com/maven2/'
-    mavenRepo urls: 'http://repository.semagia.com/snapshots/'
-    mavenRepo urls: 'http://maven.topicmapslab.de/public/'
+    mavenRepo urls: REP_SEMAGIA_SNAPSHOT
+    mavenRepo urls: REP_MAJORTOM
 }
 
 configurations {
@@ -69,12 +87,16 @@ sourceSets {
 }
 
 task ontopiaTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'ontopia')
+    testReportDir = new File(project.testReportDir, 'ontopia')
     classpath = test.classpath
     testClassesDir = test.testClassesDir
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory'
 }
 
 task genericTMAPIOntopiaTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'generic-ontopia')
+    testReportDir = new File(project.testReportDir, 'generic-ontopia')
     classpath = test.classpath
     testClassesDir = test.testClassesDir
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia'
@@ -100,5 +122,60 @@ build.dependsOn ontopiaTests
 uploadArchives {
     repositories.mavenDeployer {
         repository(url: "file://$buildDir/maven-repo/")
+
+        pom.project {
+            name project.projectName
+            description project.projectDescription
+            url project.projectURL
+            
+            organization {
+                name project.vendorName
+                url project.vendorURL
+            }
+            licenses {
+               license {
+                  name project.licenseName
+                  url project.licenseURL
+               }
+            }
+            repositories {
+               repository {
+                  id 'ontopia'
+                  url REP_ONTOPIA
+               }
+               repository {
+                  id 'ontopia-snapshots'
+                  url REP_ONTOPIA_SNAPSHOT
+               }
+               repository {
+                  id 'tmapi'
+                  url REP_TMAPI
+               }
+               repository {
+                  id 'tmapi-snapshots'
+                  url REP_TMAPI_SNAPSHOT
+               }
+               repository {
+                  id 'semagia'
+                  url REP_SEMAGIA
+               }
+               repository {
+                  id 'semagia-snapshots'
+                  url REP_SEMAGIA_SNAPSHOT
+               }
+               repository {
+                  id 'tinytim'
+                  url REP_TINYTIM
+               }
+               repository {
+                  id 'tinytim-snapshots'
+                  url REP_TINYTIM_SNAPSHOT
+               }
+               repository {
+                  id 'majortom'
+                  url REP_MAJORTOM
+               }
+            }
+        }
     }
 }

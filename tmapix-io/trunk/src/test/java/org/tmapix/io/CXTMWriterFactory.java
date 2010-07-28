@@ -78,7 +78,15 @@ class CXTMWriterFactory implements ITestConstants {
 
         @Override
         public void write(TopicMap topicMap) throws IOException {
-            _writer.write(topicMap); }
+            try {
+                _writer.write(topicMap); 
+            }
+            catch (Exception ex) {
+                final IOException ioex = new IOException("Unexpected error");
+                ioex.initCause(ex);
+                throw ioex;
+            }
+        }
         
     }
 */

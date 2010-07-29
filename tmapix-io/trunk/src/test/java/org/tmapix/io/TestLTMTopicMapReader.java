@@ -40,7 +40,7 @@ public class TestLTMTopicMapReader extends AbstractValidCXTMReaderTestCase {
 
     @Parameters
     public static Collection<Object> makeTestCases() {
-        return CXTMTestUtils.findCXTMTests("ltm", "/cxtm/ltm/");
+        return CXTMTestUtils.makeLTMTestCases();
     }
 
     @Override

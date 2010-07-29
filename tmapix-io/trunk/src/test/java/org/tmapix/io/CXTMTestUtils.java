@@ -29,10 +29,40 @@ import java.util.Collections;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class CXTMTestUtils {
+final class CXTMTestUtils {
 
     private CXTMTestUtils() {
         // noop.
+    }
+
+    public static Collection<Object> makeXTM10TestCases() {
+        return Filter.from("/cxtm/xtm1/")
+                    .using("xtm")
+                    .exclude("eliots-xtm-test.xtm", // topic map starts not with <topicMap
+                             "subjid-escaping.xtm" // Uncertain about this one
+                            )
+                            .convertToTMDM()
+                            .filter();
+    }
+
+    public static Collection<Object> makeXTM2TestCases() {
+        return Filter.from("/cxtm/xtm2/", "/cxtm/xtm21/")
+                      .using("xtm")
+                      .exclude("subjid-escaping.xtm" // Uncertain about this one
+                              )
+                      .filter();
+    }
+
+    public static Collection<Object> makeLTMTestCases() {
+        return findCXTMTests("ltm", "/cxtm/ltm/");
+    }
+
+    public static Collection<Object> makeTMXMLTestCases() {
+        return findCXTMTests("xml", "/cxtm/tmxml/");
+    }
+
+    public static Collection<Object> makeCTMTestCases() {
+        return findCXTMTests("ctm", "/cxtm/ctm/");
     }
 
     public static Collection<Object> findCXTMTests(String extension, String... dirs) {
@@ -42,6 +72,7 @@ public final class CXTMTestUtils {
     public static Collection<Object> findCXTMTestsAndConvertToTMDM(String extension, String... dirs) {
         return findCXTMTests(extension, Arrays.asList(dirs), "in", "baseline", true, Collections.<String>emptyList());
     }
+    
 
     @SuppressWarnings("boxing")
     private static Collection<Object> findCXTMTests(String extension, Collection<String> dirs, 
@@ -130,4 +161,5 @@ public final class CXTMTestUtils {
                                             _convertToTMDM, Arrays.asList(_exclude));
         }
     }
+
 }

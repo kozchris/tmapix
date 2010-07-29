@@ -40,7 +40,7 @@ public class TestTMXMLTopicMapReaderValidating extends AbstractValidCXTMReaderTe
 
     @Parameters
     public static Collection<Object> makeTestCases() {
-        return CXTMTestUtils.findCXTMTests("xml", "/cxtm/tmxml/");
+        return CXTMTestUtils.makeTMXMLTestCases();
     }
 
     @Override

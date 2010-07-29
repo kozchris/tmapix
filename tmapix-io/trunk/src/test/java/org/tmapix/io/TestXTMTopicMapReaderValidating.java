@@ -25,7 +25,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import org.tmapi.core.TopicMap;
-import org.tmapix.io.CXTMTestUtils.Filter;
 
 /**
  * Tests against the {@link TMXMLTopicMapReader}.
@@ -40,29 +39,11 @@ public class TestXTMTopicMapReaderValidating extends AbstractValidCXTMReaderTest
         super(file, inputDir, referenceDir, convertToTMDM);
     }
 
-    private static Collection<Object> _makeXTM10TestCases() {
-        return Filter.from("/cxtm/xtm1/")
-                    .using("xtm")
-                    .exclude("eliots-xtm-test.xtm", // topic map starts not with <topicMap
-                             "subjid-escaping.xtm" // Uncertain about this one
-                            )
-                            .convertToTMDM()
-                            .filter();
-    }
-
-    private static Collection<Object> _makeXTM2TestCases() {
-        return Filter.from("/cxtm/xtm2/", "/cxtm/xtm21/")
-                      .using("xtm")
-                      .exclude("subjid-escaping.xtm" // Uncertain about this one
-                              )
-                      .filter();
-    }
-
     @Parameters
     public static Collection<Object> makeTestCases() {
         final Collection<Object> result = new ArrayList<Object>(); 
-        result.addAll(_makeXTM10TestCases());
-        result.addAll(_makeXTM2TestCases());
+        result.addAll(CXTMTestUtils.makeXTM10TestCases());
+        result.addAll(CXTMTestUtils.makeXTM2TestCases());
         return result;
     }
 

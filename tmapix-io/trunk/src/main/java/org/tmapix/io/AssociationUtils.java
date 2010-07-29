@@ -38,8 +38,9 @@ final class AssociationUtils {
             final Topic type, final Topic instance,
             final Association assoc, 
             final Set<Role> roles) {
-        if ((typeInstance == null
-                && type == null && instance == null)
+        if (typeInstance == null
+                || type == null 
+                || instance == null
                 || !assoc.getType().equals(typeInstance)
                 || assoc.getReifier() != null
                 || !assoc.getScope().isEmpty()

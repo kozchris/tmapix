@@ -56,7 +56,7 @@ configurations {
 
 dependencies {
     compile 'org.tmapi:tmapi:2.0.2'
-    compile 'org.slf4j:slf4j-api:1.6.1'
+    compile 'org.slf4j:slf4j-api:(1.5.8,)'
     compile 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
     compile 'com.semagia.mio:mio-syntaxpack:0.1.0-SNAPSHOT'
     
@@ -77,6 +77,8 @@ dependencies {
     testCompile 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar'
     testCompile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
     testCompile 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT'
+
+    testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
 }
 
 sourceSets {
@@ -119,6 +121,34 @@ task majortomTests(type: Test, dependsOn: jar) {
 build.dependsOn ontopiaTests
 //build.dependsOn genericTMAPIOntopiaTests
 //build.dependsOn genericTMAPITinyTimTests
+
+task dist(dependsOn: [assemble, test]) << {
+    def base_name = "$archivesBaseName-${project.version}"
+    def base = "$distsDir/" + base_name
+    def zips = "$buildDir/dist/$base_name"
+    copy {
+        into base
+        from(libsDir)
+        from(projectDir) {
+            include 'README.txt'
+            include 'LICENSE.txt'
+            include 'CHANGES.txt'
+            include 'NOTICE.txt'
+        }
+        from("$projectDir/src") {
+            into 'src'
+            exclude 'grammar/**'
+            exclude '**/*.bak'
+        }
+        into('lib') {
+            from configurations.runtime
+        }
+    }
+    ant {
+        tar destfile: zips + '.tar.gz', basedir: distsDir, compression: 'gzip', longfile: 'gnu'
+        zip destfile: zips + '.zip', basedir: distsDir
+    }
+}
 
 uploadArchives {
     repositories.mavenDeployer {

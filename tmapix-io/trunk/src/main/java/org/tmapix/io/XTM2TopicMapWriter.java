@@ -203,7 +203,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     private void _writeAssociation(final Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
-        if (roles.isEmpty() || isTypeInstanceAssociation(assoc, roles)) {
+        if (roles.isEmpty() || super.isTypeInstanceAssociation(assoc, roles)) {
             return;
         }
         _out.startElement("association", _reifier(assoc));

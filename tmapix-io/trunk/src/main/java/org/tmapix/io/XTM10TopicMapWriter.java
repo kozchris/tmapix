@@ -136,7 +136,7 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
 
     protected void _writeAssociation(final Association assoc) throws IOException {
         final Set<Role> roles = assoc.getRoles();
-        if (roles.isEmpty() || isTypeInstanceAssociation(assoc, roles)) {
+        if (roles.isEmpty() || super.isTypeInstanceAssociation(assoc, roles)) {
             return;
         }
         _attrs.clear();

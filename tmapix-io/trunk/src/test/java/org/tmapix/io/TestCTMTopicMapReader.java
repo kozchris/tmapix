@@ -40,7 +40,7 @@ public class TestCTMTopicMapReader extends AbstractValidCXTMReaderTestCase {
 
     @Parameters
     public static Collection<Object> makeTestCases() {
-        return CXTMTestUtils.findCXTMTests("ctm", "/cxtm/ctm/");
+        return CXTMTestUtils.makeCTMTestCases();
     }
 
     @Override

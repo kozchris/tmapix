@@ -65,6 +65,10 @@ final class CXTMTestUtils {
         return findCXTMTests("ctm", "/cxtm/ctm/");
     }
 
+    public static Collection<Object> makeSnelloTestCases() {
+        return findCXTMTests("stm", "/cxtm/snello/");
+    }
+
     public static Collection<Object> findCXTMTests(String extension, String... dirs) {
         return findCXTMTests(extension, Arrays.asList(dirs), "in", "baseline", false, Collections.<String>emptyList());
     }

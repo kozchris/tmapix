@@ -40,7 +40,7 @@ public class TestSnelloTopicMapReader extends AbstractValidCXTMReaderTestCase {
 
     @Parameters
     public static Collection<Object> makeTestCases() {
-        return CXTMTestUtils.findCXTMTests("stm", "/cxtm/snello/");
+        return CXTMTestUtils.makeSnelloTestCases();
     }
 
     @Override

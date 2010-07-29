@@ -23,7 +23,7 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * Internal association utilities.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -34,7 +34,7 @@ final class AssociationUtils {
         // noop.
     }
 
-    public static final boolean isTypeInstanceAssociation(final Topic typeInstance, 
+    public static boolean isTypeInstanceAssociation(final Topic typeInstance, 
             final Topic type, final Topic instance,
             final Association assoc, 
             final Set<Role> roles) {

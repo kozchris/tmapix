@@ -124,7 +124,7 @@ abstract class AbstractXMLTopicMapWriter extends AbstractTopicMapWriter {
      *          otherwise {@code false}.
      */
     protected final boolean isTypeInstanceAssociation(final Association assoc, final Set<Role> roles) { 
-            return AssociationUtils.isTypeInstanceAssociation(_typeInstance, _type, _instance, assoc, roles);
+        return AssociationUtils.isTypeInstanceAssociation(_typeInstance, _type, _instance, assoc, roles);
     }
 
 }

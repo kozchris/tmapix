@@ -122,6 +122,11 @@ build.dependsOn ontopiaTests
 //build.dependsOn genericTMAPIOntopiaTests
 //build.dependsOn genericTMAPITinyTimTests
 
+test.doFirst {
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tinytim.core.TopicMapSystemFactoryImpl'
+}
+
+
 task dist(dependsOn: [assemble, test]) << {
     def base_name = "$archivesBaseName-${project.version}"
     def base = "$distsDir/" + base_name

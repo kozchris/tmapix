@@ -77,6 +77,15 @@ public abstract class AbstractCXTMWriterTestCase {
         else if ("jtm".equalsIgnoreCase(ext)) {
             reader = new JTMTopicMapReader(tm, src);
         }
+        else if ("stm".equalsIgnoreCase(ext)) {
+            reader = new SnelloTopicMapReader(tm, src);
+        }
+        else if ("xml".equalsIgnoreCase(ext)) {
+            reader = new TMXMLTopicMapReader(tm, src);
+        }
+        else if ("ctm".equalsIgnoreCase(ext)) {
+            reader = new CTMTopicMapReader(tm, src);
+        }
         else {
             throw new IllegalArgumentException("No reader found for '" + ext + "'");
         }

@@ -45,7 +45,7 @@ import com.semagia.mio.Syntax;
  *  <li>Reification is handled directly without adding an additional item 
  *      identifier to the reified construct and without adding an additional
  *      subject identifier to the reifier (unless this "feature" is enabled
- *      explicitely; c.f. {@link #setLegacyReifierHandling(boolean)}</li>
+ *      explicitely; c.f. {@link #setLegacyMode(boolean)}</li>
  * </ul>
  * </p>
  * 

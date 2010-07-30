@@ -41,7 +41,11 @@ public class TestJTMTopicMapWriter extends AbstractCXTMWriterTestCase {
     @Parameters
     public static Collection<Object> makeTestCases() {
         final Collection<Object> result = new ArrayList<Object>();
+        result.addAll(CXTMTestUtils.makeLTMTestCases());
         result.addAll(CXTMTestUtils.makeJTMTestCases());
+        result.addAll(CXTMTestUtils.makeSnelloTestCases());
+        result.addAll(CXTMTestUtils.makeTMXMLTestCases());
+        result.addAll(CXTMTestUtils.makeXTM10TestCases());
         result.addAll(CXTMTestUtils.makeXTM2TestCases());
         return result;
     }

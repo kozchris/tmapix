@@ -41,11 +41,7 @@ public class TestJTMTopicMapReader extends AbstractValidCXTMReaderTestCase {
 
     @Parameters
     public static Collection<Object> makeTestCases() {
-        return Filter.from("/cxtm/jtm/")
-                        .using("jtm")
-                        .exclude("subjid-escaping.xtm2.jtm" // uncertain of this one
-                                )
-                        .filter();
+        return CXTMTestUtils.makeJTMTestCases();
     }
 
     @Override

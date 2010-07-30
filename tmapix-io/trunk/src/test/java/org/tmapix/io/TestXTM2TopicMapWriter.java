@@ -15,11 +15,14 @@
  */
 package org.tmapix.io;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import junit.framework.TestCase;
-
-import org.tmapi.core.TopicMap;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests against the {@link XTM2TopicMapWriter}.
@@ -27,12 +30,37 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestXTM2TopicMapWriter extends TestCase {
+@RunWith(Parameterized.class)
+public class TestXTM2TopicMapWriter extends AbstractCXTMWriterTestCase {
 
-    public void testCreation() throws Exception {
-        final TopicMapWriter writer = new XTM2TopicMapWriter(new ByteArrayOutputStream(), 
-                                                            "http://www.semagia.com/map",
-                                                            XTMVersion.XTM_2_1);
+    public TestXTM2TopicMapWriter(File file, String inputDir,
+            String referenceDir, boolean convertToTMDM) {
+        super(file, inputDir, referenceDir, convertToTMDM);
+    }
+
+    @Parameters
+    public static Collection<Object> makeTestCases() {
+        final Collection<Object> result = new ArrayList<Object>(); 
+        result.addAll(CXTMTestUtils.makeXTM10TestCases());
+        result.addAll(CXTMTestUtils.makeXTM2TestCases());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapix.io.AbstractCXTMWriterTestCase#makeWriter(org.tmapi.core.TopicMap, java.lang.String)
+     */
+    @Override
+    protected TopicMapWriter makeWriter(final OutputStream out, String iri)
+            throws Exception {
+        return new XTM2TopicMapWriter(out, iri, XTMVersion.XTM_2_1);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapix.io.AbstractCXTMWriterTestCase#getFileExtension()
+     */
+    @Override
+    protected String getFileExtension() {
+        return "xtm";
     }
 
 }

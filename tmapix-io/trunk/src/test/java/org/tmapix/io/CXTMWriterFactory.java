@@ -39,11 +39,9 @@ class CXTMWriterFactory implements ITestConstants {
         else if (TMAPIChooser.isOntopia(topicMap)) {
             return new OntopiaCXTMWriter(out);
         }
-        /*
         else if (topicMap.getClass().getName().startsWith(_MAJORTOM)) {
             return new MajortomCXTMWriter(out, base);
         }
-        */
         else if (isGenericTMAPI(topicMap)) {
             if (TMAPIChooser.isTinyTim(((GenericTMAPITopicMap) topicMap).getWrappedTopicMap())) {
                 return new GenericTinyTimCXTMWriter(out, base);
@@ -67,7 +65,6 @@ class CXTMWriterFactory implements ITestConstants {
         return ((GenericTMAPITopicMap)topicMap).getWrappedTopicMap();
     }
 
-/*
     private static class MajortomCXTMWriter implements TopicMapWriter {
 
         private final de.topicmapslab.majortom.io.CXTMTopicMapWriter _writer;
@@ -89,7 +86,6 @@ class CXTMWriterFactory implements ITestConstants {
         }
         
     }
-*/
 
     private static class TinyTimCXTMWriter implements TopicMapWriter {
 

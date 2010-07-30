@@ -77,6 +77,7 @@ dependencies {
     testCompile 'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar'
     testCompile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
     testCompile 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT'
+    testCompile 'de.topicmapslab.majortom:majortom-core:1.1.1-SNAPSHOT'
 
     testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
 }
@@ -117,8 +118,8 @@ task majortomTests(type: Test, dependsOn: jar) {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.majortom.core.TopicMapSystemFactoryImpl'
 }
 
-//build.dependsOn majortomTests
 build.dependsOn ontopiaTests
+//build.dependsOn majortomTests
 //build.dependsOn genericTMAPIOntopiaTests
 //build.dependsOn genericTMAPITinyTimTests
 

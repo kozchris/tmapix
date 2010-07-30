@@ -69,7 +69,9 @@ public abstract class AbstractCXTMWriterTestCase {
             final String ext) {
         TopicMapReader reader = null;
         if ("ltm".equalsIgnoreCase(ext)) {
-            reader = new LTMTopicMapReader(tm, src);
+            final LTMTopicMapReader reader_ = new LTMTopicMapReader(tm, src);
+            reader_.setLegacyMode(true);
+            reader = reader_;
         }
         else if ("xtm".equalsIgnoreCase(ext)) {
             reader = new XTMTopicMapReader(tm, src);

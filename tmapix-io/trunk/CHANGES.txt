@@ -2,7 +2,7 @@
 Changes Log
 ===========
 
-0.4.0 -- 2010-07-xx
+0.4.0 -- 2010-08-xx
 -------------------
 - Fixed bug in XTM 1.0 serialiazation
   (reference to reified construct was written without a fragment identifier)
@@ -15,6 +15,8 @@ Changes Log
   libs in the classpath (it's still possible to use the many mio-libs, though)
 - Fixed bug in LTM 1.3 writer
   (multiple subject locators were written even if LTM supports just one)
+- TM/XML writer tries to detect a matching item identifier (for the provided
+  base locator) and uses it to assign a topic id.
 
 
 0.3.0 -- 2009-10-28

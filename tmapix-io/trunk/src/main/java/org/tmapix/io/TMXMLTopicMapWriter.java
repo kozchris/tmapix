@@ -371,7 +371,15 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             _out.startElement(element, _attrs);
         }
         else {
-            _out.startElement(element);
+            final String id = _getTopicIdentifier(topic);
+            if (id != null) {
+                _attrs.clear();
+                super.addAttribute("id", id);
+                _out.startElement(element, _attrs);
+            }
+            else {
+                _out.startElement(element);
+            }
         }
         for (String sid: sids) {
             _out.dataElement(_EL_SID, sid);
@@ -431,6 +439,32 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
             }
         }
         _out.endElement(element);
+    }
+
+    /**
+     * Returns an item identifier fragment from the topic iff 
+     * the topic has an item identifier which starts with the base locator.
+     *
+     * @return The topic id or {@code null} if no item identifier was found.
+     */
+    private String _getTopicIdentifier(final Topic topic) {
+        String id = null;
+        for (Locator loc: topic.getItemIdentifiers()) {
+            String reference = loc.getReference();
+            if (!reference.startsWith(_baseIRI)) {
+                continue;
+            }
+            int fragIdx =  reference.indexOf('#');
+            if (fragIdx < 0) {
+                continue;
+            }
+            id = reference.substring(fragIdx+1);
+            if (id != null && isValidNCName(id)) {
+                break;
+            }
+            id = null;
+        }
+        return id;
     }
 
     /**

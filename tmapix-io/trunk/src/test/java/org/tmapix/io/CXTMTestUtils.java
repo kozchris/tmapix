@@ -53,6 +53,14 @@ final class CXTMTestUtils {
                       .filter();
     }
 
+    public static Collection<Object> makeJTMTestCases() {
+        return Filter.from("/cxtm/jtm/")
+                    .using("jtm")
+                    .exclude("subjid-escaping.xtm2.jtm" // uncertain about this one
+                            )
+                    .filter();
+    }
+
     public static Collection<Object> makeLTMTestCases() {
         return findCXTMTests("ltm", "/cxtm/ltm/");
     }

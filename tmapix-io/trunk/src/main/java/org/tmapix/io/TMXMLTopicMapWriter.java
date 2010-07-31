@@ -110,6 +110,7 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
      */
     @Override
     public void write(final TopicMap topicMap) throws IOException {
+        super.init(topicMap);
         _write(topicMap.getTopics(), topicMap);
     }
 
@@ -403,10 +404,12 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
         }
         for (Role playedRole: topic.getRolesPlayed()) {
             final Association assoc = playedRole.getParent();
-            if (_exportedAssocIds.contains(assoc.getId())) {
+            if (_exportedAssocIds.contains(assoc.getId())
+                    || super.isTypeInstanceAssociation(assoc, assoc.getRoles())) {
                 continue;
             }
             _exportedAssocIds.add(assoc.getId());
+            _attrs.clear();
             _addScopeAndReifier(assoc);
             _addToAttributes("role", playedRole.getType());
             final String assocElement = _type(assoc);

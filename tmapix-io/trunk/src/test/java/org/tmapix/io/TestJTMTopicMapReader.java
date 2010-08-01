@@ -24,7 +24,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import org.tmapi.core.TopicMap;
-import org.tmapix.io.CXTMTestUtils.Filter;
 
 /**
  * Tests against the {@link JTMTopicMapReader}.

@@ -47,6 +47,7 @@ public class TestXTM2TopicMapWriter extends AbstractCXTMWriterTestCase {
                 .exclude("unescapeUnicode2-1.3.ltm" // TODO: Problem: The writer writes &#56319;&#57343; to the output and causes parsing problems
                         )
                 .filter());
+        result.addAll(CXTMTestUtils.makeCTMTestCases());
         result.addAll(CXTMTestUtils.makeJTMTestCases());
         result.addAll(CXTMTestUtils.makeSnelloTestCases());
         result.addAll(CXTMTestUtils.makeTMXMLTestCases());

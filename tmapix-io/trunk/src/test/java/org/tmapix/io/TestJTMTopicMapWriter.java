@@ -42,6 +42,7 @@ public class TestJTMTopicMapWriter extends AbstractCXTMWriterTestCase {
     public static Collection<Object> makeTestCases() {
         final Collection<Object> result = new ArrayList<Object>();
         result.addAll(CXTMTestUtils.makeLTMTestCases());
+        result.addAll(CXTMTestUtils.makeCTMTestCases());
         result.addAll(CXTMTestUtils.makeJTMTestCases());
         result.addAll(CXTMTestUtils.makeSnelloTestCases());
         result.addAll(CXTMTestUtils.makeTMXMLTestCases());
@@ -56,7 +57,9 @@ public class TestJTMTopicMapWriter extends AbstractCXTMWriterTestCase {
     @Override
     protected TopicMapWriter makeWriter(final OutputStream out, String iri)
             throws Exception {
-        return new JTMTopicMapWriter(out, iri);
+        final JTMTopicMapWriter writer = new JTMTopicMapWriter(out, iri);
+        writer.setPrettify(true);
+        return writer;
     }
 
     /* (non-Javadoc)

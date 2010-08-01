@@ -9,6 +9,8 @@ Changes Log
 - Fixed bug in JTM serialiazation 
   (missing si: prefix in type-instance associations)
 - Added XTM 2.1 writer
+- Fixed bug in XTM 2.0 serialization (instanceOf element was written multiple
+  times, only one instance element is allowed per topic).
 - Deprecated several XTM* reader classes in favor of 
   *one* XTM reader
 - Switched to mio-syntaxpack to reduce the no of necessary

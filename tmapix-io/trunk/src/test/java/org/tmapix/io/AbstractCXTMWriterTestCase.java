@@ -74,7 +74,9 @@ public abstract class AbstractCXTMWriterTestCase {
             reader = reader_;
         }
         else if ("xtm".equalsIgnoreCase(ext)) {
-            reader = new XTMTopicMapReader(tm, src);
+            final XTMTopicMapReader reader_ = new XTMTopicMapReader(tm, src);
+            reader_.setValidation(true);
+            reader = reader_;
         }
         else if ("jtm".equalsIgnoreCase(ext)) {
             reader = new JTMTopicMapReader(tm, src);
@@ -83,7 +85,9 @@ public abstract class AbstractCXTMWriterTestCase {
             reader = new SnelloTopicMapReader(tm, src);
         }
         else if ("xml".equalsIgnoreCase(ext)) {
-            reader = new TMXMLTopicMapReader(tm, src);
+            final TMXMLTopicMapReader reader_ = new TMXMLTopicMapReader(tm, src);
+            reader_.setValidation(true);
+            reader = reader_;
         }
         else if ("ctm".equalsIgnoreCase(ext)) {
             reader = new CTMTopicMapReader(tm, src);
@@ -100,6 +104,18 @@ public abstract class AbstractCXTMWriterTestCase {
 
     private InputStream _makeInputStream(final ByteArrayOutputStream out) {
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    private static String _getStackTrace(final Throwable t) {
+        if (t == null) {
+            return "null";
+        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+        t.printStackTrace(pw);
+        pw.flush();
+        sw.flush();
+        return sw.toString();
     }
 
     @Before
@@ -124,7 +140,12 @@ public abstract class AbstractCXTMWriterTestCase {
         tm = _sys.createTopicMap(iri);
         final InputStream in = _makeInputStream(out);
         reader = _getReaderByFileExtension(tm, new Source(in, iri), getFileExtension());
-        reader.read();
+        try {
+            reader.read();
+        }
+        catch (Exception ex) {
+            fail("Parsing failed for <" + iri + "> \n" + _getStackTrace(ex) + "\nCause: " + _getStackTrace(ex.getCause()) + "\n --- Written topic map:\n" + out.toString("utf-8"));
+        }
         final ByteArrayOutputStream result = new ByteArrayOutputStream();
         final TopicMapWriter cxtmWriter = CXTMWriterFactory.createCXTMTopicMapWriter(tm, result, iri);
         cxtmWriter.write(tm);
@@ -141,7 +162,7 @@ public abstract class AbstractCXTMWriterTestCase {
             final String resultString = result.toString("utf-8");
             diff_match_patch dmp = new diff_match_patch();
             LinkedList<Patch> patches = dmp.patch_make(expectedString, resultString); 
-            fail(iri + ":\n" + dmp.patch_toText(patches) + "\n - - -\nExpected: " + expectedString + "\n, got: " + resultString);
+            fail(iri + ":\n" + dmp.patch_toText(patches) + "\n - - -\nExpected: " + expectedString + "\n, got: " + resultString + "\n Written topic map: \n" + out.toString("utf-8"));
         }
     }
 

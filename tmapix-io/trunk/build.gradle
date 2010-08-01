@@ -127,6 +127,22 @@ test.doFirst {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tinytim.core.TopicMapSystemFactoryImpl'
 }
 
+jar {
+      manifest {
+        name = projectName
+        
+        attributes 'Implementation-Version': project.version, 
+                  'Implementation-Vendor': project.vendorName, 
+                  'Implementation-URL': project.projectURL, 
+                  'Sealed': 'false'
+                  
+        instruction 'Bundle-Vendor', project.vendorName
+        instruction 'Bundle-License', project.licenseURL
+        instruction 'Bundle-Description', project.projectDescription
+        instruction 'Import-Package', 'org.tinytim.*;resolution:=optional, net.ontopia.*;resolution:=optional, !org.tmapix.io.*, *'
+        instruction 'Export-Package', '!*.internal.*, *'
+      }
+}
 
 task dist(dependsOn: [assemble, test]) << {
     def base_name = "$archivesBaseName-${project.version}"

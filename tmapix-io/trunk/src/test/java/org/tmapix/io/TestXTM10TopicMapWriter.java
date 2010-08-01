@@ -82,6 +82,7 @@ public class TestXTM10TopicMapWriter extends AbstractCXTMWriterTestCase {
                         "subjectindref.xtm",
                         "tm-reifier.xtm",
                         "topic-as-subj-ind-1.xtm",
+                        "topic-as-subj-ind-2.xtm",
                         "whitespace.xtm",
                         "xmlbase-empty-base.xtm",
                         "xmlbase-problem.xtm",

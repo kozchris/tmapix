@@ -2,8 +2,8 @@
 Changes Log
 ===========
 
-0.4.0 -- 2010-08-xx
--------------------
+0.4.0 SNAPSHOT -- 2010-08-01
+----------------------------
 - Fixed bug in XTM 1.0 serialiazation
   (reference to reified construct was written without a fragment identifier)
 - Fixed bug in JTM serialiazation 

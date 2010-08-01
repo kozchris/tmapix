@@ -2,6 +2,22 @@
 TMAPIX I/O
 ==========
 
+TMAPIX I/O is a library to read and write topic maps with a TMAPI-compatible
+Topic Maps processor, i.e. tinyTiM <http://tinytim.sourceforge.net/>.
+
+To use TMAPIX I/O, put the tmapix-io-<VERSION>.jar and the 
+mio-syntaxpack-<VERSION>.jar (from the /lib directory) into the classpath. 
+
+If you want to use TMAPIX I/O with Ontopia <http://www.ontopia.net/>, the
+ontopia-mio-<VERSION>.jar is needed as well.
+
+Further, you need the SLF4J lib and an implementation, i.e. slf4j-jdk14.
+
+
+Mailing list
+------------
+<https://groups.google.com/group/tm-projects>
+
 
 License
 -------

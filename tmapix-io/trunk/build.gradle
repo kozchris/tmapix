@@ -113,13 +113,15 @@ task genericTMAPITinyTimTests(type: Test, dependsOn: jar) {
 task majortomTests(type: Test, dependsOn: jar) {
     testResultsDir = new File(project.testResultsDir, 'majortom')
     testReportDir = new File(project.testReportDir, 'majortom')
+    //TODO: Remove the following line iff MajorTom produces no errors anymore
+    ignoreFailures = true
     classpath = test.classpath
     testClassesDir = test.testClassesDir
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.majortom.core.TopicMapSystemFactoryImpl'
 }
 
 build.dependsOn ontopiaTests
-//build.dependsOn majortomTests
+build.dependsOn majortomTests
 //build.dependsOn genericTMAPIOntopiaTests
 //build.dependsOn genericTMAPITinyTimTests
 

@@ -494,24 +494,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Indicates if the provided <tt>topic</tt> has just one subject identifier
-     * and provides no further properties.
-     *
-     * @param topic The topic to check.
-     * @return <tt>true</tt> if the topic should be omitted, otherwise <tt>false</tt>.
-     */
-    private boolean _omitTopic(Topic topic) {
-        return topic != null
-                      && topic.getSubjectIdentifiers().size() == 1
-                      && topic.getSubjectLocators().isEmpty()
-                      && (!_exportIIDs || topic.getItemIdentifiers().isEmpty())
-                      && topic.getTypes().isEmpty()
-                      && topic.getNames().isEmpty() 
-                      && topic.getOccurrences().isEmpty()
-                      && topic.getReified() == null;
-    }
-
-    /**
      * Writes the header comment with the optional title, author, license etc.
      * information.
      *
@@ -1112,16 +1094,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             }
             _out.write('"');
         }
-    }
-
-    /**
-     * Writes the specified locator (maybe abbreviated as QName).
-     *
-     * @param loc The locator to write.
-     * @throws IOException In case of an error.
-     */
-    private void _writeLocator(final Locator loc) throws IOException {
-        _writeLocator(loc.toExternalForm());
     }
 
     /**

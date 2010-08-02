@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.tmapi.core.Association;
@@ -40,7 +39,6 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
-import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
@@ -57,9 +55,7 @@ import org.tmapix.voc.XSD;
  * @author Hannes Niederhausen
  * @version $Rev$ - $Date$
  */
-public class CTMTopicMapWriter implements TopicMapWriter {
-
-    private static final Logger LOG = Logger.getLogger(CTMTopicMapWriter.class.getName());
+public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
 
     private static final String _ID_START = "[a-zA-Z_]" +
                             "|[\\u00C0-\\u00D6]" +
@@ -93,7 +89,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     private static final Topic[] _EMPTY_TOPIC_ARRAY = new Topic[0];
     private static final Reference _UNTYPED_REFERENCE = Reference.createId("[untyped]");
 
-    private final Writer _out;
     private final String _baseIRI;
     private final String _encoding;
     private Topic _defaultNameType;
@@ -104,14 +99,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     private String _license;
     private String _comment;
     private char[] _indent;
-    private final Comparator<Topic> _topicComparator;
     private final Comparator<Topic> _topicIdComparator;
-    private final Comparator<Association> _assocComparator;
-    private final Comparator<Occurrence> _occComparator;
-    private final Comparator<Name> _nameComparator;
-    private final Comparator<Set<Topic>> _topicCollectionComparator;
-    private final Comparator<Role> _roleComparator;
-    private final Comparator<Variant> _variantComparator;
     private final Map<Topic, Reference> _topic2Reference; //TODO: LRU?
     private final Map<String, String> _prefixes;
     private final Set<String> _imports;
@@ -159,7 +147,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @param encoding The encoding to use.
      */
     private CTMTopicMapWriter(final Writer writer, final String baseIRI, final String encoding) {
-        _out = writer;
+        super(writer);
         if (baseIRI == null) {
             throw new IllegalArgumentException("The base IRI must not be null");
         }
@@ -169,14 +157,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         }
         _encoding = encoding;
         _topic2Reference = new HashMap<Topic, Reference>(200);
-        _topicComparator = new TopicComparator();
-        _topicCollectionComparator = new TopicSetComparator();
         _topicIdComparator = new TopicIdComparator();
-        _assocComparator = new AssociationComparator();
-        _occComparator = new OccurrenceComparator();
-        _nameComparator = new NameComparator();
-        _roleComparator = new RoleComparator();
-        _variantComparator = new VariantComparator();
         _prefixes = new HashMap<String, String>();
         _imports = new HashSet<String>();
         _topic2Supertypes = new HashMap<Topic, Collection<Topic>>();
@@ -441,7 +422,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         if (!assocs.isEmpty()) {
             Association[] assocArray = assocs.toArray(new Association[assocs.size()]);
             _writeSection("Associations");
-            Arrays.sort(assocArray, _assocComparator);
+            Arrays.sort(assocArray, super.getAssociationComparator());
             for (Association assoc: assocArray) {
                 _writeAssociation(assoc);
             }
@@ -595,7 +576,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     private void _writeTopics(Collection<Topic> topics) throws IOException {
         _lastReference = null;
         Topic[] topicArray = topics.toArray(new Topic[topics.size()]);
-        Arrays.sort(topicArray, _topicComparator);
+        Arrays.sort(topicArray, super.getTopicComparator());
         for (Topic topic: topicArray) {
             _writeTopic(topic, true);
         }
@@ -608,11 +589,11 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeTopic(Topic topic, boolean topicTypeHeader) throws IOException {
-        final Reference mainIdentity = _getTopicReference(topic);
+        final Reference mainIdentity = getTopicReference(topic);
         Topic[] types = _getTypes(topic);
         if (topicTypeHeader) {
             if (types.length > 0) {
-                Reference ref = _getTopicReference(types[0]);
+                Reference ref = getTopicReference(types[0]);
                 if (!ref.equals(_lastReference)) {
                     _writeSection("TT: " + ref);
                     _lastReference = ref;
@@ -709,7 +690,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         for (Locator iid: iids) {
             refs.add(Reference.createItemIdentifier(iid));
         }
-        Reference mainIdentity = _getTopicReference(topic);
+        Reference mainIdentity = getTopicReference(topic);
         if (!refs.remove(mainIdentity)
                 && mainIdentity.type == Reference.ID) {
             String iri = _baseIRI + "#" + mainIdentity.reference;
@@ -746,7 +727,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         for (Locator loc: locs) {
             refs.add(new Reference(kind, loc));
         }
-        refs.remove(_getTopicReference(topic)); 
+        refs.remove(getTopicReference(topic)); 
         Reference[] refArray = refs.toArray(new Reference[refs.size()]);
         Arrays.sort(refArray);
         return refArray;
@@ -790,7 +771,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     private Name[] _getNames(Topic topic) {
         Collection<Name> names = topic.getNames();
         Name[] nameArray = names.toArray(new Name[names.size()]);
-        Arrays.sort(nameArray, _nameComparator);
+        Arrays.sort(nameArray, super.getNameComparator());
         return nameArray;
     }
 
@@ -803,7 +784,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     private Occurrence[] _getOccurrences(Topic topic) {
         Collection<Occurrence> occs = topic.getOccurrences();
         Occurrence[] occArray = occs.toArray(new Occurrence[occs.size()]);
-        Arrays.sort(occArray, _occComparator);
+        Arrays.sort(occArray, super.getOccurrenceComparator());
         return occArray;
     }
 
@@ -868,7 +849,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _writeScope(name);
         _writeReifier(name);
         Variant[] variants = name.getVariants().toArray(new Variant[0]);
-        Arrays.sort(variants, _variantComparator);
+        Arrays.sort(variants, super.getVariantComparator());
         for (Variant variant: variants) {
             _writeVariant(variant);
         }
@@ -899,7 +880,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _writeTopicRef(assoc.getType());
         _out.write('(');
         Role[] roles = assoc.getRoles().toArray(new Role[0]);
-        Arrays.sort(roles, _roleComparator);
+        Arrays.sort(roles, super.getRoleComparator());
         _writeRole(roles[0]);
         for (int i=1; i<roles.length; i++) {
             _out.write(", ");
@@ -1018,7 +999,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeTopicRef(Topic topic) throws IOException {
-        _writeTopicRef(_getTopicReference(topic));
+        _writeTopicRef(getTopicReference(topic));
     }
 
     /**
@@ -1136,25 +1117,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         }
         // No relative IRI and no QName was written, write the reference as it is
         _out.write('<' + reference + '>');
-    }
-
-    /**
-     * Returns a reference to the provided topic.
-     * <p>
-     * The reference to the topic stays stable during the serialization of
-     * the topic map.
-     * </p>
-     *
-     * @param topic The topic to retrieve a reference for.
-     * @return A reference to the specified topic.
-     */
-    private Reference _getTopicReference(Topic topic) {
-        Reference ref = _topic2Reference.get(topic);
-        if (ref == null) {
-            ref = _generateTopicReference(topic);
-            _topic2Reference.put(topic, ref);
-        }
-        return ref;
     }
 
     /**
@@ -1278,35 +1240,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Writes a warning msg to the log.
-     * 
-     * This method is used to inform the user that the serialized topic map
-     * is not valid.
-     *
-     * @param msg The warning message.
-     */
-    private static void _reportInvalid(final String msg) {
-        LOG.warning("Invalid CTM: '" + msg + "'");
-    }
-
-    static final class Template implements Comparable<Template> {
-        private final String name;
-        private final Collection<Object> params;
-        private Template(String name) {
-            this.name = name;
-            this.params = new ArrayList<Object>();
-        }
-        @Override
-        public int compareTo(Template o) {
-            int res = name.compareTo(o.name);
-            if (res == 0) {
-                res = params.size() - o.params.size();
-            }
-            return res;
-        }
-    }
-
-    /**
      * Represents a reference to a topic.
      */
     private static final class Reference implements Comparable<Reference> {
@@ -1420,374 +1353,29 @@ public class CTMTopicMapWriter implements TopicMapWriter {
          */
         @Override
         public int compare(Topic o1, Topic o2) {
-            return _getTopicReference(o1).compareTo(_getTopicReference(o2));
+            return getTopicReference(o1).compareTo(getTopicReference(o2));
         }
     }
 
-    private class TopicComparator implements Comparator<Topic> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Topic o1, Topic o2) {
-            int res = _topicCollectionComparator.compare(o1.getTypes(), o2.getTypes());
-            if (res == 0) {
-                res = _getTopicReference(o1).compareTo(_getTopicReference(o2));
-            }
-            return res;
-        }
-    }
-
-    /**
-     * Abstract comparator that provides some utility methods which handle common 
-     * comparisons.
+    /* (non-Javadoc)
+     * @see org.tmapix.io.AbstractTextualTopicMapWriter#getDefaultNameType()
      */
-    private abstract class AbstractComparator<T> implements Comparator<T> {
-        int compareString(String o1, String o2) {
-            if (o1 == null && o2 != null) {
-                _reportInvalid("The first string value is null");
-                return -1;
-            }
-            if (o1 != null && o2 == null) {
-                _reportInvalid("The second string value is null");
-                return +1;
-            }
-            return o1.compareTo(o2);
-        }
-        /**
-         * Extracts the type of the typed Topic Maps constructs and compares
-         * the topics.
-         *
-         * @param o1 The first typed Topic Maps construct.
-         * @param o2 The second typed Topic Maps construct.
-         * @return A negative integer, zero, or a positive integer as the 
-         *          first argument is less than, equal to, or greater than the 
-         *          second.
-         */
-        int compareType(Typed o1, Typed o2) {
-            return _topicIdComparator.compare(o1.getType(), o2.getType());
-        }
-        /**
-         * Extracts the scope of the scoped Topic Maps constructs and compares
-         * them.
-         *
-         * @param o1 The first scoped Topic Maps construct.
-         * @param o2 The second scoped Topic Maps construct.
-         * @return A negative integer, zero, or a positive integer as the 
-         *          first argument is less than, equal to, or greater than the 
-         *          second.
-         */
-        int compareScope(Scoped o1, Scoped o2) {
-            return _topicCollectionComparator.compare(o1.getScope(), o2.getScope());
-        }
-        /**
-         * Extracts the reifier of the reifiable Topic Maps constructs and 
-         * compares them.
-         *
-         * @param o1 The first reifiable Topic Maps construct.
-         * @param o2 The second reifiable Topic Maps construct.
-         * @return A negative integer, zero, or a positive integer as the 
-         *          first argument is less than, equal to, or greater than the 
-         *          second.
-         */
-        int compareReifier(Reifiable o1, Reifiable o2) {
-            Topic reifier1 = o1.getReifier();
-            Topic reifier2 = o2.getReifier();
-            if (reifier1 == reifier2) {
-                return 0;
-            }
-            int res = 0;
-            if (reifier1 == null) {
-                res = reifier2 == null ? 0 : -1;
-            }
-            else if (reifier2 == null) {
-                res = 1;
-            }
-            return res != 0 ? res : _topicIdComparator.compare(reifier1, reifier2);
-        }
+    @Override
+    protected Topic getDefaultNameType() {
+        return _defaultNameType;
     }
 
-    /**
-     * Enhances the {@link AbstractComparator} with a method to compare the
-     * value and datatype of an occurrence or variant.
+    /* (non-Javadoc)
+     * @see org.tmapix.io.AbstractTextualTopicMapWriter#getTopicReference(org.tmapi.core.Topic)
      */
-    private abstract class AbstractDatatypeAwareComparator<T> extends AbstractComparator<T> {
-        /**
-         * Compares the value and datatype of the occurrences / variants.
-         *
-         * @param o1 The first occurrence / variant.
-         * @param o2 The second occurrence / variant.
-         * @return A negative integer, zero, or a positive integer as the 
-         *          first argument is less than, equal to, or greater than the 
-         *          second.
-         */
-        int compareValueDatatype(DatatypeAware o1, DatatypeAware o2) {
-            final String datatype1 = o1.getDatatype().toExternalForm();
-            final String datatype2 = o2.getDatatype().toExternalForm();
-            int res = 0;
-            if (_isNativelySupported(datatype1)) {
-                res = _isNativelySupported(datatype2) ? 0 : -1;
-            }
-            else if (_isNativelySupported(datatype2)) {
-                res = 1;
-            }
-            if (res == 0) {
-                res = compareString(datatype1, datatype2);
-                if (res == 0) {
-                    res = compareString(o1.getValue(), o2.getValue());
-                }
-            }
-            return res;
+    @Override
+    protected Reference getTopicReference(Topic topic) {
+        Reference ref = _topic2Reference.get(topic);
+        if (ref == null) {
+            ref = _generateTopicReference(topic);
+            _topic2Reference.put(topic, ref);
         }
-    }
-
-    /**
-     * Association comparator.
-     * 
-     */
-    private final class AssociationComparator extends AbstractComparator<Association> {
-
-        private Comparator<Set<Role>> _roleSetComparator;
-
-        AssociationComparator() {
-            _roleSetComparator = new RoleSetComparator();
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Association o1, Association o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = compareType(o1, o2);
-            if (res == 0) {
-                res = _roleSetComparator.compare(o1.getRoles(), o2.getRoles());
-                if (res == 0) {
-                    res = compareScope(o1, o2);
-                }
-            }
-            return res;
-        }
-    }
-
-    /**
-     * Role comparator which ignores the parent association. This comparator
-     * is meant to be used for roles where the parent is known to be equal or
-     * unequal.
-     */
-    private class RoleComparator extends AbstractComparator<Role> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Role o1, Role o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = compareType(o1, o2);
-            if (res == 0) {
-                res = _topicIdComparator.compare(o1.getPlayer(), o2.getPlayer());
-            }
-            return res;
-        }
-    }
-    
-    /**
-     * Occurrence comparator.
-     * - Occs in the UCS are less than ones with a special scope.
-     * - Occs which are not reified are less than ones which are reified.
-     */
-    private final class OccurrenceComparator extends AbstractDatatypeAwareComparator<Occurrence> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Occurrence o1, Occurrence o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = compareType(o1, o2);
-            if (res == 0) {
-                res = compareScope(o1, o2);
-                if (res == 0) {
-                    res = compareReifier(o1, o2);
-                    if (res == 0) {
-                        res = compareValueDatatype(o1, o2);
-                    }
-                }
-            }
-            return res;
-        }
-        
-    }
-
-    /**
-     * Name comparator.
-     * - Names with the default name type are less than names with a non-standard type.
-     * - Names in the UCS are less than ones with a special scope.
-     * - Names with no variants are less than ones with variants
-     * - Names which are not reified are less than ones which are reified.
-     */
-    private final class NameComparator extends AbstractComparator<Name> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Name o1, Name o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = compareType(o1, o2);
-            if (res == 0) {
-                res = compareScope(o1, o2);
-                if (res == 0) {
-                    res = o1.getVariants().size() - o2.getVariants().size();
-                    if (res == 0) {
-                        res = compareReifier(o1, o2);
-                        if (res == 0) {
-                            res = compareString(o1.getValue(), o2.getValue());
-                        }
-                    }
-                }
-            }
-            return res;
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.mio.CTMTopicMapWriter.AbstractComparator#compareType(org.tmapi.core.Typed, org.tmapi.core.Typed)
-         */
-        @Override
-        int compareType(Typed o1, Typed o2) {
-            Topic type1 = o1.getType();
-            Topic type2 = o2.getType();
-            int res = 0;
-            if (type1.equals(_defaultNameType)) {
-                res = type2.equals(type1) ? 0 : -1;
-            }
-            else if (type2.equals(_defaultNameType)) {
-                res = 1;
-            }
-            return res != 0 ? res : super.compareType(o1, o2);
-        }
-    }
-
-    /**
-     * Variant comparator.
-     * - Variants with a lesser scope size are less.
-     * - Variants which are not reified are less than ones which are reified.
-     */
-    private final class VariantComparator extends AbstractDatatypeAwareComparator<Variant> {
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Variant o1, Variant o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = compareScope(o1, o2);
-            if (res == 0) {
-                res = compareReifier(o1, o2);
-                if (res == 0) {
-                    res = compareValueDatatype(o1, o2);
-                }
-            }
-            return res;
-        }
-    }
-
-    /**
-     * Comparator which compares the size of the provided set.
-     * 
-     * Iff the size of the sets are equal, another comparison method is used
-     * to compare the content of the sets.
-     */
-    private abstract class AbstractSetComparator<T> implements Comparator<Set<T>> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Set<T> o1, Set<T> o2) {
-            int s1 = o1.size();
-            int s2 = o2.size();
-            int res = s1 - s2;
-            if (res == 0) {
-                res = compareContent(o1, o2, s1);
-            }
-            return res;
-        }
-
-        /**
-         * Called iff the size of the sets is equal.
-         * 
-         * This method is used to compare the content of the sets.
-         *
-         * @param o1 The first set.
-         * @param o2 The second set.
-         * @param size The size of the set(s).
-         * @return A negative integer, zero, or a positive integer as the 
-         *          first argument is less than, equal to, or greater than the 
-         *          second.
-         */
-        abstract int compareContent(Set<T> o1, Set<T> o2, int size);
-    }
-
-    /**
-     * Compares role sets. The parent of the roles is ignored! 
-     */
-    private final class RoleSetComparator extends AbstractSetComparator<Role> {
-
-        private RoleComparator _roleCmp; 
-
-        RoleSetComparator() {
-            _roleCmp = new RoleComparator();
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.mio.CXTMTopicMapWriter.AbstractSetComparator#compareContent(java.util.Set, java.util.Set, int)
-         */
-        @Override
-        int compareContent(Set<Role> o1, Set<Role> o2,
-                int size) {
-            int res = 0;
-            Role[] roles1 = o1.toArray(new Role[size]);
-            Role[] roles2 = o2.toArray(new Role[size]);
-            Arrays.sort(roles1, _roleCmp);
-            Arrays.sort(roles2, _roleCmp);
-            for (int i=0; i < size && res == 0; i++) {
-                res = _roleCmp.compare(roles1[i], roles2[i]);
-            }
-            return res;
-        }
-    }
-
-    /**
-     * Compares the scope of two scoped Topic Maps constructs.
-     */
-    private final class TopicSetComparator extends AbstractSetComparator<Topic> {
-
-        /* (non-Javadoc)
-         * @see org.tinytim.mio.CTMTopicMapWriter.AbstractSetComparator#compareContent(java.util.Set, java.util.Set, int)
-         */
-        @Override
-        int compareContent(Set<Topic> o1, Set<Topic> o2, int size) {
-            int res = 0 ;
-            Topic[] topics1 = o1.toArray(new Topic[size]);
-            Topic[] topics2 = o2.toArray(new Topic[size]);
-            Arrays.sort(topics1, _topicIdComparator);
-            Arrays.sort(topics2, _topicIdComparator);
-            for (int i=0; i < size && res == 0; i++) {
-                res = _topicIdComparator.compare(topics1[i], topics2[i]);
-            }
-            return res;
-        }
+        return ref;
     }
 
 }

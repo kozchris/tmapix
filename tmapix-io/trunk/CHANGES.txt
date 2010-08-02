@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+
+0.4.0 -- 2010-08-dd
+-------------------
+- Added CTM serializer
+
+
 0.4.0 SNAPSHOT -- 2010-08-01
 ----------------------------
 - Fixed bug in XTM 1.0 serialiazation

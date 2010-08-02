@@ -392,6 +392,9 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         Collection<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
         Collection<Association> assocs = new ArrayList<Association>(topicMap.getAssociations());
         final TypeInstanceIndex tiIdx = topicMap.getIndex(TypeInstanceIndex.class);
+        if (!tiIdx.isOpen()) {
+            tiIdx.open();
+        }
         if (!tiIdx.isAutoUpdated()) {
             tiIdx.reindex();
         }

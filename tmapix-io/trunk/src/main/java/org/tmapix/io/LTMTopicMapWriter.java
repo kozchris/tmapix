@@ -68,8 +68,8 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @param baseIRI The base IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs.
      */
-    public LTMTopicMapWriter(OutputStream stream, String baseIRI) throws IOException {
-        this(stream, baseIRI, "utf-8");
+    public LTMTopicMapWriter(OutputStream out, String baseIRI) throws IOException {
+        this(out, baseIRI, "utf-8");
     }
 
     /**
@@ -80,9 +80,9 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @param encoding The encoding to use.
      * @throws IOException If an error occurs.
      */
-    public LTMTopicMapWriter(OutputStream stream, String baseIRI, String encoding)
+    public LTMTopicMapWriter(OutputStream out, String baseIRI, String encoding)
         throws IOException {
-        super(stream, baseIRI, encoding);
+        super(out, baseIRI, encoding);
         _topic2Reference = new HashMap<Topic, String>();
         _sidPrefixes = new HashMap<String, String>();
         _sloPrefixes = new HashMap<String, String>();

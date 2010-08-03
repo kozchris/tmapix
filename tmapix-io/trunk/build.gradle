@@ -147,7 +147,21 @@ jar {
 }
 
 javadoc {
+    appName = 'TMAPIX I/O ' + project.version
+
     exclude '**/internal/**'
+
+    project.configure(options) {
+        memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PUBLIC
+        docTitle = "$appName"
+        windowTitle = "$appName"
+        header = "$appName"
+        author = "true"
+        version = "true"
+        use = "true"
+        links('http://java.sun.com/j2se/1.5.0/docs/api', 'http://www.tmapi.org/2.0/api/')
+    }
+
 }
 
 task dist(dependsOn: [assemble, test, javadoc]) << {

@@ -53,6 +53,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     private JSONWriter _out;
     private String _baseIRI;
     private Topic _defaultNameType;
+    private boolean _exportIIds = true;
 
     /**
      * Creates a JTM writer, using "utf-8" encoding.
@@ -101,12 +102,34 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         return _out.getPrettify();
     }
 
+    /**
+     * Returns if item identifiers are exported (enabeld by default).
+     *
+     * @return {@code true} if item identifiers are exported, otherwise {@code false}. 
+     */
+    public boolean getExportItemIdentifiers() {
+        return _exportIIds;
+    }
+
+    /**
+     * Configures the export of item identifiers.
+     * 
+     * If {@code export} is set to {@code false}, item identifiers are not
+     * exported (enabled by default).
+     *
+     * @param export {@code true} if item identifiers should be exported, 
+     *                  otherwise {@code false}.
+     */
+    public void setExportItemIdentifiers(final boolean export) {
+        _exportIIds = export;
+    }
+
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
     @Override
     public void write(final TopicMap topicMap) throws IOException {
-        _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
+        _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);
         _out.startDocument();
         _out.startObject();
         _writeKeyValue("version", "1.0");
@@ -156,15 +179,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     private void _writeTopic(final Topic topic) throws IOException {
         // Ignore the topic if it is the default name type and it has no further
         // characteristics
-        if (topic.equals(_defaultNameType)
-                && topic.getReified() == null
-                && topic.getSubjectIdentifiers().size() == 1
-                && topic.getSubjectLocators().isEmpty()
-                && topic.getItemIdentifiers().isEmpty()
-                && topic.getRolesPlayed().isEmpty()
-                && topic.getTypes().isEmpty()
-                && topic.getNames().isEmpty()
-                && topic.getOccurrences().isEmpty()) {
+        if (topic.equals(_defaultNameType)) {
             return;
         }
         _out.startObject();
@@ -273,7 +288,9 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException If an error occurs.
      */
     private void _writeItemIdentifiers(final Construct construct) throws IOException {
-        _writeLocators("item_identifiers", construct.getItemIdentifiers());
+        if (_exportIIds) {
+            _writeLocators("item_identifiers", construct.getItemIdentifiers());
+        }
     }
 
     /**

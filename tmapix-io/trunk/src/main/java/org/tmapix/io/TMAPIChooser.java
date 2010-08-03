@@ -15,6 +15,9 @@
  */
 package org.tmapix.io;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.tmapi.core.TopicMap;
 
 import com.semagia.mio.IMapHandler;
@@ -26,6 +29,8 @@ import com.semagia.mio.IMapHandler;
  * @version $Rev$ - $Date$
  */
 final class TMAPIChooser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TMAPIChooser.class.getName());
 
     private static final String _TINYTIM = "org.tinytim";
     private static final String _ONTOPIA = "net.ontopia.topicmaps.impl.tmapi2.";
@@ -68,7 +73,13 @@ final class TMAPIChooser {
     }
 
     private static IMapHandler makeOntopiaMapInputHandler(final TopicMap topicMap) {
-        return new net.ontopia.topicmaps.io.OntopiaMapHandler(unwrapOntopia(topicMap));
+        try {
+            return new net.ontopia.topicmaps.io.OntopiaMapHandler(unwrapOntopia(topicMap));
+        }
+        catch (Exception ex) {
+            LOG.warn("Ontopia MIO not found, falling back to the generic TMAPI handler");
+            return createTMAPIMapHandler(topicMap);
+        }
     }
 
     static net.ontopia.topicmaps.core.TopicMapIF unwrapOntopia(TopicMap topicMap) {

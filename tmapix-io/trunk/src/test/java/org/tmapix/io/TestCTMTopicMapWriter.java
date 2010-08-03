@@ -82,6 +82,18 @@ public class TestCTMTopicMapWriter extends AbstractCXTMWriterTestCase {
                 .exclude("occurrence-datetime.xml" // Parser fails :(
                         ).filter());
         result.addAll(CXTMTestUtils.makeSnelloTestCases());
+        result.addAll(Filter.from("/cxtm/ltm/")
+                .using("ltm")
+                .exclude(// Constructs != topic which have an iid
+                        "mergextm.ltm",
+                        "mio-bug-11.ltm",
+                        "reify-association-1.3.ltm",
+                        "reify-basename-1.3.ltm",
+                        "reify-occurrence-1.3.ltm",
+                        "reify-role-1.3.ltm",
+                        "reify-variant-1.3.ltm",
+                        "reifytm-1.3.ltm"
+                        ).filter());
         return result;
     }
     

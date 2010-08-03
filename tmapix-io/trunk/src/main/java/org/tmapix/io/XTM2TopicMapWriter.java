@@ -66,14 +66,7 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
      */
     public XTM2TopicMapWriter(final OutputStream out, final String baseIRI, 
             final XTMVersion version) throws IOException {
-        super(out, baseIRI);
-        if (version == null) {
-            throw new IllegalArgumentException("The XTM version must not be null");
-        }
-        if (version == XTMVersion.XTM_1_0) {
-            throw new IllegalArgumentException("Expected either XTM 2.0 or 2.1");
-        }
-        _version = version;
+        this(out, baseIRI, "utf-8", version);
     }
 
     /**

@@ -146,12 +146,18 @@ jar {
       }
 }
 
-task dist(dependsOn: [assemble, test]) << {
+javadoc {
+    exclude '**/internal/**'
+}
+
+task dist(dependsOn: [assemble, test, javadoc]) << {
     def base_name = "$archivesBaseName-${project.version}"
     def base = "$distsDir/" + base_name
     def zips = "$buildDir/dist/$base_name"
+    def doc_dir = "$buildDir/docs"
     copy {
         into base
+        from(doc_dir)
         from(libsDir)
         from(projectDir) {
             include 'README.txt'

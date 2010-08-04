@@ -47,6 +47,8 @@ public class TestCTMTopicMapWriter extends AbstractCXTMWriterTestCase {
                 .exclude("subjid-escaping.xtm",
                         // Constructs != topic which have an iid
                         "association-duplicate-iid.xtm",
+                        "association-duplicate-iid2.xtm",
+                        "association-duplicate-iid3.xtm",
                         "association-duplicate-reified2.xtm",
                         "association-duplicate-reified3.xtm",
                         "association-duplicate-reified4.xtm",

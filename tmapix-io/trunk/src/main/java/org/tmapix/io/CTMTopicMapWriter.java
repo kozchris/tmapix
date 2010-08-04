@@ -55,7 +55,7 @@ import org.tmapix.voc.XSD;
  * @author Hannes Niederhausen
  * @version $Rev$ - $Date$
  */
-public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
+public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
 
     private static final String _ID_START = "[a-zA-Z_]" +
                             "|[\\u00C0-\\u00D6]" +
@@ -89,8 +89,6 @@ public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
     private static final Topic[] _EMPTY_TOPIC_ARRAY = new Topic[0];
     private static final Reference _UNTYPED_REFERENCE = Reference.createId("[untyped]");
 
-    private final String _baseIRI;
-    private final String _encoding;
     private Topic _defaultNameType;
     private boolean _exportIIDs;
     private boolean _keepAbsoluteIIDs;
@@ -98,7 +96,6 @@ public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
     private String _author;
     private String _license;
     private String _comment;
-    private char[] _indent;
     private final Comparator<Topic> _topicIdComparator;
     private final Map<Topic, Reference> _topic2Reference; //TODO: LRU?
     private final Map<String, String> _prefixes;
@@ -147,21 +144,12 @@ public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
      * @param encoding The encoding to use.
      */
     private CTMTopicMapWriter(final Writer writer, final String baseIRI, final String encoding) {
-        super(writer);
-        if (baseIRI == null) {
-            throw new IllegalArgumentException("The base IRI must not be null");
-        }
-        _baseIRI = baseIRI;
-        if (encoding == null) {
-            throw new IllegalArgumentException("The encoding must not be null");
-        }
-        _encoding = encoding;
+        super(writer, baseIRI, encoding);
         _topic2Reference = new HashMap<Topic, Reference>(200);
         _topicIdComparator = new TopicIdComparator();
         _prefixes = new HashMap<String, String>();
         _imports = new HashSet<String>();
         _topic2Supertypes = new HashMap<Topic, Collection<Topic>>();
-        setIndentation(4);
         setExportItemIdentifiers(false);
     }
 
@@ -286,48 +274,6 @@ public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
      */
     public void removePrefix(String prefix) {
         _prefixes.remove(prefix);
-    }
-
-    /**
-     * Sets the indentation level, by default the indentation level is set to 4
-     * which means that four whitespace characters are written.
-     * <p>
-     * If the size is set to <tt>0</tt>, no indentation will be done.
-     * </p>
-     * <p>
-     * The indentation level indicates how many whitespaces are written in front
-     * of a statement within a topic block.
-     * </p>
-     * <p>Example (indentation level = 4):
-     * <pre>
-     * john isa person;
-     *     - "John".
-     * </pre>
-     * </p>
-     * <p>Example (indentation level = 0):
-     * <pre>
-     * paul isa person;
-     * - "Paul".
-     * </pre>
-     * </p>
-     *
-     * @param level The identation level.
-     */
-    public void setIndentation(int level) {
-        if (_indent == null || _indent.length != level) {
-            _indent = new char[level];
-            Arrays.fill(_indent, ' ');
-        }
-    }
-
-    /**
-     * Returns the identation level.
-     *
-     * @return The number of whitespaces which are written in front of a 
-     *          statement within a topic block.
-     */
-    public int getIdentation() {
-        return _indent.length;
     }
 
     /**
@@ -923,7 +869,7 @@ public class CTMTopicMapWriter extends AbstractTextualTopicMapWriter {
         if (wantSemicolon) {
             _out.write(';');
             _newline();
-            _out.write(_indent);
+            super.indent();
         }
     }
 

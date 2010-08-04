@@ -71,18 +71,18 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
         _nameComparator = new NameComparator();
         _variantComparator = new VariantComparator();
         _topicCollectionComparator = new TopicCollectionComparator();
-        setIdentation(4);
+        setIndentation(4);
     }
 
     /**
-     * Sets the identation level, by default the identation level is set to 4
+     * Sets the indentation level, by default the indentation level is set to 4
      * which means that four whitespace characters are written.
      * <p>
-     * If the size is set to <tt>0</tt>, no identation will be done.
+     * If the size is set to <tt>0</tt>, no indentation will be done.
      * </p>
-     * @param level The identation level.
+     * @param level The indentation level.
      */
-    public void setIdentation(int level) {
+    public void setIndentation(int level) {
         if (_indent == null || _indent.length != level) {
             _indent = new char[level];
             Arrays.fill(_indent, ' ');
@@ -90,12 +90,12 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Returns the identation level.
+     * Returns the indentation level.
      *
      * @return The number of whitespaces which are written in front of a 
      *          statement within a topic block.
      */
-    public int getIdentation() {
+    public int getIndentation() {
         return _indent.length;
     }
 
@@ -188,7 +188,7 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
     protected abstract Topic getDefaultNameType();
 
     /**
-     * Writes the identation.
+     * Writes the indentation.
      *
      * @throws IOException In case of an error.
      */

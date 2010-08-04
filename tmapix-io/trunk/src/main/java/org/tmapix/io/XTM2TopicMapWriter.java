@@ -36,7 +36,6 @@ import org.tmapi.core.Variant;
 
 import org.tmapix.io.XMLWriter;
 import org.tmapix.voc.Namespace;
-import org.tmapix.voc.TMDM;
 import org.tmapix.voc.XSD;
 
 import org.xml.sax.Attributes;

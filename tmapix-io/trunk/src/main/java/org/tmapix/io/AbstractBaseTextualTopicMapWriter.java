@@ -88,7 +88,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * @param baseIRI The document IRI.
      * @param encoding The encoding to use.
      */
-    private AbstractBaseTextualTopicMapWriter(final Writer out,
+    protected AbstractBaseTextualTopicMapWriter(final Writer out,
             final String baseIRI, final String encoding) {
         super(out);
         if (encoding == null) {
@@ -125,7 +125,7 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      *          otherwise {@code false}.
      */
     protected final boolean isTypeInstanceAssociation(final Association assoc, final Set<Role> roles) { 
-            return AssociationUtils.isTypeInstanceAssociation(_typeInstance, _type, _instance, assoc, roles);
+            return WriterUtils.isTypeInstanceAssociation(_typeInstance, _type, _instance, assoc, roles);
     }
 
     /**

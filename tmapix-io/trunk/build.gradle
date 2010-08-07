@@ -120,6 +120,8 @@ task majortomTests(type: Test, dependsOn: jar) {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.majortom.core.TopicMapSystemFactoryImpl'
 }
 
+test.maxParallelForks = 4
+
 build.dependsOn ontopiaTests
 build.dependsOn majortomTests
 //build.dependsOn genericTMAPIOntopiaTests
@@ -186,6 +188,9 @@ task dist(dependsOn: [assemble, test, javadoc]) << {
         }
         into('lib') {
             from configurations.runtime
+            from(configurations.compiledep) { 
+              include 'ontopia-mio*'
+            }
         }
     }
     ant {

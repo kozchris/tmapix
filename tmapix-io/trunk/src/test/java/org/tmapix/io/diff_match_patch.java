@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  * Also contains the behaviour settings.
  */
 @SuppressWarnings("boxing")
-public class diff_match_patch {
+class diff_match_patch {
 
   // Defaults.
   // Set these on your diff_match_patch instance to override the defaults.

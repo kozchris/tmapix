@@ -32,7 +32,7 @@ import org.tmapix.voc.XTM10;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev: 343 $ - $Date: 2009-08-12 13:48:07 +0200 (Mi, 12 Aug 2009) $
  */
-public class XTM10Utils {
+final class XTM10Utils {
 
     private XTM10Utils() {
         // noop.

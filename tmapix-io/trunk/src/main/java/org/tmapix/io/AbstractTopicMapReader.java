@@ -122,7 +122,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.ITopicMapReader#read()
+     * @see org.tmapix.io.TopicMapReader#read()
      */
     @Override
     public void read() throws IOException {

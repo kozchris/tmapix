@@ -110,7 +110,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.net.URL)
+     * @see org.tmapix.io.RDFTopicMapReader#setMappingSource(java.net.URL)
      */
     @Override
     public void setMappingSource(URL url) {
@@ -118,7 +118,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.lang.String)
+     * @see org.tmapix.io.RDFTopicMapReader#setMappingSource(java.lang.String)
      */
     @Override
     public void setMappingSource(String iri) {
@@ -126,7 +126,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.RDFTopicMapReader#getMappingSource()
+     * @see org.tmapix.io.RDFTopicMapReader#getMappingSource()
      */
     @Override
     public String getMappingSource() {
@@ -134,7 +134,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.RDFTopicMapReader#getMappingSourceSyntax()
+     * @see org.tmapix.io.RDFTopicMapReader#getMappingSourceSyntax()
      */
     @Override
     public RDFSyntax getMappingSourceSyntax() {
@@ -143,7 +143,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.RDFTopicMapReader#setMappingSourceSyntax(org.tinytim.mio.RDFTopicMapReader.MappingSyntax)
+     * @see org.tmapix.io.RDFTopicMapReader#setMappingSourceSyntax(org.tmapix.io.RDFSyntax)
      */
     @Override
     public void setMappingSourceSyntax(RDFSyntax syntax) {

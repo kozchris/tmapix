@@ -44,13 +44,27 @@ final class XMLWriter {
 
     private boolean _prettify;
 
+    private int _bits = -1;
+
     public XMLWriter(final OutputStream out) throws IOException {
-        this(out, "utf-8");
+        this(out, "UTF-8");
     }
 
     public XMLWriter(final OutputStream out, final String encoding) throws IOException {
         _out = new OutputStreamWriter(out, encoding);
         _encoding = encoding;
+        if ("UTF-8".equalsIgnoreCase(encoding) 
+                || "UTF-16".equalsIgnoreCase(encoding)) {
+            _bits = 16;
+        }
+        else if ("ISO-8859-1".equalsIgnoreCase(encoding) 
+                    || "Latin1".equalsIgnoreCase(encoding)) {
+            _bits = 8;
+        }
+        else if ("US-ASCII".equalsIgnoreCase(encoding) 
+                    || "ASCII".equalsIgnoreCase(encoding)) {
+            _bits = 7;
+        }
     }
 
     /**
@@ -256,10 +270,43 @@ final class XMLWriter {
     public void characters(final char[] chars, final int start, final int length) throws IOException {
         _writeEscapedCharacters(chars, start, length, false);
     }
+    
+    private static boolean _isHighSurrogate(final char c) {
+        return c >= 0xD800 && c <= 0xDBFF;
+    }
+
+    private static boolean _isLowSurrogate(final char c) {
+        return c >= 0xDC00 && c <= 0xDFFF;
+    }
+    
+    private boolean _shouldEscape(final char c) {
+        if (_bits == 16) {
+            return false;
+        }
+        if (_bits == 8) {
+            return ((int) c > 255);
+        }
+        if (_bits == 7) {
+            return ((int) c > 127);
+        }
+        else {
+            return _isHighSurrogate(c);
+        }
+    }
+
+    private static int _combineSurrogatePair(final char highSurrogate, final char lowSurrogate) {
+        int high = highSurrogate & 0x7FF;
+        int low  = lowSurrogate - 0xDC00;
+        int highShifted = high << 10;
+        int combined = highShifted | low; 
+        int codePoint = combined + 0x10000;
+        return codePoint;
+    }
 
     private void _writeEscapedCharacters(final char[] ch, final int start, final int length,
             final boolean attributeValue) throws IOException {
-        for (int i=start; i < start + length; i++) {
+        final int len = start + length;
+        for (int i=start; i < len; i++) {
             switch (ch[i]) {
             case '&':
                 _out.write("&amp;");
@@ -279,17 +326,31 @@ final class XMLWriter {
                 }
                 break;
             default:
-                if (ch[i] > '\u007f') {
-                    _out.write("&#");
-                    _out.write(Integer.toString(ch[i]));
-                    _out.write(';');
+                if (_shouldEscape(ch[i])) {
+                    char c = ch[i];
+                    int uc = c;
+                    if (_isHighSurrogate((char)c)) {
+                        i++;
+                        if (i < len) {
+                            char low = ch[i];
+                            if (!_isLowSurrogate(low)) {
+                                throw new IOException("Could not decode surrogate pair 0x" + Integer.toHexString(c) + " / 0x" + Integer.toHexString(low));
+                            }
+                            else {
+                                uc = _combineSurrogatePair((char)c, low);
+                            }
+                        }
+                        else {
+                            throw new IOException("Surrogate pair 0x" + Integer.toHexString(c) + " truncated");
+                        }
+                    }
+                    String s = "&#x" + Integer.toHexString(uc).toUpperCase() + ';';
+                    _out.write(s);
                 }
                 else {
                     _out.write(ch[i]);
                 }
             }
         }
-        
     }
-
 }

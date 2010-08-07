@@ -33,7 +33,8 @@ public interface TopicMapReader {
      * Reads a topic map.
      *
      * @throws IOException If an error occurs.
+     * @throws TMAPIXParseException If parsing error, i.e. syntax error, occurs.
      */
-    public void read() throws IOException;
+    public void read() throws IOException, TMAPIXParseException;
 
 }

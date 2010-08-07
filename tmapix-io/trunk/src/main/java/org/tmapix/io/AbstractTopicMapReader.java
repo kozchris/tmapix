@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 
 import com.semagia.mio.DeserializerRegistry;
@@ -136,7 +135,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
                 throw (IOException) ex.getException();
             }
             else {
-                throw new TMAPIRuntimeException(ex);
+                throw new TMAPIXParseException(ex);
             }
         }
         finally {

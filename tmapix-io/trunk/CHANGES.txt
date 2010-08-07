@@ -6,6 +6,8 @@ Changes Log
 0.4.0 -- 2010-08-dd
 -------------------
 - Added CTM serializer
+- Added TMAPIXParseException for better error reporting
+  (Runtime exception derived from TMAPIRuntimeException)
 
 
 0.4.0 SNAPSHOT -- 2010-08-01

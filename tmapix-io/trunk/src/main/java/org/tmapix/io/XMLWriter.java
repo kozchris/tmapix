@@ -327,8 +327,7 @@ final class XMLWriter {
                 break;
             default:
                 if (_shouldEscape(ch[i])) {
-                    char c = ch[i];
-                    int uc = c;
+                    int c = ch[i];
                     if (_isHighSurrogate((char)c)) {
                         i++;
                         if (i < len) {
@@ -337,14 +336,14 @@ final class XMLWriter {
                                 throw new IOException("Could not decode surrogate pair 0x" + Integer.toHexString(c) + " / 0x" + Integer.toHexString(low));
                             }
                             else {
-                                uc = _combineSurrogatePair((char)c, low);
+                                c = _combineSurrogatePair((char)c, low);
                             }
                         }
                         else {
                             throw new IOException("Surrogate pair 0x" + Integer.toHexString(c) + " truncated");
                         }
                     }
-                    String s = "&#x" + Integer.toHexString(uc).toUpperCase() + ';';
+                    String s = "&#x" + Integer.toHexString(c).toUpperCase() + ';';
                     _out.write(s);
                 }
                 else {

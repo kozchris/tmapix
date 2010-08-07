@@ -108,7 +108,7 @@ public class TMAPIXParseException extends TMAPIRuntimeException {
     }
 
     /**
-     * The column number of the end of the text where the exception occurred.
+     * The line number of the end of the text where the exception occurred.
      *
      * @return An integer representing the line number, or -1 if none is available.
      */

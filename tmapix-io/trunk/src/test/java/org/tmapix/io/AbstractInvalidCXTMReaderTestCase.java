@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.tmapi.core.ModelConstraintException;
-import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
@@ -64,7 +63,7 @@ public abstract class AbstractInvalidCXTMReaderTestCase {
             // Good.
             // The engine has thrown an exception
         }
-        catch (TMAPIRuntimeException ex) {
+        catch (TMAPIXParseException ex) {
             // Good.
             // Parser has thrown an exception
         }

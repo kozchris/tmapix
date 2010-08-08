@@ -28,7 +28,6 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
@@ -103,7 +102,7 @@ public abstract class AbstractValidCXTMReaderTestCase {
             reader.read();
         }
         catch (Throwable ex) {
-            if (ex instanceof TMAPIRuntimeException && ex.getCause() instanceof MIOException) {
+            if (ex instanceof TMAPIXParseException && ex.getCause() instanceof MIOException) {
                 ex = ex.getCause();
             }
             fail("Parsing failed for <" + iri + "> \n" + _getStackTrace(ex) + "\nCause: " + _getStackTrace(ex.getCause()));

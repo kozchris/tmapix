@@ -26,6 +26,7 @@ import com.semagia.mio.DeserializerRegistry;
 import com.semagia.mio.IDeserializer;
 import com.semagia.mio.IMapHandler;
 import com.semagia.mio.MIOException;
+import com.semagia.mio.MIOParseException;
 import com.semagia.mio.Property;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
@@ -135,7 +136,13 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
                 throw (IOException) ex.getException();
             }
             else {
-                throw new TMAPIXParseException(ex);
+                int line = -1;
+                int column = -1;
+                if (ex instanceof MIOParseException) {
+                    line = ((MIOParseException) ex).getLineNumber();
+                    column = ((MIOParseException) ex).getColumnNumber();
+                }
+                throw new TMAPIXParseException(ex, line, column);
             }
         }
         finally {

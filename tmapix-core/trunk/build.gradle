@@ -1,0 +1,151 @@
+/*
+ * Gradle 0.9 build file.
+ * 
+ * - Download Gradle from <http://www.gradle.org/>
+ * - Execute gradle build
+ */
+group = 'org.tmapix'
+version = '0.2.0'
+
+apply plugin: 'java'
+apply plugin: 'osgi'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+defaultTasks 'clean', 'build'
+
+project.projectName = 'TMAPIX Core'
+project.projectDescription = 'TMAPIX Core' //TODO
+project.vendorName = 'Semagia'
+project.vendorURL = 'http://www.semagia.com/'
+project.licenseName = 'Apache Software License, Version 2.0'
+project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+project.projectURL = 'http://www.tmapix.org/'
+
+REP_TINYTIM = 'http://tinytim.sourceforge.net/maven-repository/'
+REP_TINYTIM_SNAPSHOT = 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
+REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
+REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
+
+gradle.taskGraph.whenReady {taskGraph ->
+   if (!taskGraph.hasTask(':release')) {
+       version += '-SNAPSHOT'
+   }
+}
+
+repositories {
+    mavenCentral()
+    mavenRepo urls: REP_TMAPI
+    mavenRepo urls: REP_TINYTIM
+    mavenRepo urls: REP_TINYTIM_SNAPSHOT
+}
+
+dependencies {
+    compile 'org.tmapi:tmapi:2.0.2'
+    compile 'org.slf4j:slf4j-api:(1.5.8,)'
+
+    testCompile 'junit:junit:4.8.1'
+
+    testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
+}
+
+jar {
+      manifest {
+        name = projectName
+        
+        attributes 'Implementation-Version': project.version, 
+                  'Implementation-Vendor': project.vendorName, 
+                  'Implementation-URL': project.projectURL, 
+                  'Sealed': 'false'
+                  
+        instruction 'Bundle-Vendor', project.vendorName
+        instruction 'Bundle-License', project.licenseURL
+        instruction 'Bundle-Description', project.projectDescription
+        instruction 'Export-Package', '!*.internal.*, *'
+      }
+}
+
+javadoc {
+    appName = 'TMAPIX Core ' + project.version
+
+    exclude '**/internal/**'
+
+    project.configure(options) {
+        memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PUBLIC
+        docTitle = "$appName"
+        windowTitle = "$appName"
+        header = "$appName"
+        author = "true"
+        version = "true"
+        use = "true"
+        links('http://java.sun.com/j2se/1.5.0/docs/api', 'http://www.tmapi.org/2.0/api/')
+    }
+
+}
+
+task dist(dependsOn: [assemble, test, javadoc]) << {
+    def base_name = "$archivesBaseName-${project.version}"
+    def base = "$distsDir/" + base_name
+    def zips = "$buildDir/dist/$base_name"
+    def doc_dir = "$buildDir/docs"
+    copy {
+        into base
+        from(doc_dir)
+        from(libsDir)
+        from(projectDir) {
+            include 'README.txt'
+            include 'LICENSE.txt'
+            include 'CHANGES.txt'
+            include 'NOTICE.txt'
+        }
+        from("$projectDir/src") {
+            into 'src'
+            exclude 'grammar/**'
+            exclude '**/*.bak'
+        }
+        into('lib') {
+            from configurations.runtime
+        }
+    }
+    ant {
+        tar destfile: zips + '.tar.gz', basedir: distsDir, compression: 'gzip', longfile: 'gnu'
+        zip destfile: zips + '.zip', basedir: distsDir
+    }
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file://$buildDir/maven-repo/")
+
+        pom.project {
+            name project.projectName
+            description project.projectDescription
+            url project.projectURL
+            
+            organization {
+                name project.vendorName
+                url project.vendorURL
+            }
+            licenses {
+               license {
+                  name project.licenseName
+                  url project.licenseURL
+               }
+            }
+            repositories {
+               repository {
+                  id 'tmapi'
+                  url REP_TMAPI
+               }
+               repository {
+                  id 'tinytim'
+                  url REP_TINYTIM
+               }
+               repository {
+                  id 'tinytim-snapshots'
+                  url REP_TINYTIM_SNAPSHOT
+               }
+            }
+        }
+    }
+}

@@ -22,11 +22,6 @@ project.licenseName = 'Apache Software License, Version 2.0'
 project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 project.projectURL = 'http://www.tmapix.org/'
 
-REP_TINYTIM = 'http://tinytim.sourceforge.net/maven-repository/'
-REP_TINYTIM_SNAPSHOT = 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
-REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
-REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
-
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
        version += '-SNAPSHOT'
@@ -35,18 +30,10 @@ gradle.taskGraph.whenReady {taskGraph ->
 
 repositories {
     mavenCentral()
-    mavenRepo urls: REP_TMAPI
-    mavenRepo urls: REP_TINYTIM
-    mavenRepo urls: REP_TINYTIM_SNAPSHOT
 }
 
 dependencies {
-    compile 'org.tmapi:tmapi:2.0.2'
-    compile 'org.slf4j:slf4j-api:(1.5.8,)'
-
     testCompile 'junit:junit:4.8.1'
-
-    testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
 }
 
 jar {
@@ -130,20 +117,6 @@ uploadArchives {
                license {
                   name project.licenseName
                   url project.licenseURL
-               }
-            }
-            repositories {
-               repository {
-                  id 'tmapi'
-                  url REP_TMAPI
-               }
-               repository {
-                  id 'tinytim'
-                  url REP_TINYTIM
-               }
-               repository {
-                  id 'tinytim-snapshots'
-                  url REP_TINYTIM_SNAPSHOT
                }
             }
         }

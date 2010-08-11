@@ -1,0 +1,9 @@
+#summary Projects that use TMAPIX
+#labels Featured
+
+= Projects that use TMAPIX =
+
+  * [http://maiana.topicmapslab.de Maiana]
+  * [https://code.google.com/p/majortom/ MaJorToM]
+  * [https://code.google.com/p/onotoa/ Onotoa]
+  * [https://code.google.com/p/sesametm/ SesameTM]

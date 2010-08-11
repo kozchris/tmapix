@@ -3,7 +3,8 @@
 
 = Projects that use TMAPIX =
 
-  * [http://maiana.topicmapslab.de Maiana]
+  * [http://tinytim.sourceforge.net/ tinyTiM]
+  * [http://maiana.topicmapslab.de/ Maiana]
   * [https://code.google.com/p/majortom/ MaJorToM]
   * [https://code.google.com/p/onotoa/ Onotoa]
   * [https://code.google.com/p/sesametm/ SesameTM]

@@ -902,7 +902,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         else if (XSD.STRING.equals(datatype)) {
             _writeString(value);
         }
-        else if (_isNativelySupported(datatype)) {
+        else if (CTMUtils.isNativeDatatype(datatype)) {
             _out.write(value);
         }
         else {
@@ -999,7 +999,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
             String iri = entry.getValue();
             if (reference.startsWith(iri)) {
                 String localPart = reference.substring(iri.length());
-                if (_isValidLocalPart(localPart)) {
+                if (CTMUtils.isValidLocalPart(localPart)) {
                     _out.write(entry.getKey());
                     _out.write(':');
                     _out.write(localPart);
@@ -1067,32 +1067,6 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      */
     private static boolean _isValidId(String id) {
         return CTMUtils.isValidId(id);
-    }
-
-    /**
-     * Returns if the provided <tt>id</tt> is a valid local part of a QName.
-     *
-     * @param id The id to check.
-     * @return <tt>true</tt> if the id is valid, otherwise <tt>false</tt>.
-     */
-    private boolean _isValidLocalPart(String id) {
-        return CTMUtils.isValidLocalPart(id);
-    }
-
-    /**
-     * Returns if the provided <tt>literal</tt> is supported by CTM natively.
-     *
-     * @param literal The literal to check.
-     * @return <tt>true</tt> if the literal is supported, else <tt>false</tt>.
-     */
-    private boolean _isNativelySupported(final String datatype) {
-        return XSD.STRING.equals(datatype)
-                || XSD.ANY_URI.equals(datatype)
-                || XSD.DECIMAL.equals(datatype)
-                || XSD.INTEGER.equals(datatype)
-                || XSD.DATE.equals(datatype)
-                || XSD.DATE_TIME.equals(datatype)
-                || XSD.DOUBLE.equals(datatype);
     }
 
     /**

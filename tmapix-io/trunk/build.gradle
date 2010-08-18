@@ -14,6 +14,9 @@ apply plugin: 'eclipse'
 
 defaultTasks 'clean', 'build'
 
+//TODO: Remove me once <http://jira.codehaus.org/browse/GRADLE-1079> is fixed
+eclipseClasspath.variables = [:]
+
 project.projectName = 'TMAPIX I/O'
 project.projectDescription = 'TMAPIX I/O' //TODO
 project.vendorName = 'Semagia'
@@ -40,12 +43,13 @@ gradle.taskGraph.whenReady {taskGraph ->
 
 repositories {
     mavenCentral()
+    // jarjar
+    mavenRepo urls: 'http://repo.joist.ws/'
     mavenRepo urls: REP_TMAPI
     mavenRepo urls: REP_TINYTIM
     mavenRepo urls: REP_TINYTIM_SNAPSHOT
     mavenRepo urls: REP_ONTOPIA
     mavenRepo urls: REP_ONTOPIA_SNAPSHOT
-    mavenRepo urls: 'http://repository.jboss.com/maven2/'
     mavenRepo urls: REP_SEMAGIA_SNAPSHOT
     mavenRepo urls: REP_MAJORTOM
 }

@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.DatatypeAware;
@@ -45,6 +44,8 @@ import org.tmapi.index.TypeInstanceIndex;
 import org.tmapix.voc.TMDM;
 import org.tmapix.voc.XSD;
 
+import com.semagia.mio.ctm.CTMUtils;
+
 /**
  * {@link TopicMapWriter} implementation that is able to serialize topic maps
  * into a 
@@ -57,33 +58,6 @@ import org.tmapix.voc.XSD;
  */
 public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
 
-    private static final String _ID_START = "[a-zA-Z_]" +
-                            "|[\\u00C0-\\u00D6]" +
-                            "|[\\u00D8-\\u00F6]" + 
-                            "|[\\u00F8-\\u02FF]" +
-                            "|[\\u0370-\\u037D]" + 
-                            "|[\\u037F-\\u1FFF]" +
-                            "|[\\u200C-\\u200D]" + 
-                            "|[\\u2070-\\u218F]" +
-                            "|[\\u2C00-\\u2FEF]" + 
-                            "|[\\u3001-\\uD7FF]" +
-                            "|[\\uF900-\\uFDCF]" + 
-                            "|[\\uFDF0-\\uFFFD]" + 
-                            "|[\\u10000-\\uEFFFF]";
-    private static final String _ID_PART = _ID_START + 
-                                   "|[\\-\\.0-9]" + 
-                                   "|\\u00B7" + 
-                                   "|[\\u0300-\\u036F]" + 
-                                   "|[\\u203F-\\u2040]";
-    private static final String _ID_END = _ID_START + 
-                                   "|[\\-0-9]" + 
-                                   "|\\u00B7" +  
-                                   "|[\\u0300-\\u036F]" + 
-                                   "|[\\u203F-\\u2040]";
-    private static final Pattern _ID_PATTERN = Pattern.compile(String.format("%s(%s*%s)*", _ID_START, _ID_PART, _ID_END));
-    private static final Pattern _LOCAL_PATTERN = Pattern.compile("([0-9]*\\.*[\\-A-Za-z_0-9])*");
-    private static final Pattern _IRI_PATTERN = Pattern.compile("[^<>\"\\{\\}\\`\\\\ ]+");
-    private static final char[] _TRIPLE_QUOTES = new char[] { '"', '"', '"' };
     private static final Reference[] _EMPTY_REFERENCE_ARRAY = new Reference[0];
 
     private static final Topic[] _EMPTY_TOPIC_ARRAY = new Topic[0];
@@ -255,13 +229,13 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         if (prefix == null) {
             throw new IllegalArgumentException("The prefix must not be null");
         }
-        if (!_isValidId(prefix)) {
+        if (!CTMUtils.isValidId(prefix)) {
             throw new IllegalArgumentException("The prefix is an invalid CTM identifier: " + prefix);
         }
         if (reference == null) {
             throw new IllegalArgumentException("The reference must not be null");
         }
-        if (!_IRI_PATTERN.matcher(reference).matches()) {
+        if (!CTMUtils.isValidIRI(reference)) {
             throw new IllegalArgumentException("The reference is an invalid CTM IRI: " + reference);
         }
         _prefixes.put(prefix, reference);
@@ -995,35 +969,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeString(String string) throws IOException {
-        // Avoid escaping of "
-        if (string.indexOf('"') > 0 && !string.endsWith("\"")) {
-            _out.write(_TRIPLE_QUOTES);
-            char[] ch = string.toCharArray();
-            for (int i=0; i<ch.length; i++) {
-                switch (ch[i]) {
-                    case '\\':
-                        _out.write("\\");
-                    default:
-                        _out.write(ch[i]);
-                }
-            }
-            _out.write(_TRIPLE_QUOTES);
-        }
-        else {
-            // Either the string ends with a " or the string is a 'normal' string
-            _out.write('"');
-            char[] ch = string.toCharArray();
-            for (int i=0; i<ch.length; i++) {
-                switch (ch[i]) {
-                    case '"':
-                    case '\\':
-                        _out.write("\\");
-                    default:
-                        _out.write(ch[i]);
-                }
-            }
-            _out.write('"');
-        }
+        CTMUtils.writeString(_out, string);
     }
 
     /**
@@ -1079,7 +1025,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
             int idx = addr.indexOf('#');
             if (idx > 0) {
                 String id = addr.substring(idx+1);
-                if (_isValidId(id) && !_isKeyword(id)) {
+                if (_isValidId(id) && !CTMUtils.isKeyword(id)) {
                     if (_keepAbsoluteIIDs && !addr.startsWith(_baseIRI)) {
                         refs.add(Reference.createItemIdentifier(iid));
                     }
@@ -1114,27 +1060,13 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
     }
 
     /**
-     * Returns if the provided identifier is a CTM keyword.
-     *
-     * @param id The id to check.
-     * @return <tt>true</tt> if <tt>id</tt> is a keyword, otherwise <tt>false</tt>.
-     */
-    private boolean _isKeyword(String id) {
-        return id.length() == 3
-                && ("def".equals(id)
-                        || "end".equals(id)
-                        || "isa".equals(id)
-                        || "ako".equals(id));
-    }
-
-    /**
      * Returns if the provided <tt>id</tt> is a valid CTM topic identifier.
      *
      * @param id The id to check.
      * @return <tt>true</tt> if the id is valid, otherwise <tt>false</tt>.
      */
-    private boolean _isValidId(String id) {
-        return _ID_PATTERN.matcher(id).matches();
+    private static boolean _isValidId(String id) {
+        return CTMUtils.isValidId(id);
     }
 
     /**
@@ -1144,7 +1076,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
      * @return <tt>true</tt> if the id is valid, otherwise <tt>false</tt>.
      */
     private boolean _isValidLocalPart(String id) {
-        return _LOCAL_PATTERN.matcher(id).matches();
+        return CTMUtils.isValidLocalPart(id);
     }
 
     /**

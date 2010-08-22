@@ -152,7 +152,12 @@ public abstract class AbstractCXTMWriterTestCase {
         }
         final ByteArrayOutputStream result = new ByteArrayOutputStream();
         final TopicMapWriter cxtmWriter = CXTMWriterFactory.createCXTMTopicMapWriter(tm, result, iri);
-        cxtmWriter.write(tm);
+        try {
+            cxtmWriter.write(tm);
+        }
+        catch (Throwable ex) {
+            fail("CXTM serialisation failed for <" + iri + "> \n" + _getStackTrace(ex) + "\nCause: " + _getStackTrace(ex.getCause()));
+        }
         final ByteArrayOutputStream expected = new ByteArrayOutputStream();
         final InputStream tmp = new FileInputStream(referenceFile);
         int b;

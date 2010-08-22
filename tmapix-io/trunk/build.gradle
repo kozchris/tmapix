@@ -137,7 +137,7 @@ test.maxParallelForks = 4
 
 build.dependsOn ontopiaTests
 build.dependsOn majortomTests
-build.dependsOn sesametmTests
+//build.dependsOn sesametmTests
 build.dependsOn cxtmwriterTests
 
 test.doFirst {

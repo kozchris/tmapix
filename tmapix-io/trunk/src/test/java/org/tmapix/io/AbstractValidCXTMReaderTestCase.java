@@ -115,7 +115,7 @@ public abstract class AbstractValidCXTMReaderTestCase {
         try {
             writer.write(tm);
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             fail("CXTM serialisation failed for <" + iri + "> \n" + _getStackTrace(ex) + "\nCause: " + _getStackTrace(ex.getCause()));
         }
         final ByteArrayOutputStream expected = new ByteArrayOutputStream();

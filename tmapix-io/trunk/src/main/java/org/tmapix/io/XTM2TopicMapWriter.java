@@ -34,11 +34,12 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
-import org.tmapix.io.XMLWriter;
 import org.tmapix.voc.Namespace;
 import org.tmapix.voc.XSD;
 
 import org.xml.sax.Attributes;
+
+import com.semagia.mio.utils.xml.XMLWriter;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into

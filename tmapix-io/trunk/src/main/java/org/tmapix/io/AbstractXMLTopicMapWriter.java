@@ -26,6 +26,8 @@ import org.tmapi.core.TopicMap;
 import org.tmapix.voc.TMDM;
 import org.xml.sax.helpers.AttributesImpl;
 
+import com.semagia.mio.utils.xml.XMLWriter;
+
 /**
  * Abstract superclass for XML serializers.
  * <p>

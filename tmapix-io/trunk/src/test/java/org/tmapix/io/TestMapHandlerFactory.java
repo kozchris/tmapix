@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestMapHandlerFactory extends TestCase implements ITestConstants {
+public class TestMapHandlerFactory extends TestCase {
     
     private String _tmSysFactoryValue;
 
@@ -82,14 +82,6 @@ public class TestMapHandlerFactory extends TestCase implements ITestConstants {
 
     public void testDetectOntopia() throws Exception {
         assertTrue(makeMapHandler(TMAPIChooser.ONTOPIA_SYSTEM_FACTORY) instanceof OntopiaMapHandler);
-    }
-
-    public void testUnknownTMAPIImplementation() throws Exception {
-        assertTrue(makeMapHandler(GENERIC_SYSTEM_FACTORY_TINYTIM) instanceof TMAPIMapHandler);
-    }
-
-    public void testUnknownTMAPIImplementation2() throws Exception {
-        assertTrue(makeMapHandler(GENERIC_SYSTEM_FACTORY_ONTOPIA) instanceof TMAPIMapHandler);
     }
 
     public void testIgnoreTinyTim() throws Exception {

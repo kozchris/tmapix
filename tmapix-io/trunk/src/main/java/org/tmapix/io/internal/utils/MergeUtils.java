@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2009 - 2010 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.tmapi.core.Variant;
 import org.tmapix.voc.XSD;
 
 /**
- * 
+ * Internal class to merge various Topic Maps constructs.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -72,6 +72,48 @@ public class MergeUtils {
             sigs.put(SignatureGenerator.generateSignature(role), role);
         }
         for (Role role: new ArrayList<Role>(source.getRoles())) {
+            _handleExisting(role, sigs.get(SignatureGenerator.generateSignature(role)));
+            role.remove();
+        }
+        source.remove();
+    }
+
+    private static void _handleExisting(Reifiable source, Reifiable target) {
+        _moveItemIdentifiers(source, target);
+        if (source.getReifier() == null) {
+            return;
+        }
+        if (target.getReifier() != null) {
+            Topic reifier = source.getReifier();
+            source.setReifier(null);
+            target.getReifier().mergeIn(reifier);
+        }
+        else {
+            Topic reifier = source.getReifier();
+            source.setReifier(null);
+            target.setReifier(reifier);
+        }
+    }
+
+    private static void _merge(Role source, Role target) {
+        final Association sourceParent = source.getParent();
+        final Association targetParent = target.getParent();
+        _handleExisting(sourceParent, targetParent);
+        _moveRoles(sourceParent, targetParent);
+        if (!sourceParent.equals(targetParent)) {
+            sourceParent.remove();
+        }
+    }
+    
+    private static void _moveRoles(Association source, Association target) {
+        if (source.equals(target)) {
+            return;
+        }
+        Map<String, Role> sigs = new HashMap<String, Role>();
+        for (Role role: target.getRoles()) {
+            sigs.put(SignatureGenerator.generateSignature(role), role);
+        }
+        for (Role role: new ArrayList<Role>(source.getRoles())) {
             Role existing = sigs.get(SignatureGenerator.generateSignature(role));
             if (existing != null) {
                 _handleExisting(role, existing);
@@ -80,22 +122,6 @@ public class MergeUtils {
                 Role targetRole = target.createRole(role.getType(), role.getPlayer());
                 _handleExisting(role, targetRole);
             }
-        }
-        source.remove();
-    }
-
-    private static void _handleExisting(Reifiable source, Reifiable target) {
-        _moveItemIdentifiers(source, target);
-        _moveReifier(source, target);
-    }
-
-    private static void _merge(Role source, Role target) {
-        if (source.getParent().equals(target.getParent())) {
-            _handleExisting(source, target);
-            source.remove();
-        }
-        else {
-            _merge(source.getParent(), target.getParent());
         }
     }
 
@@ -146,14 +172,6 @@ public class MergeUtils {
         for (Locator iid: new ArrayList<Locator>(source.getItemIdentifiers())) {
             source.removeItemIdentifier(iid);
             target.addItemIdentifier(iid);
-        }
-    }
-
-    private static void _moveReifier(Reifiable source, Reifiable target) {
-        if (source.getReifier() != null) {
-            Topic reifier = source.getReifier();
-            source.setReifier(null);
-            target.setReifier(reifier);
         }
     }
 

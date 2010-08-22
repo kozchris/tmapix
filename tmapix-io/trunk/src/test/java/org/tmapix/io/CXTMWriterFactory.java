@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import org.tmapi.core.TopicMap;
 import org.tmapix.io.TMAPIChooser;
 import org.tmapix.io.TopicMapWriter;
+import org.tmapix.io.CXTMTopicMapWriter.DuplicateRemover;
+import org.tmapix.io.CXTMWriterTopicMapSystemFactoryTinyTim.CXTMWriterTopicMapTinyTim;
 
 /**
  * 
@@ -28,7 +30,7 @@ import org.tmapix.io.TopicMapWriter;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-class CXTMWriterFactory implements ITestConstants {
+class CXTMWriterFactory {
 
     private static final String _MAJORTOM = "de.topicmapslab.majortom";
 
@@ -42,27 +44,25 @@ class CXTMWriterFactory implements ITestConstants {
         else if (topicMap.getClass().getName().startsWith(_MAJORTOM)) {
             return new MajortomCXTMWriter(out, base);
         }
-        else if (isGenericTMAPI(topicMap)) {
-            if (TMAPIChooser.isTinyTim(((GenericTMAPITopicMap) topicMap).getWrappedTopicMap())) {
-                return new GenericTinyTimCXTMWriter(out, base);
+        else {
+            CXTMTopicMapWriter cxtmWriter = new CXTMTopicMapWriter(out, base);
+            if (topicMap instanceof CXTMWriterTopicMapTinyTim) {
+                cxtmWriter.setDuplicateRemover(new TinyTimDuplicateRemover());
             }
-            else {
-                return new GenericOntopiaCXTMWriter(out);
-            }
+            return cxtmWriter;
         }
-        throw new IOException("No CXTM serializer found");
     }
 
-    static boolean isGenericTMAPI(TopicMap topicMap) {
-        return isGenericTMAPI(topicMap.getClass().getName());
-    }
 
-    private static boolean isGenericTMAPI(String className) {
-        return className.startsWith(GENERIC_PACKAGE);
-    }
+    private static final class TinyTimDuplicateRemover implements DuplicateRemover {
 
-    private static TopicMap _unwrap(TopicMap topicMap) {
-        return ((GenericTMAPITopicMap)topicMap).getWrappedTopicMap();
+        @Override
+        public void removeDuplicates(TopicMap topicMap) {
+            TopicMap tm = ((CXTMWriterTopicMapTinyTim) topicMap).getWrappedTopicMap();
+            org.tinytim.utils.TypeInstanceConverter.convertAssociationsToTypes(tm);
+            org.tinytim.utils.DuplicateRemovalUtils.removeDuplicates(tm);
+        }
+        
     }
 
     private static class MajortomCXTMWriter implements TopicMapWriter {
@@ -101,19 +101,6 @@ class CXTMWriterFactory implements ITestConstants {
         
     }
 
-    private static class GenericTinyTimCXTMWriter extends TinyTimCXTMWriter {
-
-        public GenericTinyTimCXTMWriter(OutputStream out, String base) throws IOException {
-            super(out, base);
-        }
-
-        @Override
-        public void write(TopicMap topicMap) throws IOException {
-            super.write(_unwrap(topicMap)); 
-        }
-        
-    }
-
     private static class OntopiaCXTMWriter implements TopicMapWriter {
         
         private final net.ontopia.topicmaps.xml.CanonicalXTMWriter _writer;
@@ -129,16 +116,4 @@ class CXTMWriterFactory implements ITestConstants {
 
     }
 
-    private static class GenericOntopiaCXTMWriter extends OntopiaCXTMWriter {
-
-        public GenericOntopiaCXTMWriter(OutputStream out) throws IOException {
-            super(out);
-        }
-
-        @Override
-        public void write(TopicMap topicMap) throws IOException {
-            super.write(_unwrap(topicMap)); 
-        }
-
-    }
 }

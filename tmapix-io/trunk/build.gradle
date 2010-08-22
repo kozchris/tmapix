@@ -5,7 +5,7 @@
  * - Execute gradle build
  */
 group = 'org.tmapix'
-version = '0.4.0'
+version = '0.5.0'
 
 apply plugin: 'java'
 apply plugin: 'osgi'
@@ -16,6 +16,7 @@ defaultTasks 'clean', 'build'
 
 //TODO: Remove me once <http://jira.codehaus.org/browse/GRADLE-1079> is fixed
 eclipseClasspath.variables = [:]
+eclipseClasspath.downloadSources = false
 
 project.projectName = 'TMAPIX I/O'
 project.projectDescription = 'TMAPIX I/O' //TODO
@@ -33,7 +34,8 @@ REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
 REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
 REP_ONTOPIA_SNAPSHOT = 'https://ontopia.googlecode.com/svn/maven-snapshot-repository/'
 REP_ONTOPIA = 'https://ontopia.googlecode.com/svn/maven-repository'
-REP_MAJORTOM = 'http://maven.topicmapslab.de/public/'
+REP_TMLAB = 'http://maven.topicmapslab.de/public/'
+REP_ADUNA = 'http://repo.aduna-software.org/maven2/releases/'
 
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
@@ -51,7 +53,8 @@ repositories {
     mavenRepo urls: REP_ONTOPIA
     mavenRepo urls: REP_ONTOPIA_SNAPSHOT
     mavenRepo urls: REP_SEMAGIA_SNAPSHOT
-    mavenRepo urls: REP_MAJORTOM
+    mavenRepo urls: REP_TMLAB
+    mavenRepo urls: REP_ADUNA
 }
 
 configurations {
@@ -82,6 +85,7 @@ dependencies {
     testCompile 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
     testCompile 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT'
     testCompile 'de.topicmapslab.majortom:majortom-core:1.1.1-SNAPSHOT'
+    testCompile 'de.topicmapslab.sesametm:sesametm-engine:0.1.1-SNAPSHOT'
 
     testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
 }
@@ -100,18 +104,13 @@ task ontopiaTests(type: Test, dependsOn: jar) {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory'
 }
 
-task genericTMAPIOntopiaTests(type: Test, dependsOn: jar) {
-    testResultsDir = new File(project.testResultsDir, 'generic-ontopia')
-    testReportDir = new File(project.testReportDir, 'generic-ontopia')
+task cxtmwriterTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'cxtmwriter')
+    testReportDir = new File(project.testReportDir, 'cxtmwriter')
+    ignoreFailures = true
     classpath = test.classpath
     testClassesDir = test.testClassesDir
-    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tmapix.io.GenericTMAPITopicMapSystemFactoryOntopia'
-}
-
-task genericTMAPITinyTimTests(type: Test, dependsOn: jar) {
-    classpath = test.classpath
-    testClassesDir = test.testClassesDir
-    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tmapix.io.GenericTMAPITopicMapSystemFactoryTinyTim'
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tmapix.io.CXTMWriterTopicMapSystemFactoryTinyTim'
 }
 
 task majortomTests(type: Test, dependsOn: jar) {
@@ -124,12 +123,22 @@ task majortomTests(type: Test, dependsOn: jar) {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.majortom.core.TopicMapSystemFactoryImpl'
 }
 
+task sesametmTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'sesametm')
+    testReportDir = new File(project.testReportDir, 'sesametm')
+    //TODO: Remove the following line iff SesameTM produces no errors anymore
+    ignoreFailures = true
+    classpath = test.classpath
+    testClassesDir = test.testClassesDir
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.sesametm.cregan.core.CTopicMapSystemFactory'
+}
+
 test.maxParallelForks = 4
 
 build.dependsOn ontopiaTests
 build.dependsOn majortomTests
-//build.dependsOn genericTMAPIOntopiaTests
-//build.dependsOn genericTMAPITinyTimTests
+build.dependsOn sesametmTests
+build.dependsOn cxtmwriterTests
 
 test.doFirst {
     systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tinytim.core.TopicMapSystemFactoryImpl'
@@ -248,8 +257,8 @@ uploadArchives {
                   url REP_TINYTIM_SNAPSHOT
                }
                repository {
-                  id 'majortom'
-                  url REP_MAJORTOM
+                  id 'tmlab'
+                  url REP_TMLAB
                }
             }
         }

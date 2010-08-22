@@ -24,13 +24,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.DatatypeAware;
@@ -70,7 +72,7 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public final class CXTMTopicMapWriter implements TopicMapWriter {
 
-    private static final Logger LOG = Logger.getLogger(CXTMTopicMapWriter.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(CXTMTopicMapWriter.class.getName());
 
     private static final Role[] _EMPTY_ROLES = new Role[0];
 
@@ -113,10 +115,10 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
         _out = new XMLC14NWriter(out);
         _attrs = new AttributesImpl();
         _normBase = _normalizeBaseLocator(baseLocator);
-        _construct2Id = new HashMap<Construct, Integer>();
+        _construct2Id = new IdentityHashMap<Construct, Integer>();
         _locator2Norm = new HashMap<Locator, String>();
-        _assoc2Roles = new HashMap<Association, Role[]>();
-        _topic2Roles = new HashMap<Topic, List<Role>>();
+        _assoc2Roles = new IdentityHashMap<Association, Role[]>();
+        _topic2Roles = new IdentityHashMap<Topic, List<Role>>();
         _topicComparator = new TopicComparator();
         _assocComparator = new AssociationComparator();
         _roleComparator = new RoleComparator();
@@ -676,7 +678,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
                 normLoc = normLoc.substring(slashPos);
             }
         }
-        if (normLoc.charAt(0) == '/') {
+        if (normLoc.length() > 0 && normLoc.charAt(0) == '/') {
             normLoc = normLoc.substring(1);
         }
         _locator2Norm.put(locator, normLoc);
@@ -717,7 +719,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
      * @param msg The warning message.
      */
     private static void _reportInvalid(final String msg) {
-        LOG.warning("Invalid CXTM: '" + msg + "'");
+        LOG.warn("Invalid CXTM: '" + msg + "'");
     }
 
     /**
@@ -1146,7 +1148,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
      */
     private final class TypeInstanceAssociation implements Association {
 
-        final Set<Role> _roles; 
+        final Set<Role> _roles;
 
         TypeInstanceAssociation(Topic type, Topic instance) {
             Role typeRole = new TypeInstanceRole(this, _type, type);

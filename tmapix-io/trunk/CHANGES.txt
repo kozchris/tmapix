@@ -8,6 +8,9 @@ Changes Log
 - Added CTM serializer
 - Added TMAPIXParseException for better error reporting
   (Runtime exception derived from TMAPIRuntimeException)
+- Added CXTMTopicMapWriter
+- Updated CTM parser to the latest CTM draft
+- Fixed bugs in the TMAPIMapHandler
 
 
 0.4.0 SNAPSHOT -- 2010-08-01

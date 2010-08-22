@@ -348,13 +348,15 @@ final class TMAPIMapHandler extends AbstractHamsterMapHandler<Topic> {
                         && SignatureGenerator.generateSignature(reifiableA)
                             .equals(SignatureGenerator.generateSignature(reifiableB))
                         );
-        if (res && reifiableA instanceof Role || reifiableA instanceof Variant) {
+        if (res && reifiableA instanceof Role) {
             res = SignatureGenerator.generateSignature((Reifiable) reifiableA.getParent())
                             .equals(SignatureGenerator.generateSignature((Reifiable) reifiableB.getParent()));
         }
         if (res && reifiableA instanceof Variant) {
-            res = ((Variant) reifiableA).getParent().getParent()
-                    .equals(((Variant) reifiableB).getParent().getParent()); 
+            Name parentA = (Name) reifiableA.getParent();
+            Name parentB = (Name) reifiableB.getParent();
+            res = parentA.getParent().equals(parentB.getParent())
+                        && SignatureGenerator.generateSignature(parentA).equals(SignatureGenerator.generateSignature(parentB));
         }
         return res;
     }

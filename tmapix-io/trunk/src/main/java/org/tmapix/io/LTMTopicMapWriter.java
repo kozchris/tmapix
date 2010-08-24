@@ -378,7 +378,6 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
                 _out.write(' ');
                 _writeTopicRef(type);
             }
-            super.newline();
         }
         else if (names.length > 0) {
             _out.write(' ');

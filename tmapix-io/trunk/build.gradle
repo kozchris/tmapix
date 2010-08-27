@@ -74,7 +74,7 @@ dependencies {
     // (and in Eclipse) but they shouldn't be exposed as dependency
     compiledep 'org.tmapix:tmapix-core:0.2.0-SNAPSHOT',
                'org.tinytim:tinytim:2.0.1-SNAPSHOT',
-               'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar',
+               'net.ontopia:ontopia-engine:5.1.0',
                'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
     
     testCompile 'junit:junit:4.8.1',
@@ -84,7 +84,7 @@ dependencies {
     // could be used as testCompile deps *without* repeating the whole deps here
     testCompile 'org.tmapix:tmapix-core:0.2.0-SNAPSHOT',
                 'org.tinytim:tinytim:2.0.1-SNAPSHOT',
-                'net.ontopia:ontopia-engine:5.1.0-SNAPSHOT@jar',
+                'net.ontopia:ontopia-engine:5.1.0',
                 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT',
                 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT',
                 'de.topicmapslab.majortom:majortom-core:1.1.1-SNAPSHOT',

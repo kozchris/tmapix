@@ -47,6 +47,8 @@ repositories {
     mavenCentral()
     // jarjar
     mavenRepo urls: 'http://repo.joist.ws/'
+    // JGroups (Ontopia)
+    mavenRepo urls: 'http://repository.jboss.org/maven2/'
     mavenRepo urls: REP_TMAPI
     mavenRepo urls: REP_TINYTIM
     mavenRepo urls: REP_TINYTIM_SNAPSHOT

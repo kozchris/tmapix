@@ -32,8 +32,8 @@ REP_TINYTIM = 'http://tinytim.sourceforge.net/maven-repository/'
 REP_TINYTIM_SNAPSHOT = 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
 REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
 REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
-REP_ONTOPIA_SNAPSHOT = 'https://ontopia.googlecode.com/svn/maven-snapshot-repository/'
-REP_ONTOPIA = 'https://ontopia.googlecode.com/svn/maven-repository'
+REP_ONTOPIA_SNAPSHOT = 'http://ontopia.googlecode.com/svn/maven-snapshot-repository/'
+REP_ONTOPIA = 'http://ontopia.googlecode.com/svn/maven-repository/'
 REP_TMLAB = 'http://maven.topicmapslab.de/public/'
 REP_ADUNA = 'http://repo.aduna-software.org/maven2/releases/'
 
@@ -89,7 +89,6 @@ dependencies {
                 'net.ontopia:ontopia-engine:5.1.0',
                 'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT',
                 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT',
-                'de.topicmapslab.majortom:majortom-core:1.1.1-SNAPSHOT',
                 'de.topicmapslab.sesametm:sesametm-engine:0.1.1-SNAPSHOT'
 
     testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'

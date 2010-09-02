@@ -50,6 +50,7 @@ repositories {
     // JGroups (Ontopia)
     mavenRepo urls: 'http://repository.jboss.org/maven2/'
     mavenRepo urls: REP_TMAPI
+    mavenRepo urls: REP_TMAPI_SNAPSHOT
     mavenRepo urls: REP_TINYTIM
     mavenRepo urls: REP_TINYTIM_SNAPSHOT
     mavenRepo urls: REP_ONTOPIA

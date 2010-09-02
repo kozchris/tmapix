@@ -13,7 +13,7 @@ To validate XML topic maps like TM/XML or XTM topic maps, the jing lib is requir
 as well.
 
 If you want to use TMAPIX I/O with Ontopia <http://www.ontopia.net/>, the
-ontopia-mio-<VERSION>.jar recommended.
+ontopia-mio-<VERSION>.jar is recommended.
 
 Further, you need the SLF4J lib and an implementation, i.e. slf4j-jdk14.
 

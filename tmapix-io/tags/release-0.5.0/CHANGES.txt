@@ -1,0 +1,62 @@
+===========
+Changes Log
+===========
+
+
+0.5.0 -- 2010-09-02
+-------------------
+- Added CTM serializer
+- Added TMAPIXParseException for better error reporting
+  (Runtime exception derived from TMAPIRuntimeException)
+- Added CXTMTopicMapWriter
+- Updated CTM parser to the latest CTM draft (2010-03-31)
+- Fixed bugs in the TMAPIMapHandler
+- Switched to mio-syntaxpack-nodeps
+- LTM writer generates better formatted output
+
+
+0.4.0 SNAPSHOT -- 2010-08-01
+----------------------------
+- Fixed bug in XTM 1.0 serialiazation
+  (reference to reified construct was written without a fragment identifier)
+- Fixed bug in JTM serialiazation 
+  (missing si: prefix in type-instance associations)
+- Added XTM 2.1 writer
+- Fixed bug in XTM 2.0 serialization (instanceOf element was written multiple
+  times, only one instance element is allowed per topic).
+- Deprecated several XTM* reader classes in favor of *one* XTM reader
+- Switched to mio-syntaxpack to reduce the no of necessary
+  libs in the classpath (it's still possible to use the many mio-libs, though)
+- Fixed bug in LTM 1.3 writer
+  (multiple subject locators were written even if LTM supports just one)
+- TM/XML writer tries to detect a matching item identifier (for the provided
+  base locator) and uses it to assign a topic id.
+- Fixed bug in TM/XML writer which caused a NPE if a topic has more than
+  one type.
+
+
+0.3.0 -- 2009-10-28
+-------------------
+- Changed package name from ``com.semagia.tmapix`` to ``org.tmapix``
+- Added XTM 1.0 writer
+- Added XTM 2.0 writer
+- Added LTM 1.3 writer
+- Added TM/XML 1.0 writer
+- Added JSON Topic Maps 1.0 writer
+- Added experimental XTM 2.1 reader
+- Added experimental Snello reader
+- Added experimental CTM reader
+- Internal code changes
+- Fixed bugs in the TM/XML reader
+- Fixed bugs in the JTM reader
+
+
+0.2.0 -- 2009-08-17
+-------------------
+- Internal code changes
+- Added OntopiaMapHandler which uses Ontopia's native API
+
+
+0.1.0 -- 2009-08-16
+-------------------
+- Initial release

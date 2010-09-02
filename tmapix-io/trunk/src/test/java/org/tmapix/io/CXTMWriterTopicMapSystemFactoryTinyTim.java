@@ -258,6 +258,10 @@ public class CXTMWriterTopicMapSystemFactoryTinyTim extends TopicMapSystemFactor
         public void mergeIn(TopicMap arg0) throws ModelConstraintException {
             _tm.mergeIn(arg0);
         }
+        
+        public void clear() {
+            _tm.clear();
+        }
 
         public void remove() {
             _tm.remove();

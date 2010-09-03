@@ -68,10 +68,7 @@ public class TestCTMTopicMapWriter extends AbstractCXTMWriterTestCase {
                         "role-duplicate-iid2.xtm",
                         "variant-duplicate-iid.xtm"
                         ).filter());
-        result.addAll(Filter.from("/cxtm/tmxml/")
-                .using("xml")
-                .exclude("occurrence-datetime.xml" // Parser fails :(
-                        ).filter());
+        result.addAll(CXTMTestUtils.makeTMXMLTestCases());
         result.addAll(CXTMTestUtils.makeSnelloTestCases());
         result.addAll(Filter.from("/cxtm/ltm/")
                 .using("ltm")

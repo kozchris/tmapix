@@ -66,18 +66,7 @@ public class TestCTMTopicMapWriter extends AbstractCXTMWriterTestCase {
                         "occurrence-duplicate-iid2.xtm",
                         "role-duplicate-iid.xtm",
                         "role-duplicate-iid2.xtm",
-                        // Unsure about the following, parser fails
-                        "role-duplicate-reified.xtm",
-                        "role-duplicate-reified2.xtm",
-                        "role-duplicate-reified3.xtm",
-                        "role-duplicate-reified4.xtm",
-                        "role-reifier.xtm",
-                        "role-reifier-element-sid.xtm",
-                        "role-reifier-element-slo.xtm",
-                        "role-reifier-element-topicref.xtm",
-                        // End of unsure
-                        "variant-duplicate-iid.xtm",
-                        "topicref-no-fragment-id.xtm"   // unsure
+                        "variant-duplicate-iid.xtm"
                         ).filter());
         result.addAll(Filter.from("/cxtm/tmxml/")
                 .using("xml")

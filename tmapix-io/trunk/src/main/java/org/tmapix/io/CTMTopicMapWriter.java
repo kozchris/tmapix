@@ -822,10 +822,7 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _writeTopicRef(role.getType());
         _out.write(": ");
         _writeTopicRef(role.getPlayer());
-        if (role.getReifier() != null) {
-            _writeReifier(role);
-            _out.write(" #( Great, you found a reason why a role should be reified, please tell us about it :) )# ");
-        }
+        _writeReifier(role);
     }
 
     /**
@@ -1036,6 +1033,9 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
                 else {
                     refs.add(Reference.createItemIdentifier(iid));
                 }
+            }
+            else {
+                refs.add(Reference.createItemIdentifier(iid));
             }
         }
         if (refs.isEmpty()) {

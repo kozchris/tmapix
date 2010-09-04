@@ -9,6 +9,7 @@ Changes Log
 - The CTM serializer generated an unnecessary, artificial
   topic id sometimes. Fixed.
 - Updated mio-syntaxpack to 0.1.1
+- Added more test cases
 
 
 0.5.0 -- 2010-09-02

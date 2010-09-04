@@ -67,7 +67,7 @@ dependencies {
 
     compile 'org.tmapi:tmapi:[2.0.2,)',
             'org.slf4j:slf4j-api:[1.5.8,)',
-            'com.semagia.mio:mio-syntaxpack-nodeps:0.1.0-SNAPSHOT'
+            'com.semagia.mio:mio-syntaxpack-nodeps:0.1.1'
     
     // We need tinyTiM and Ontopia in the classpath at compile time
     // (and in Eclipse) but they shouldn't be exposed as dependency

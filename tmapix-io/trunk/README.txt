@@ -16,16 +16,10 @@ ontopia-mio-<VERSION>.jar is recommended.
 
 Further, you need the SLF4J lib and an implementation, i.e. slf4j-jdk14.
 
-
 How to use TMAPIX I/O
 ---------------------
 tinyTiM's documentation covers TMAPIX I/O to some extent:
 <http://tinytim.sourceforge.net/docs/2.0/mio/>
-
-
-Mailing list
-------------
-<https://groups.google.com/group/tm-projects>
 
 
 License

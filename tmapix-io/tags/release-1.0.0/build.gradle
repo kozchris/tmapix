@@ -1,0 +1,291 @@
+/*
+ * Gradle 0.9 build file.
+ * 
+ * - Download Gradle from <http://www.gradle.org/>
+ * - Execute gradle build
+ */
+group = 'org.tmapix'
+version = '1.0.0'
+
+apply plugin: 'java'
+apply plugin: 'osgi'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+defaultTasks 'clean', 'build'
+
+//TODO: Remove me once <http://jira.codehaus.org/browse/GRADLE-1079> is fixed
+eclipseClasspath.variables = [:]
+eclipseClasspath.downloadSources = false
+
+project.projectName = 'TMAPIX I/O'
+project.projectDescription = 'TMAPIX I/O' //TODO
+project.vendorName = 'TMAPIX project'
+project.vendorURL = 'http://www.tmapix.org/'
+project.licenseName = 'Apache Software License, Version 2.0'
+project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+project.projectURL = 'http://www.tmapix.org/'
+
+REP_SEMAGIA = 'http://repository.semagia.com/releases/'
+REP_SEMAGIA_SNAPSHOT = 'http://repository.semagia.com/snapshots/'
+REP_TINYTIM = 'http://tinytim.sourceforge.net/maven-repository/'
+REP_TINYTIM_SNAPSHOT = 'http://tinytim.sourceforge.net/maven-repository/snapshots/'
+REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
+REP_TMAPI_SNAPSHOT = 'http://www.tmapi.org/maven-repository/snapshots/'
+REP_ONTOPIA_SNAPSHOT = 'http://ontopia.googlecode.com/svn/maven-snapshot-repository/'
+REP_ONTOPIA = 'http://ontopia.googlecode.com/svn/maven-repository/'
+REP_TMLAB = 'http://maven.topicmapslab.de/public/'
+REP_ADUNA = 'http://repo.aduna-software.org/maven2/releases/'
+
+gradle.taskGraph.whenReady {taskGraph ->
+   if (!taskGraph.hasTask(':release')) {
+       version += '-SNAPSHOT'
+   }
+}
+
+repositories {
+    mavenCentral()
+    // JGroups (Ontopia)
+    mavenRepo urls: 'http://repository.jboss.org/maven2/'
+    mavenRepo urls: REP_TMAPI
+    mavenRepo urls: REP_TMAPI_SNAPSHOT
+    mavenRepo urls: REP_TINYTIM
+    mavenRepo urls: REP_TINYTIM_SNAPSHOT
+    mavenRepo urls: REP_ONTOPIA
+    mavenRepo urls: REP_ONTOPIA_SNAPSHOT
+    mavenRepo urls: REP_SEMAGIA
+    mavenRepo urls: REP_SEMAGIA_SNAPSHOT
+    mavenRepo urls: REP_TMLAB
+    mavenRepo urls: REP_ADUNA
+}
+
+configurations {
+    compiledep
+}
+
+dependencies {
+
+    compile 'org.tmapi:tmapi:[2.0.2,)',
+            'org.slf4j:slf4j-api:[1.5.8,)',
+            'com.semagia.mio:mio-syntaxpack-nodeps:0.1.1'
+    
+    // We need tinyTiM and Ontopia in the classpath at compile time
+    // (and in Eclipse) but they shouldn't be exposed as dependency
+    compiledep 'org.tmapix:tmapix-core:0.2.0-SNAPSHOT',
+               'org.tinytim:tinytim:2.0.1-SNAPSHOT',
+               'net.ontopia:ontopia-engine:5.1.0',
+               'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT'
+    
+    testCompile 'junit:junit:4.8.1',
+                'com.semagia.mio:mio-core-tests:0.9.6-SNAPSHOT'
+    
+    // This sucks! Would be cool if "compiledep" dependencies 
+    // could be used as testCompile deps *without* repeating the whole deps here
+    testCompile 'org.tmapix:tmapix-core:0.2.0-SNAPSHOT',
+                'org.tmapi:tmapi:2.0.3-SNAPSHOT',
+                'org.tinytim:tinytim:2.0.1-SNAPSHOT',
+                'net.ontopia:ontopia-engine:5.1.0',
+                'net.ontopia:ontopia-mio:0.1.0-SNAPSHOT',
+                'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT',
+                'de.topicmapslab.sesametm:sesametm-engine:0.1.1-SNAPSHOT'
+
+    testRuntime 'org.slf4j:slf4j-jdk14:[1.5.8,)'
+}
+
+sourceSets {
+    main {
+      compileClasspath = sourceSets.main.compileClasspath + configurations.compiledep
+    }
+}
+
+task ontopiaTests(type: Test, dependsOn: jar) {
+    // Remove me once CTM works!
+    ignoreFailures = true
+    testResultsDir = new File(project.testResultsDir, 'ontopia')
+    testReportDir = new File(project.testReportDir, 'ontopia')
+    classpath = test.classpath
+    testClassesDir = test.testClassesDir
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'net.ontopia.topicmaps.impl.tmapi2.TopicMapSystemFactory'
+}
+
+task cxtmwriterTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'cxtmwriter')
+    testReportDir = new File(project.testReportDir, 'cxtmwriter')
+    ignoreFailures = true
+    classpath = test.classpath
+    testClassesDir = test.testClassesDir
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tmapix.io.CXTMWriterTopicMapSystemFactoryTinyTim'
+}
+
+task majortomTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'majortom')
+    testReportDir = new File(project.testReportDir, 'majortom')
+    //TODO: Remove the following line iff MajorTom produces no errors anymore
+    ignoreFailures = true
+    classpath = test.classpath
+    testClassesDir = test.testClassesDir
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.majortom.core.TopicMapSystemFactoryImpl'
+}
+
+task sesametmTests(type: Test, dependsOn: jar) {
+    testResultsDir = new File(project.testResultsDir, 'sesametm')
+    testReportDir = new File(project.testReportDir, 'sesametm')
+    //TODO: Remove the following line iff SesameTM produces no errors anymore
+    ignoreFailures = true
+    classpath = test.classpath
+    testClassesDir = test.testClassesDir
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'de.topicmapslab.sesametm.cregan.core.CTopicMapSystemFactory'
+}
+
+test.maxParallelForks = 4
+
+build.dependsOn ontopiaTests
+build.dependsOn majortomTests
+//build.dependsOn sesametmTests
+build.dependsOn cxtmwriterTests
+
+test.doFirst {
+    systemProperties['org.tmapi.core.TopicMapSystemFactory'] = 'org.tinytim.core.TopicMapSystemFactoryImpl'
+}
+
+test {
+    // Remove me once CTM works!
+    ignoreFailures = true
+}
+
+jar {
+      manifest {
+        name = projectName
+        
+        attributes 'Implementation-Version': project.version, 
+                  'Implementation-Vendor': project.vendorName, 
+                  'Implementation-URL': project.projectURL, 
+                  'Sealed': 'false'
+                  
+        instruction 'Bundle-Vendor', project.vendorName
+        instruction 'Bundle-License', project.licenseURL
+        instruction 'Bundle-Description', project.projectDescription
+        instruction 'Import-Package', 'org.tinytim.*;resolution:=optional, net.ontopia.*;resolution:=optional, !org.tmapix.io.*, *'
+        instruction 'Export-Package', '!*.internal.*, *'
+      }
+}
+
+javadoc {
+    appName = 'TMAPIX I/O ' + project.version
+
+    exclude '**/internal/**'
+
+    project.configure(options) {
+        memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PUBLIC
+        docTitle = "$appName"
+        windowTitle = "$appName"
+        header = "$appName"
+        author = "true"
+        version = "true"
+        use = "true"
+        links('http://java.sun.com/j2se/1.5.0/docs/api', 'http://www.tmapi.org/2.0/api/')
+    }
+
+}
+
+task dist(dependsOn: [assemble, test, javadoc]) << {
+    def base_name = "$archivesBaseName-${project.version}"
+    def base = "$distsDir/" + base_name
+    def zips = "$buildDir/dist/$base_name"
+    def doc_dir = "$buildDir/docs"
+    copy {
+        into base
+        from(doc_dir)
+        from(libsDir)
+        from(projectDir) {
+            include 'README.txt'
+            include 'LICENSE.txt'
+            include 'CHANGES.txt'
+            include 'NOTICE.txt'
+        }
+        from("$projectDir/src") {
+            into 'src'
+            exclude 'grammar/**'
+            exclude '**/*.bak'
+        }
+        into('lib') {
+            from configurations.runtime
+            from(configurations.compiledep) { 
+              include 'ontopia-mio*'
+            }
+        }
+    }
+    ant {
+        tar destfile: zips + '.tar.gz', basedir: distsDir, compression: 'gzip', longfile: 'gnu'
+        zip destfile: zips + '.zip', basedir: distsDir
+    }
+}
+
+task release(dependsOn: dist) {
+    // noop.
+}
+
+artifacts {
+    archives jar
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file://$buildDir/maven-repo/")
+
+        pom.project {
+            name project.projectName
+            description project.projectDescription
+            url project.projectURL
+            
+            organization {
+                name project.vendorName
+                url project.vendorURL
+            }
+            licenses {
+               license {
+                  name project.licenseName
+                  url project.licenseURL
+               }
+            }
+            repositories {
+               repository {
+                  id 'ontopia'
+                  url REP_ONTOPIA
+               }
+               repository {
+                  id 'ontopia-snapshots'
+                  url REP_ONTOPIA_SNAPSHOT
+               }
+               repository {
+                  id 'tmapi'
+                  url REP_TMAPI
+               }
+               repository {
+                  id 'tmapi-snapshot'
+                  url REP_TMAPI_SNAPSHOT
+               }
+               repository {
+                  id 'semagia-releases'
+                  url REP_SEMAGIA
+               }
+               repository {
+                  id 'semagia-snapshots'
+                  url REP_SEMAGIA_SNAPSHOT
+               }
+               repository {
+                  id 'tinytim'
+                  url REP_TINYTIM
+               }
+               repository {
+                  id 'tinytim-snapshots'
+                  url REP_TINYTIM_SNAPSHOT
+               }
+               repository {
+                  id 'tmlab'
+                  url REP_TMLAB
+               }
+            }
+        }
+    }
+}

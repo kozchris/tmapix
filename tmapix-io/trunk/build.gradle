@@ -20,8 +20,8 @@ eclipseClasspath.downloadSources = false
 
 project.projectName = 'TMAPIX I/O'
 project.projectDescription = 'TMAPIX I/O' //TODO
-project.vendorName = 'Semagia'
-project.vendorURL = 'http://www.semagia.com/'
+project.vendorName = 'TMAPIX project'
+project.vendorURL = 'http://www.tmapix.org/'
 project.licenseName = 'Apache Software License, Version 2.0'
 project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 project.projectURL = 'http://www.tmapix.org/'
@@ -45,8 +45,6 @@ gradle.taskGraph.whenReady {taskGraph ->
 
 repositories {
     mavenCentral()
-    // jarjar
-    mavenRepo urls: 'http://repo.joist.ws/'
     // JGroups (Ontopia)
     mavenRepo urls: 'http://repository.jboss.org/maven2/'
     mavenRepo urls: REP_TMAPI
@@ -55,6 +53,7 @@ repositories {
     mavenRepo urls: REP_TINYTIM_SNAPSHOT
     mavenRepo urls: REP_ONTOPIA
     mavenRepo urls: REP_ONTOPIA_SNAPSHOT
+    mavenRepo urls: REP_SEMAGIA
     mavenRepo urls: REP_SEMAGIA_SNAPSHOT
     mavenRepo urls: REP_TMLAB
     mavenRepo urls: REP_ADUNA
@@ -62,15 +61,12 @@ repositories {
 
 configurations {
     compiledep
-    onejar
 }
 
 dependencies {
 
-    onejar 'com.tonicsystems:jarjar:1.0'
-
-    compile 'org.tmapi:tmapi:[2.0.0,)',
-            'org.slf4j:slf4j-api:(1.5.8,)',
+    compile 'org.tmapi:tmapi:[2.0.2,)',
+            'org.slf4j:slf4j-api:[1.5.8,)',
             'com.semagia.mio:mio-syntaxpack-nodeps:0.1.0-SNAPSHOT'
     
     // We need tinyTiM and Ontopia in the classpath at compile time
@@ -93,7 +89,7 @@ dependencies {
                 'de.topicmapslab.majortom:majortom-inMemory:1.1.1-SNAPSHOT',
                 'de.topicmapslab.sesametm:sesametm-engine:0.1.1-SNAPSHOT'
 
-    testRuntime 'org.slf4j:slf4j-jdk14:(1.5.8,)'
+    testRuntime 'org.slf4j:slf4j-jdk14:[1.5.8,)'
 }
 
 sourceSets {
@@ -174,52 +170,6 @@ jar {
       }
 }
 
-/*
-task repack(dependsOn: jar) << {
-    def destDir = "$buildDir/onejar"
-    
-    def the_jar = "$buildDir/libs/tmp-tmapix-onejar.jar"
-    
-    ant {
-        taskdef name: 'jarjar', 
-            classname: 'com.tonicsystems.jarjar.JarJarTask', 
-            classpath: configurations.onejar.asPath
-
-        jarjar(jarfile: the_jar) {
-            fileset dir: sourceSets.main.classesDir
-            zipfileset(src: configurations.default.find { f -> f.name.startsWith('mio-syntaxpack') })
-
-            rule pattern: 'com.semagia.mio.**', result: 'org.tmapix.io.internal.mio.@1'
-
-            keep pattern: 'org.tmapix.io.**'
-            keep pattern: 'com.semagia.mio.**'
-        }
-        unjar src: the_jar, dest: "$buildDir/onejar"
-    }
-    new File(the_jar).delete()
-    new File("$buildDir/onejar/META-INF/MANIFEST.MF").delete()
-    
-    def serviceFile = "$buildDir/onejar/META-INF/services/com.semagia.mio.IDeserializerFactory"
-    oldServiceFile = new File(serviceFile)
-    def services = oldServiceFile.readLines()
-    oldServiceFile.delete()
-    writer = new File(serviceFile).newWriter()
-    for(line in services) {
-        writer.write(line.replace("com.semagia.mio", "org.tmapix.io.internal.mio"))
-        writer.write('\n')
-    }
-    writer.close()
-}
-
-task onejarJar(type: Jar, dependsOn: repack ) {
-    baseName = jar.baseName + '-onejar'
-    from "$buildDir/onejar"
-    manifest = project.manifest {
-      from(jar.manifest)
-    }
-}
-*/
-
 javadoc {
     appName = 'TMAPIX I/O ' + project.version
 
@@ -277,7 +227,6 @@ task release(dependsOn: dist) {
 
 artifacts {
     archives jar
-//    onejar onejarJar
 }
 
 uploadArchives {
@@ -315,6 +264,10 @@ uploadArchives {
                repository {
                   id 'tmapi-snapshot'
                   url REP_TMAPI_SNAPSHOT
+               }
+               repository {
+                  id 'semagia-releases'
+                  url REP_SEMAGIA
                }
                repository {
                   id 'semagia-snapshots'

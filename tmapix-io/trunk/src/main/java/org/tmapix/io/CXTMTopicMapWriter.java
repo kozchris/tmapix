@@ -152,6 +152,13 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    /**
      * Serializes the specified <tt>topicMap</tt> into the CXTM format.
      * <p>
      * <em>CAUTION</em>: This method MAY modify the topic map since duplicate 

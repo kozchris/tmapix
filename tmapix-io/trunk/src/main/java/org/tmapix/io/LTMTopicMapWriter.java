@@ -88,10 +88,16 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _sloPrefixes = new HashMap<String, String>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         super.init(topicMap);
         _xtmDisplayName = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(XTM10.DISPLAY));

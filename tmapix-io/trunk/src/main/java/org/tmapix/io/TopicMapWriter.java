@@ -17,6 +17,7 @@ package org.tmapix.io;
 
 import java.io.IOException;
 
+import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -27,6 +28,7 @@ import org.tmapi.core.TopicMap;
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
+ * @author Patrick Jaehnichen (jaehnichen[at]informatik.uni-leipzig.de <a href="http://www.topicmapslab.de/">TopicMapsLab at University of Leipzig, Germany</a>
  * @version $Rev$ - $Date$
  */
 public interface TopicMapWriter {
@@ -39,4 +41,11 @@ public interface TopicMapWriter {
      */
     public void write(TopicMap topicMap) throws IOException;
 
+    /**
+     * Serializes the given <tt>topics</tt>, hence a <tt>topicMap</tt> fragment.
+     * 
+     * @param topics The array of topics to serialize.
+     * @throws IOException If an error occurs.
+     */
+    public void write(Topic[] topics) throws IOException;
 }

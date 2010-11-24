@@ -18,6 +18,7 @@ package org.tmapix.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.Vector;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -124,10 +125,61 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _exportIIds = export;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	if(topics == null || topics.length == 0)
+    		throw new IOException("Empty set of topics!");
+    	TopicMap topicMap = topics[0].getTopicMap();
+    	Vector<Association> associationsToWrite = new Vector<Association>();
+        _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);
+        _out.startDocument();
+        _out.startObject();
+        _writeKeyValue("version", "1.0");
+        _writeKeyValue("item_type", "topicmap");
+        _writeReifier(topicMap);
+        _writeItemIdentifiers(topicMap);
+        _out.key("topics");
+        _out.startArray();
+        for (Topic topic: topics) {
+            _writeTopic(topic);
+            Set<Role> topicRoles = topic.getRolesPlayed();
+            for(Role r : topicRoles) {
+            	Association a = r.getParent();
+            	if(!associationsToWrite.contains(a))
+            		associationsToWrite.add(a);
+            }
+        }
+        _out.endArray();
+        _out.key("associations");
+        _out.startArray();
+        for (Association assoc: associationsToWrite) {
+            _writeAssociation(assoc);
+        }
+        // Write type-instance relationships
+        final TypeInstanceIndex tiIdx = topicMap.getIndex(TypeInstanceIndex.class);
+        if (!tiIdx.isOpen()) {
+            tiIdx.open();
+        }
+        if (!tiIdx.isAutoUpdated()) {
+            tiIdx.reindex();
+        }
+        for(Topic type : topics) {
+        	for(Topic typeType : type.getTypes())
+        		_writeTypeInstance(typeType, type);
+	       	for(Topic instance : tiIdx.getTopics(type))
+	            _writeTypeInstance(type, instance);
+    	}
+        tiIdx.close();
+        _out.endArray();
+        _out.endObject();
+        _out.endDocument();
+    }
+
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);
         _out.startDocument();

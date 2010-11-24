@@ -99,7 +99,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.io.File)
      */
-    @Override
     public void setMappingSource(File file) {
         try {
             setMappingSource(file.toURI().toURL());
@@ -112,7 +111,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tmapix.io.RDFTopicMapReader#setMappingSource(java.net.URL)
      */
-    @Override
     public void setMappingSource(URL url) {
         setMappingSource(url.toExternalForm());
     }
@@ -120,7 +118,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tmapix.io.RDFTopicMapReader#setMappingSource(java.lang.String)
      */
-    @Override
     public void setMappingSource(String iri) {
         _deserializer.setProperty(Property.RDF2TM_MAPPING_IRI, iri);
     }
@@ -128,7 +125,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tmapix.io.RDFTopicMapReader#getMappingSource()
      */
-    @Override
     public String getMappingSource() {
         return (String) _deserializer.getProperty(Property.RDF2TM_MAPPING_IRI);
     }
@@ -136,7 +132,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tmapix.io.RDFTopicMapReader#getMappingSourceSyntax()
      */
-    @Override
     public RDFSyntax getMappingSourceSyntax() {
         final com.semagia.mio.Syntax syntax = (com.semagia.mio.Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
         return _toRDFSyntax(syntax); 
@@ -145,7 +140,6 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tmapix.io.RDFTopicMapReader#setMappingSourceSyntax(org.tmapix.io.RDFSyntax)
      */
-    @Override
     public void setMappingSourceSyntax(RDFSyntax syntax) {
         _deserializer.setProperty(Property.RDF2TM_MAPPING_SYNTAX, _toMIOSyntax(syntax));
     }

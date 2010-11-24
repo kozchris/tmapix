@@ -260,7 +260,6 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * Comparator for locators.
      */
     private static class LocatorComparator implements Comparator<Locator> {
-        @Override
         public int compare(Locator o1, Locator o2) {
             return o1.getReference().compareTo(o2.getReference());
         }

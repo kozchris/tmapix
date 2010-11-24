@@ -53,9 +53,9 @@
         </repository>
     </repositories>
     <modules>
-        <module>tmapix-core</module>
-        <module>semagia-tmapix-filter</module>
-        <module>tmapix-io</module>
+        <module>../tmapix-core</module>
+        <module>../tmapix-filter</module>
+        <module>../tmapix-io</module>
     </modules>  
   
 </project>

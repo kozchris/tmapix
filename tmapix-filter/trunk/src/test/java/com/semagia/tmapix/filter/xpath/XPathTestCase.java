@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.tmapi.core.Construct;
 import org.tmapi.core.TMAPITestCase;
 
@@ -33,8 +34,10 @@ import com.semagia.tmapix.filter.IFilter;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
+//ignoring because no test but maven complains...
+@Ignore
 public class XPathTestCase extends TMAPITestCase {
 
     public XPathTestCase(String name) {

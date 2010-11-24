@@ -47,5 +47,14 @@ public interface TopicMapWriter {
      * @param topics The array of topics to serialize.
      * @throws IOException If an error occurs.
      */
-    public void write(Topic[] topics) throws IOException;
+    public void write(Topic... topics) throws IOException;
+
+    /**
+     * Writes the specified topics.
+     *
+     * @param topics The topics to serialize.
+     * @throws IOException In case of an error.
+     */
+    public void write(final Iterable<Topic> topics) throws IOException;
+
 }

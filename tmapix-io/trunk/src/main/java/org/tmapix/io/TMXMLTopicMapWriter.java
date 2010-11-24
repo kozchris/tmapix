@@ -50,7 +50,7 @@ import org.tmapix.voc.XSD;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements TopicMapFragmentWriter {
+public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements TopicMapWriter {
 
     private static final String _PREFIX_TMDM = "iso";
     private static final String _PREFIX_TMXML = "tm";

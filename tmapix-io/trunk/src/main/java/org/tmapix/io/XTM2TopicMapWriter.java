@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Set;
+import java.util.Vector;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -124,7 +125,18 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
     /**
      * {@inheritDoc}
      */
-    public void write(final Topic[] topics) throws IOException {
+    public void write(Iterable<Topic> topics) throws IOException {
+    	Vector<Topic> tv = new Vector<Topic>();
+    	for(Topic t : topics) {
+    		tv.add(t);
+    	}
+    	write(tv.toArray(new Topic[tv.size()]));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }
 

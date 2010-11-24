@@ -18,6 +18,7 @@ package org.tmapix.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,19 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
     /**
      * {@inheritDoc}
      */
-    public void write(final Topic[] topics) throws IOException {
+    public void write(Iterable<Topic> topics) throws IOException {
+    	Vector<Topic> tv = new Vector<Topic>();
+    	for(Topic t : topics) {
+    		tv.add(t);
+    	}
+    	write(tv.toArray(new Topic[tv.size()]));
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }
     

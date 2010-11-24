@@ -128,7 +128,19 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     /**
      * {@inheritDoc}
      */
-    public void write(final Topic[] topics) throws IOException {
+    public void write(Iterable<Topic> topics) throws IOException {
+    	Vector<Topic> tv = new Vector<Topic>();
+    	for(Topic t : topics) {
+    		tv.add(t);
+    	}
+    	write(tv.toArray(new Topic[tv.size()]));
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic... topics) throws IOException {
     	if(topics == null || topics.length == 0)
     		throw new IOException("Empty set of topics!");
     	TopicMap topicMap = topics[0].getTopicMap();

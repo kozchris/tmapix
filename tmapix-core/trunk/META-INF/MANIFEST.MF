@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Export-Package: org.tmapix.voc;uses:="org.tmapi.core,com.semagia.mio,or
+ g.slf4j,com.semagia.mio.utils.xml,org.xml.sax.helpers,org.tmapi.index
+ ,com.semagia.mio.ctm,org.xml.sax,net.ontopia.topicmaps.impl.tmapi2,or
+ g.tinytim.mio,net.ontopia.topicmaps.io,net.ontopia.topicmaps.core,com
+ .semagia.mio.helpers"
+Tool: Bnd-0.0.384
+Bundle-Name: TMAPIX I/O
+Created-By: 1.6.0_19 (Sun Microsystems Inc.)
+Bundle-Vendor: TMAPIX project
+Bundle-Version: 1.0.1
+Bnd-LastModified: 1283601343015
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-Description: TMAPIX I/O
+Import-Package: com.semagia.mio,com.semagia.mio.ctm,com.semagia.mio.he
+ lpers,com.semagia.mio.utils.xml,net.ontopia.topicmaps.core;resolution
+ :=optional,net.ontopia.topicmaps.impl.tmapi2;resolution:=optional,net
+ .ontopia.topicmaps.io;resolution:=optional,org.slf4j;version="1.6",or
+ g.tinytim.mio;resolution:=optional,org.tmapi.core;version="2.0",org.t
+ mapi.index;version="2.0",org.xml.sax,org.xml.sax.helpers
+Bundle-SymbolicName: org.tmapix.voc
+

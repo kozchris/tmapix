@@ -121,10 +121,16 @@ public class XTM2TopicMapWriter extends AbstractXMLTopicMapWriter {
         return _version;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         // Cache the default name type. May be null, though
         _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);

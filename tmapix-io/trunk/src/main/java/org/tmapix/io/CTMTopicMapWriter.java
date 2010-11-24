@@ -277,10 +277,16 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         _keepAbsoluteIIDs = keepAbsoluteItemIdentifiers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
+    
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));
         _out.write("%encoding \"" + _encoding + "\"");
@@ -1182,7 +1188,6 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         /* (non-Javadoc)
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        @Override
         public int compareTo(Reference o) {
             int res = type - o.type;
             if (res == 0) {
@@ -1203,7 +1208,6 @@ public class CTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
-        @Override
         public int compare(Topic o1, Topic o2) {
             return getTopicReference(o1).compareTo(getTopicReference(o2));
         }

@@ -108,7 +108,6 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         super.init(topicMap);
         _write(topicMap.getTopics(), topicMap);
@@ -117,7 +116,6 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapFragmentWriter#write(org.tmapi.core.Topic[])
      */
-    @Override
     public void write(final Topic... topics) throws IOException {
         if (topics == null) {
             throw new IllegalArgumentException("The topic array must not be null");
@@ -128,7 +126,6 @@ public class TMXMLTopicMapWriter extends AbstractXMLTopicMapWriter implements To
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapFragmentWriter#write(java.lang.Iterable)
      */
-    @Override
     public void write(final Iterable<Topic> topics) throws IOException {
         if (topics == null) {
             throw new IllegalArgumentException("The topics must not be null");

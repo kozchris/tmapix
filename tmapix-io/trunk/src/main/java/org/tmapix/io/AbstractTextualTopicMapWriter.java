@@ -219,7 +219,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
         }
 
         @SuppressWarnings("unchecked")
-        @Override
         public int compare(Topic o1, Topic o2) {
             final Comparable comp1 = getTopicReference(o1);
             final Comparable comp2 = getTopicReference(o2);
@@ -230,7 +229,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
     private class TopicComparator implements Comparator<Topic> {
 
         @SuppressWarnings("unchecked")
-        @Override
         public int compare(Topic o1, Topic o2) {
             int res = _topicCollectionComparator.compare(o1.getTypes(), o2.getTypes());
             if (res == 0) {
@@ -346,7 +344,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
             _roleSetComparator = new RolesComparator();
         }
 
-        @Override
         public int compare(Association o1, Association o2) {
             if (o1 == o2) {
                 return 0;
@@ -369,7 +366,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
      */
     private class RoleComparator extends AbstractComparator<Role> {
 
-        @Override
         public int compare(Role o1, Role o2) {
             if (o1 == o2) {
                 return 0;
@@ -389,7 +385,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
      */
     protected class OccurrenceComparator extends AbstractDatatypeAwareComparator<Occurrence> {
 
-        @Override
         public int compare(Occurrence o1, Occurrence o2) {
             if (o1 == o2) {
                 return 0;
@@ -417,7 +412,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
      */
     private final class NameComparator extends AbstractComparator<Name> {
 
-        @Override
         public int compare(Name o1, Name o2) {
             if (o1 == o2) {
                 return 0;
@@ -463,7 +457,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
      */
     protected class VariantComparator extends AbstractDatatypeAwareComparator<Variant> {
 
-        @Override
         public int compare(Variant o1, Variant o2) {
             if (o1 == o2) {
                 return 0;
@@ -487,7 +480,6 @@ abstract class AbstractTextualTopicMapWriter implements TopicMapWriter {
      */
     private abstract class AbstractCollectionComparator<T> implements Comparator<Collection<T>> {
 
-        @Override
         public int compare(Collection<T> o1, Collection<T> o2) {
             final int s1 = o1.size();
             final int s2 = o2.size();

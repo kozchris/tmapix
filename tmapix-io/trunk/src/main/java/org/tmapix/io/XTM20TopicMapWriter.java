@@ -18,6 +18,7 @@ package org.tmapix.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -60,10 +61,16 @@ public class XTM20TopicMapWriter implements TopicMapWriter {
         _writer = new XTM2TopicMapWriter(out, baseIRI, encoding, XTMVersion.XTM_2_0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _writer.write(topicMap);
     }

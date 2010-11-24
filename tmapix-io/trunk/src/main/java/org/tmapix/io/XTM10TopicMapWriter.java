@@ -78,11 +78,16 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
         super(out, baseIRI, encoding);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void write(final Topic[] topics) throws IOException {
+    	throw new UnsupportedOperationException("Not implemented yet.");
+    }
     
     /* (non-Javadoc)
      * @see org.tinytim.mio.ITopicMapWriter#write(org.tmapi.core.TopicMap)
      */
-    @Override
     public void write(final TopicMap topicMap) throws IOException {
         // Cache the default name type. May be null, though
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));

@@ -19,11 +19,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
@@ -261,17 +262,18 @@ abstract class AbstractBaseTextualTopicMapWriter extends
      * Comparator for locators.
      */
     private static class LocatorComparator implements Comparator<Locator> {
+    	@Override
         public int compare(Locator o1, Locator o2) {
             return o1.getReference().compareTo(o2.getReference());
         }
     }
     
+    @Override
     public void write(Iterable<Topic> topics) throws IOException {
-    	Vector<Topic> tv = new Vector<Topic>();
-    	for(Topic t : topics) {
-    		tv.add(t);
-    	}
-    	write(tv.toArray(new Topic[tv.size()]));
+    	List<Topic> tl = new ArrayList<Topic>();
+    	for(Topic t : topics)
+    		tl.add(t);
+    	write(tl.toArray(new Topic[tl.size()]));
     }
 
 }

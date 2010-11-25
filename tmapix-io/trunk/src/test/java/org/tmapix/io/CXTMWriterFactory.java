@@ -17,7 +17,8 @@ package org.tmapix.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -58,6 +59,7 @@ class CXTMWriterFactory {
 
     private static final class TinyTimDuplicateRemover implements DuplicateRemover {
 
+        @Override
         public void removeDuplicates(TopicMap topicMap) {
             TopicMap tm = ((CXTMWriterTopicMapTinyTim) topicMap).getWrappedTopicMap();
             org.tinytim.utils.TypeInstanceConverter.convertAssociationsToTypes(tm);
@@ -74,18 +76,20 @@ class CXTMWriterFactory {
             _writer = new de.topicmapslab.majortom.io.CXTMTopicMapWriter(out, base);
         }
 
+        @Override
         public void write(Iterable<Topic> topics) throws IOException {
-        	Vector<Topic> tv = new Vector<Topic>();
-        	for(Topic t : topics) {
-        		tv.add(t);
-        	}
-        	write(tv.toArray(new Topic[tv.size()]));
+        	List<Topic> tl = new ArrayList<Topic>();
+        	for(Topic t : topics)
+        		tl.add(t);
+        	write(tl.toArray(new Topic[tl.size()]));
         }
-
+        
+        @Override
         public void write(final Topic... topics) throws IOException {
         	throw new UnsupportedOperationException("Not implemented yet.");
         }
 
+        @Override
         public void write(TopicMap topicMap) throws IOException {
             try {
                 _writer.write(topicMap); 
@@ -107,18 +111,20 @@ class CXTMWriterFactory {
             _writer = new org.tinytim.mio.CXTMTopicMapWriter(out, base);
         }
 
+        @Override
         public void write(Iterable<Topic> topics) throws IOException {
-        	Vector<Topic> tv = new Vector<Topic>();
-        	for(Topic t : topics) {
-        		tv.add(t);
-        	}
-        	write(tv.toArray(new Topic[tv.size()]));
+        	List<Topic> tl = new ArrayList<Topic>();
+        	for(Topic t : topics)
+        		tl.add(t);
+        	write(tl.toArray(new Topic[tl.size()]));
         }
-
+        
+        @Override
         public void write(final Topic... topics) throws IOException {
         	throw new UnsupportedOperationException("Not implemented yet.");
         }
 
+        @Override
         public void write(TopicMap topicMap) throws IOException {
             _writer.write(topicMap); }
         
@@ -131,19 +137,21 @@ class CXTMWriterFactory {
         public OntopiaCXTMWriter(OutputStream out) throws IOException {
             _writer = new net.ontopia.topicmaps.xml.CanonicalXTMWriter(out);
         }
-
+        
+        @Override
         public void write(Iterable<Topic> topics) throws IOException {
-        	Vector<Topic> tv = new Vector<Topic>();
-        	for(Topic t : topics) {
-        		tv.add(t);
-        	}
-        	write(tv.toArray(new Topic[tv.size()]));
+        	List<Topic> tl = new ArrayList<Topic>();
+        	for(Topic t : topics)
+        		tl.add(t);
+        	write(tl.toArray(new Topic[tl.size()]));
         }
-
+        
+        @Override
         public void write(final Topic... topics) throws IOException {
         	throw new UnsupportedOperationException("Not implemented yet.");
         }
 
+        @Override
         public void write(TopicMap topicMap) throws IOException {
             _writer.write(TMAPIChooser.unwrapOntopia(topicMap));
         }

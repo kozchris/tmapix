@@ -17,8 +17,9 @@ package org.tmapix.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,21 +80,18 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
         super(out, baseIRI, encoding);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void write(Iterable<Topic> topics) throws IOException {
-    	Vector<Topic> tv = new Vector<Topic>();
-    	for(Topic t : topics) {
-    		tv.add(t);
-    	}
-    	write(tv.toArray(new Topic[tv.size()]));
+    	List<Topic> tl = new ArrayList<Topic>();
+    	for(Topic t : topics)
+    		tl.add(t);
+    	write(tl.toArray(new Topic[tl.size()]));
     }
 
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }
@@ -101,6 +99,7 @@ public class XTM10TopicMapWriter extends AbstractXMLTopicMapWriter {
     /* (non-Javadoc)
      * @see org.tinytim.mio.ITopicMapWriter#write(org.tmapi.core.TopicMap)
      */
+    @Override
     public void write(final TopicMap topicMap) throws IOException {
         // Cache the default name type. May be null, though
         _defaultNameType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TMDM.TOPIC_NAME));

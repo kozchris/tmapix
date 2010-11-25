@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,21 +151,18 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
         return _duplicateRemover;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void write(Iterable<Topic> topics) throws IOException {
-    	Vector<Topic> tv = new Vector<Topic>();
-    	for(Topic t : topics) {
-    		tv.add(t);
-    	}
-    	write(tv.toArray(new Topic[tv.size()]));
+    	List<Topic> tl = new ArrayList<Topic>();
+    	for(Topic t : topics)
+    		tl.add(t);
+    	write(tl.toArray(new Topic[tl.size()]));
     }
 
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }

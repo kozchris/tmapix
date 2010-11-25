@@ -17,8 +17,9 @@ package org.tmapix.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -125,26 +126,23 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _exportIIds = export;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void write(Iterable<Topic> topics) throws IOException {
-    	Vector<Topic> tv = new Vector<Topic>();
-    	for(Topic t : topics) {
-    		tv.add(t);
-    	}
-    	write(tv.toArray(new Topic[tv.size()]));
+    	List<Topic> tl = new ArrayList<Topic>();
+    	for(Topic t : topics)
+    		tl.add(t);
+    	write(tl.toArray(new Topic[tl.size()]));
     }
 
-    
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final Topic... topics) throws IOException {
     	if(topics == null || topics.length == 0)
     		throw new IOException("Empty set of topics!");
     	TopicMap topicMap = topics[0].getTopicMap();
-    	Vector<Association> associationsToWrite = new Vector<Association>();
+    	List<Association> associationsToWrite = new ArrayList<Association>();
         _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);
         _out.startDocument();
         _out.startObject();
@@ -192,6 +190,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
+    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _defaultNameType = WriterUtils.getOmitableDefaultTopicNameType(topicMap, !_exportIIds);
         _out.startDocument();

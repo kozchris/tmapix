@@ -17,7 +17,8 @@ package org.tmapix.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -62,20 +63,19 @@ public class XTM20TopicMapWriter implements TopicMapWriter {
         _writer = new XTM2TopicMapWriter(out, baseIRI, encoding, XTMVersion.XTM_2_0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void write(Iterable<Topic> topics) throws IOException {
-    	Vector<Topic> tv = new Vector<Topic>();
-    	for(Topic t : topics) {
-    		tv.add(t);
-    	}
-    	write(tv.toArray(new Topic[tv.size()]));
+    	List<Topic> tl = new ArrayList<Topic>();
+    	for(Topic t : topics)
+    		tl.add(t);
+    	write(tl.toArray(new Topic[tl.size()]));
     }
 
+    
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }
@@ -83,6 +83,7 @@ public class XTM20TopicMapWriter implements TopicMapWriter {
     /* (non-Javadoc)
      * @see org.tmapix.io.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
+    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _writer.write(topicMap);
     }

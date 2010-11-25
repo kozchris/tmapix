@@ -91,7 +91,8 @@ public class LTMTopicMapWriter extends AbstractBaseTextualTopicMapWriter {
     /**
      * {@inheritDoc}
      */
-    public void write(final Topic[] topics) throws IOException {
+    @Override
+    public void write(final Topic... topics) throws IOException {
     	throw new UnsupportedOperationException("Not implemented yet.");
     }
 

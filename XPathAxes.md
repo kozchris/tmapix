@@ -1,0 +1,116 @@
+# XPath Axes #
+
+Each [Topic Maps API (TMAPI)](http://www.tmapi.org/2.0) construct provides some axes, these are explained in the following.
+
+
+# Construct #
+
+| **Axis**          | **TMAPI equivalent**   |
+|:------------------|:-----------------------|
+| `..`              | getParent()            |
+| `parent::*`       | getParent()            |
+| `iid`             | getItemIdentifiers()   |
+
+# Reifiable #
+
+Provides all `Construct` axes plus the following:
+
+| **Axis**       | **TMAPI equivalent**       |
+|:---------------|:---------------------------|
+| `reifier`      | getReifier()               |
+
+
+# Scoped #
+
+Provides all `Construct` axes plus the following:
+
+| **Axis**     | **TMAPI equivalent**       |
+|:-------------|:---------------------------|
+| `scope`      | getScope()                 |
+
+
+# Typed #
+
+Provides all `Construct` axes plus the following:
+
+| **Axis**     | **TMAPI equivalent**       |
+|:-------------|:---------------------------|
+| `type`       | getType()                  |
+
+
+# DatatypeAware #
+
+Provides all `Scoped` and `Reifiable` axes plus the following:
+
+| **Axis**       | **TMAPI equivalent**       |
+|:---------------|:---------------------------|
+| `value`        | getValue()                 |
+| `datatype`     | getDatatype()              |
+
+
+# Topic Map #
+
+Provides all `Reifiable` axes plus the following:
+
+| **Axis**         | **TMAPI equivalent**       |
+|:-----------------|:---------------------------|
+| `topic`          | getTopics()                |
+| `association`    | getAssociations()          |
+| `child::*`       | all Topics and Associations |
+
+
+# Topic #
+
+Provides all `Construct` axes plus the following:
+
+| **Axis**       | **TMAPI equivalent**       |
+|:---------------|:---------------------------|
+| `sid`          | getSubjectIdentifiers()    |
+| `slo`          | getSubjectLocators()       |
+| `occurrence`   | getOccurrences()           |
+| `name`         | getNames()                 |
+| `reified`      | getReified()               |
+| `type`         | getTypes()                 |
+| `instance`     | TypeInstanceIndex.getTopics(topic)) |
+| `role`         | getRolesPlayed()           |
+| `child::*`     | all Names and Occurrences  |
+
+
+# Association #
+
+Provides all `Typed`, `Scoped` and `Reifiable` axes plus the following:
+
+| **Axis**       | **TMAPI equivalent**       |
+|:---------------|:---------------------------|
+| `role`         | getRoles()                 |
+| `child::*`     | same as getRoles()         |
+
+
+# Role #
+
+Provides all `Typed`, and `Reifiable` axes plus the following:
+
+| **Axis**     | **TMAPI equivalent**       |
+|:-------------|:---------------------------|
+| `player`     | getPlayer()                |
+
+
+# Occurrence #
+
+Adds no additional axis, see `DatatypeAware` and `Typed`
+
+
+# Name #
+
+Provides all `Typed`, `Scoped`, and `Reifiable` axes plus the following:
+
+| **Axis**       | **TMAPI equivalent**       |
+|:---------------|:---------------------------|
+| `value`        | getValue()                 |
+| `variant`      | getVariants()              |
+| `child::*`     | same as getVariants()      |
+
+
+# Variant #
+
+Adds no additional axis, see `DatatypeAware`

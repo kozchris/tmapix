@@ -1,0 +1,48 @@
+# XPath Examples #
+
+Returns all associations where a topic plays a role:
+```
+IFilter<Association> filter = XPathFilter.create("role/..");
+
+for (Association assoc: filter.match(topic)) {
+  // ...
+}
+```
+
+
+Returns all names with the value "Semagia"
+```
+IFilter<Name> filter = XPathFilter.create("name[value = 'Semagia']");
+
+for (Name name: filter.match(topic)) {
+   // ...
+}
+```
+
+Find all occurrences with datatype xsd:anyURI:
+```
+IFilter<Occurrence> filter = XPathFilter.create("occurrence[datatype=xsd:anyURI]");
+
+for (Occurrence occ: filter.match(topic)) {
+   // ...
+}
+```
+
+Find all occurrences with datatype xsd:anyURI and return the string value:
+```
+IFilter<String> filter = XPathFilter.create("occurrence[datatype=xsd:anyURI]/value");
+
+for (String val: filter.match(topic)) {
+   // ...
+}
+```
+
+
+Find all instances of "topic":
+```
+IFilter<Topic> filter = XPathFilter.create("instance");
+
+for (Topic instance: filter.match(topic)) {
+   // ...
+}
+```
